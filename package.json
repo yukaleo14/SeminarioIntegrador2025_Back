@@ -1,0 +1,19 @@
+{
+  "name": "fuber_delivery",
+  "version": "18.0.0",
+  "description": "Aplicacion de delivery de comidas",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yukaleo14/SeminarioIntegrador2025_Back.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yukaleo14/SeminarioIntegrador2025_Back/issues"
+  },
+  "homepage": "https://github.com/yukaleo14/SeminarioIntegrador2025_Back#readme"
+}
