@@ -1,26 +1,30 @@
 import { LoginDto } from './dto/login-dto';
 import { Injectable } from '@nestjs/common';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
-  login(loginDto: LoginDto) {
-    return 'This action adds a new login';
-  }
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly prisma: PrismaService,
+  ) {}
 
-  findAll() {
-    return `This action returns all logins`;
-  }
+  // Validar usuario y generar token JWT
+  async validateUser(loginDto: LoginDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: loginDto.email },
+    });
 
-  findOne(id: number) {
-    return `This action returns a #${id} login`;
-  }
+    if (!user) return null; // Usuario no encontrado
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} login`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} login`;
+    // Contraseña correcta
+    if (user.password === loginDto.password) {
+      return this.jwtService.sign({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      });
+    }
   }
 }
