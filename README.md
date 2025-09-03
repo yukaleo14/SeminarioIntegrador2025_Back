@@ -2,6 +2,70 @@
 
 Aplicación basada de aplicaciones de pedidos de comida
 
+# 🏗️ Proyecto NestJS + MySQL + Prisma
+
+Este proyecto es un backend desarrollado con **NestJS**, utilizando **MySQL** como base de datos y **Prisma** como ORM. La base de datos se levanta fácilmente con **Docker**, y las migraciones se gestionan con Prisma.
+
+## ⚡ Requisitos previos
+
+- [Node.js](https://nodejs.org/) >= 18
+- [npm](https://www.npmjs.com/)
+- [NestJS CLI](https://docs.nestjs.com/cli/overview) (`npm i -g @nestjs/cli`)
+- [Docker](https://www.docker.com/) y [Docker Compose](https://docs.docker.com/compose/)
+
+---
+
+## 🛠️ Instalación del proyecto
+
+### Instalar las dependencias de Node.js:
+
+```bash
+npm install
+```
+
+### Crear el archivo de variables de entorno .env en la raíz del proyecto
+
+DATABASE_URL: conexión usada por NestJS
+SHADOW_DATABASE_URL: conexión usada por Prisma Migrate para la shadow database
+
+## Migraciones con Prisma
+
+### 1 Crear y ejecutar migraciones según el schema definido en prisma/schema.prisma:
+
+```bash
+npx prisma migrate dev --name init
+```
+
+### 2 Generar Prisma Client (para que NestJS pueda usarlo):
+
+```bash
+npx prisma generate
+```
+
+## 🚀 Levantar la aplicación
+
+### 1 Levantar la base de datos con Docker
+
+Primero, iniciamos los contenedores definidos en `docker-compose.yml`:
+
+```bash
+docker compose up -d
+```
+
+O podemos apagar los contenedores con
+
+```bash
+docker compose down
+```
+
+### 2 Luego ya podemos correr el programa con
+
+```bash
+$ npm run start:dev
+```
+
+Podemos Acceder a la aplicacion con http://localhost:3000/openapi
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
