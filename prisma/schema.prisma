@@ -25,3 +25,30 @@ enum Role {
   DELIVERY
   BUSINESS
 }
+
+model Pay {
+  id    Int    @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  nrPay String @unique
+  payDate DateTime @default(now())
+  mount Float
+  methodPay MethodPay @relation(fields: [methodPayId], references: [id])
+  methodPayId Int
+  state State @relation(fields: [stateId], references: [id])
+  stateId Int
+}
+
+model MethodPay {
+  id    Int    @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  name String
+  pay Pay[]
+}
+
+model State {
+  id    Int    @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  ambit String
+  name String
+  pay Pay[]
+}
