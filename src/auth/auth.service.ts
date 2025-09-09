@@ -1,5 +1,5 @@
 import { LoginDto } from './dto/login-dto';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -16,8 +16,12 @@ export class AuthService {
       where: { email: loginDto.email },
     });
     // Usuario no encontrado
-    if (!user) return null;
-
+    if (!user) {
+      throw new HttpException(
+        'Correo o contraseña incorrectos',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     // Contraseña correcta
     if (user.password === loginDto.password) {
       return this.jwtService.sign({
@@ -25,6 +29,11 @@ export class AuthService {
         email: user.email,
         role: user.role,
       });
+    } else {
+      throw new HttpException(
+        'Correo o contraseña incorrectos',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 }
