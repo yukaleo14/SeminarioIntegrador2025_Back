@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login-dto';
 import { Public } from './decorators/public.decorator';
@@ -17,9 +11,6 @@ export class AuthController {
   @Public()
   async login(@Body() loginDto: LoginDto) {
     const userToken = await this.authService.validateUser(loginDto);
-
-    if (!userToken)
-      throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
 
     return userToken;
   }
