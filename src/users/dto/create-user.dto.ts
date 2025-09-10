@@ -6,7 +6,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { Role } from '@prisma/client';
+import { Rol } from '@prisma/client';
 
 export class CreateUserDto {
   @IsString()
@@ -43,6 +43,6 @@ export class CreateUserDto {
   @ApiProperty({ required: true })
   telephone: string;
 
-  @ApiProperty({ required: false, default: Role.CLIENT })
-  role?: Role = Role.CLIENT;
+  @ApiProperty({ required: false, default: Rol.CLIENTE })
+  rol?: Rol = Rol.CLIENTE;
 }

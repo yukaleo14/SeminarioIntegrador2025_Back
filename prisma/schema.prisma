@@ -1,5 +1,5 @@
-generator cliente {
-  provider = "prisma-cliente-js"
+generator client {
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -28,7 +28,7 @@ model User {
   delivery Order[] @relation("deliveryOrders")
   company Order[] @relation("companyOrders")
 
-  Rol Rol @default(CLIENTE)
+  rol Rol @default(CLIENTE)
 }
 
 enum Rol {

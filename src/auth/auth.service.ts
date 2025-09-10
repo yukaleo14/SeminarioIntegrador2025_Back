@@ -27,7 +27,7 @@ export class AuthService {
       return this.jwtService.sign({
         id: user.id,
         email: user.email,
-        role: user.role,
+        rol: user.rol,
       });
     } else {
       throw new HttpException(
