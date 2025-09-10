@@ -24,7 +24,7 @@ model User {
   Sucursales Sucursal[]
 
   //el usuario puede tener varios Rols
-  cliente Order[] @relation("clienteOrders")
+  cliente Order[] @relation("clienteOrders") 
   delivery Order[] @relation("deliveryOrders")
   company Order[] @relation("companyOrders")
 
@@ -64,6 +64,8 @@ model Sucursal {
   address String
   Horario Horario[]
 
+  estado Estado @relation(fields: [estadoId], references: [id])
+  estadoId Int
   user User? @relation(fields: [userId], references: [id])
   userId Int?
 }
@@ -74,36 +76,38 @@ model Horario {
   closeTime String
   Sucursal Sucursal @relation(fields: [SucursalId], references: [id])
   SucursalId Int
-  day Day @relation(fields: [dayId], references: [id]) 
-  dayId Int
+  dia Dia
 }
 
-model Day {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  Horario Horario[]
+enum Dia {
+  LUNES
+  MARTES
+  MIERCOLES
+  JUEVES
+  VIERNES
+  SABADO
+  DOMINGO
 }
 
-
-model Pay {
+model Pago {
   id    Int    @id @default(autoincrement())
   createdAt DateTime @default(now())
-  nrPay String @unique
-  payDate DateTime @default(now())
+  nrpago String @unique
+  pagoDate DateTime @default(now())
   mount Float
-  methodPay MethodPay @relation(fields: [methodPayId], references: [id])
-  methodPayId Int
+  methodpago Methodpago @relation(fields: [methodpagoId], references: [id])
+  methodpagoId Int
   Estado Estado @relation(fields: [EstadoId], references: [id])
   EstadoId Int
 
   order Order[]
 }
 
-model MethodPay {
+model Methodpago {
   id    Int    @id @default(autoincrement())
   createdAt DateTime @default(now())
   name String
-  pay Pay[]
+  pago Pago[]
 }
 
 model Estado {
@@ -112,7 +116,8 @@ model Estado {
   ambito Ambito
   nombre Nombre 
 
-  pay Pay[]
+  sucursal Sucursal[]
+  pago Pago[]
   pedido Order[]
   producto Producto[]
 }
@@ -145,18 +150,18 @@ model Order {
   distributionTime Int @unique
   createdAt DateTime @default(now())
   
-  cliente User @relation("clienteOrders", fields: [userId], references: [id])
+  cliente User? @relation("clienteOrders", fields: [userId], references: [id])
   userId Int @unique
-  delivery User @relation("deliveryOrders", fields: [deliveryId], references: [id])
+  delivery User? @relation("deliveryOrders", fields: [deliveryId], references: [id])
   deliveryId Int @unique
-  company User @relation("companyOrders", fields: [companyId], references: [id])
+  company User? @relation("companyOrders", fields: [companyId], references: [id])
   companyId Int @unique
 
   ruta Ruta @relation(fields: [rutaId], references: [id])
   rutaId Int
 
-  pay Pay @relation(fields: [payId], references: [id])
-  payId Int
+  pago Pago @relation(fields: [pagoId], references: [id])
+  pagoId Int
 
   estado Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
