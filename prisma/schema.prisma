@@ -74,8 +74,8 @@ model Horario {
   id    Int    @id @default(autoincrement())
   openTime String
   closeTime String
-  Sucursal Sucursal @relation(fields: [SucursalId], references: [id])
-  SucursalId Int
+  sucursal Sucursal @relation(fields: [sucursalId], references: [id])
+  sucursalId Int
   dia Dia
 }
 

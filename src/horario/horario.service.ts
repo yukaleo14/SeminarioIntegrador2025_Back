@@ -1,26 +1,71 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateHorarioDto } from './dto/create-horario.dto';
 import { UpdateHorarioDto } from './dto/update-horario.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Horario } from '@prisma/client';
 
 @Injectable()
 export class HorarioService {
-  create(createHorarioDto: CreateHorarioDto) {
-    return 'This action adds a new horario';
+  constructor(private prisma: PrismaService) {}
+
+  async create(createHorarioDto: CreateHorarioDto) : Promise<Horario> {
+    try {
+      const newHorario = await this.prisma.horario.create({
+        data: {
+          ...createHorarioDto,
+          Sucursal: {
+            connect: { id: createHorarioDto.sucursalId } 
+          }
+        }, 
+      });
+      return newHorario;
+    } catch (error) {
+      console.error('Error creating horario:', error);
+      throw error;
+    }
   }
 
   findAll() {
-    return `This action returns all horario`;
+    return this.prisma.horario.findMany({
+      select: {
+        id: true,
+        dia: true,
+        openTime: true,
+        closeTime: true,
+      }
+    }
+    );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} horario`;
+  async findOne(id: number) {
+    const horario = await this.prisma.horario.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        dia: true,
+        openTime: true,
+        closeTime: true,}
+    });
+    if (!horario) {
+      throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+    }
+    return horario;
   }
 
-  update(id: number, updateHorarioDto: UpdateHorarioDto) {
-    return `This action updates a #${id} horario`;
+  async update(id: number, updateHorarioDto: UpdateHorarioDto) {
+    await this.findOne(id);
+    await this.prisma.horario.update({
+      where: { id },
+      data: updateHorarioDto,
+    });
+    return 'Horario actualizado correctamente';
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} horario`;
+  async remove(id: number) {
+    await this.findOne(id);
+    await this.prisma.horario.delete({
+      where: { id },
+    });
+    return 'Horario eliminado correctamente';
   }
 }
