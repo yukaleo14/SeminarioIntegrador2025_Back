@@ -7,26 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Usuario {
   id    Int    @id @default(autoincrement())
-  email String @unique
-  name  String
-  surname String
+  mail String @unique
+  nombre  String
+  apellido String
   dni   String @unique
-  telephone String @unique
-  createdAt DateTime @default(now())
-  password String
+  telefono String @unique
+  fechaHora DateTime @default(now())
+  cuit String
+  contraseña String
 
   //en caso de ser sucursal, tendra una ubicacion
   ubicacion Ubicacion? @relation(fields: [ubicacionId], references: [id])
   ubicacionId Int?
 
-  Sucursales Sucursal[]
+  sucursales Sucursal[]
 
-  //el usuario puede tener varios Rols
-  cliente Order[] @relation("clienteOrders") 
-  delivery Order[] @relation("deliveryOrders")
-  company Order[] @relation("companyOrders")
+  //el usuario puede tener varios Roles
+  cliente Pedido[] @relation("clientePedidos") 
+  delivery Pedido[] @relation("deliveryPedidos")
+  company Pedido[] @relation("companyPedidos")
 
   rol Rol @default(CLIENTE)
 }
@@ -37,45 +38,47 @@ enum Rol {
   BUSINESS
 }
 
-model Category {
+model Categoria {
   id    Int    @id @default(autoincrement())
-  name  String @unique
-  createdAt DateTime @default(now())
-  products Producto[]
+  nombre  String @unique
+  fechaHora DateTime @default(now())
+  productos Producto[]
 }
 
 model Producto {
   id    Int    @id @default(autoincrement())
-  name  String
-  unitPrice Float
-  category Category @relation(fields: [categoryId], references: [id])
-  categoryId Int
-  createdAt DateTime @default(now())
+  nombre  String
+  precioUnidad Float
+
+  categoria Categoria @relation(fields: [categoriaId], references: [id])
+  categoriaId Int
+  fechaHora DateTime @default(now())
 
   estado Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
 
-  orderDetails OrderDetail[]
+  detalleDePedido DetalleDePedido[]
 }
 
 model Sucursal {
   id    Int    @id @default(autoincrement())
-  name  String
-  address String
-  Horario Horario[]
+  nombre  String
+  direccion String
+  horario Horario[]
 
   estado Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
-  user User? @relation(fields: [userId], references: [id])
-  userId Int?
+  usuario Usuario? @relation(fields: [usuarioId], references: [id])
+  usuarioId Int?
 }
 
 model Horario {
   id    Int    @id @default(autoincrement())
-  openTime String
-  closeTime String
-  Sucursal Sucursal @relation(fields: [SucursalId], references: [id])
-  SucursalId Int
+  desde String
+  hasta String
+
+  sucursal Sucursal @relation(fields: [sucursalId], references: [id])
+  sucursalId Int
   dia Dia
 }
 
@@ -91,34 +94,33 @@ enum Dia {
 
 model Pago {
   id    Int    @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  nrpago String @unique
-  pagoDate DateTime @default(now())
-  mount Float
-  methodpago Methodpago @relation(fields: [methodpagoId], references: [id])
-  methodpagoId Int
-  Estado Estado @relation(fields: [EstadoId], references: [id])
-  EstadoId Int
+  numero String @unique
+  fechaHora DateTime @default(now())
+  monto Float
+  
+  formaPago FormaPago @relation(fields: [formaPagoId], references: [id])
+  formaPagoId Int
+  estado Estado @relation(fields: [estadoId], references: [id])
+  estadoId Int
 
-  order Order[]
+  pedido Pedido[]
 }
 
-model Methodpago {
-  id    Int    @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  name String
+model FormaPago {
+  id    Int  @id @default(autoincrement())
+  nombre String
   pago Pago[]
 }
 
 model Estado {
   id    Int    @id @default(autoincrement())
-  createdAt DateTime @default(now())
+  fechaHora DateTime @default(now())
   ambito Ambito
   nombre Nombre 
 
   sucursal Sucursal[]
   pago Pago[]
-  pedido Order[]
+  pedido Pedido[]
   producto Producto[]
 }
 
@@ -137,24 +139,23 @@ enum Nombre {
   ENTREGADO
   CANCELADO
   DEMORADO
-
-
+  PENDIENTE
 }
 
-model Order {
+model Pedido {
   id    Int    @id @default(autoincrement())
-  nrOrder String @unique
-  arrivalTime DateTime @unique
-  totalMount Int @unique
-  preparationTime Int @unique
-  distributionTime Int @unique
-  createdAt DateTime @default(now())
+  numero String @unique
+  horaLlegadaEstimada DateTime @unique
+  montoTotal Int @unique
+  tiempoPreparacionEstimado Int @unique
+  tiempoRepartoEstimado Int @unique
+  fechaHora DateTime @default(now())
   
-  cliente User? @relation("clienteOrders", fields: [userId], references: [id])
-  userId Int @unique
-  delivery User? @relation("deliveryOrders", fields: [deliveryId], references: [id])
+  cliente Usuario? @relation("clientePedidos", fields: [usuarioId], references: [id])
+  usuarioId Int @unique
+  delivery Usuario? @relation("deliveryPedidos", fields: [deliveryId], references: [id])
   deliveryId Int @unique
-  company User? @relation("companyOrders", fields: [companyId], references: [id])
+  company Usuario? @relation("companyPedidos", fields: [companyId], references: [id])
   companyId Int @unique
 
   ruta Ruta @relation(fields: [rutaId], references: [id])
@@ -166,28 +167,28 @@ model Order {
   estado Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
 
-  orderDetails OrderDetail[]
+  detalle DetalleDePedido[]
 
 }
 
-model OrderDetail {
+model DetalleDePedido {
   id    Int    @id @default(autoincrement())
-  quantity Int
-  unitPrice Float
-  createdAt DateTime @default(now())
+  cantidad Int
+  montoSubtotal Float
+  fechaHora DateTime @default(now())
 
-  order Order @relation(fields: [orderId], references: [id])
-  orderId Int
+  pedido Pedido @relation(fields: [pedidoId], references: [id])
+  pedidoId Int
 
-  product Producto @relation(fields: [productId], references: [id])
-  productId Int
+  categoria Producto @relation(fields: [productoId], references: [id])
+  productoId Int
 }
 
 model Ruta {
   id    Int    @id @default(autoincrement())
   tarifaDistancia Float
-  createdAt DateTime @default(now())
-  pedido Order[]
+  fechaHora DateTime @default(now())
+  pedido Pedido[]
   origen Ubicacion @relation("OrigenUbicacion", fields: [origenId], references: [id])
   origenId Int
   destino Ubicacion @relation("DestinoUbicacion", fields: [destinoId], references: [id])
@@ -199,8 +200,9 @@ model Ubicacion {
   id    Int    @id @default(autoincrement())
   coordenadaX Float
   coordenadaY Float
-  createdAt DateTime @default(now())
+  fechaHora DateTime @default(now())
+  
   origen Ruta[] @relation("OrigenUbicacion")
   destino Ruta[] @relation("DestinoUbicacion")
-  sucursal User[]
+  sucursal Usuario[]
 }

@@ -12,8 +12,8 @@ export class AuthService {
 
   // Validar usuario y generar token JWT
   async validateUser(loginDto: LoginDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: loginDto.email },
+    const user = await this.prisma.usuario.findUnique({
+      where: { mail: loginDto.mail },
     });
     // Usuario no encontrado
     if (!user) {
@@ -23,10 +23,10 @@ export class AuthService {
       );
     }
     // Contraseña correcta
-    if (user.password === loginDto.password) {
+    if (user.contraseña === loginDto.contraseña) {
       return this.jwtService.sign({
         id: user.id,
-        email: user.email,
+        mail: user.mail,
         rol: user.rol,
       });
     } else {
