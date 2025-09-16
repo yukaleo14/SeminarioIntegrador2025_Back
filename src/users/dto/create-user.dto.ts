@@ -12,19 +12,19 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ required: true })
-  name: string;
+  nombre: string;
 
   @IsString()
   @IsNotEmpty()
   @MinLength(5)
   @ApiProperty({ required: true })
-  surname: string;
+  apellido: string;
 
   @IsString()
   @IsNotEmpty()
   @IsEmail()
   @ApiProperty({ required: true })
-  email: string;
+  mail: string;
 
   @IsString()
   @IsNotEmpty()
@@ -36,12 +36,17 @@ export class CreateUserDto {
   @MinLength(6)
   @MaxLength(20)
   @ApiProperty({ required: true })
-  password: string;
+  contraseña: string;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ required: true })
-  telephone: string;
+  telefono: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  cuit: string;
 
   @ApiProperty({ required: false, default: Rol.CLIENTE })
   rol?: Rol = Rol.CLIENTE;

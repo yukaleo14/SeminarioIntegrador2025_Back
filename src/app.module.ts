@@ -6,6 +6,8 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { SucursalModule } from './sucursal/sucursal.module';
 import { HorarioModule } from './horario/horario.module';
+import { PagoModule } from './pago/pago.module';
+import { FormaPagoModule } from './forma-pago/forma-pago.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { HorarioModule } from './horario/horario.module';
     }),
     SucursalModule,
     HorarioModule,
+    PagoModule,
+    FormaPagoModule,
   ],
   controllers: [],
   providers: [PrismaService],

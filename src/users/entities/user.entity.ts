@@ -7,22 +7,19 @@ export class UserEntity implements UserWithoutPassword {
   @ApiProperty()
   id: number;
   @ApiProperty()
-  email: string;
+  mail: string;
   @ApiProperty()
-  name: string;
-
+  nombre: string;
   @ApiProperty()
-  surname: string;
-
+  apellido: string;
   @ApiProperty()
-  telephone: string;
-
+  telefono: string;
   @ApiProperty()
   dni: string;
-
   @ApiProperty()
-  createdAt: Date;
-
+  fechaHora: Date;
+  @ApiProperty()
+  cuit: string;
   @ApiProperty()
   rol: Rol;
 }

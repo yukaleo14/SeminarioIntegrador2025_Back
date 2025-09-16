@@ -8,14 +8,14 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
-    const emailDup = await this.prisma.user.findUnique({
-      where: { email: createUserDto.email },
+    const emailDup = await this.prisma.usuario.findUnique({
+      where: { mail: createUserDto.mail },
     });
-    const dniDup = await this.prisma.user.findUnique({
+    const dniDup = await this.prisma.usuario.findUnique({
       where: { dni: createUserDto.dni },
     });
-    const phoneDup = await this.prisma.user.findUnique({
-      where: { telephone: createUserDto.telephone },
+    const phoneDup = await this.prisma.usuario.findUnique({
+      where: { telefono: createUserDto.telefono },
     });
     if (emailDup || dniDup) {
       throw new HttpException(
@@ -29,7 +29,7 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    await this.prisma.user.create({
+    await this.prisma.usuario.create({
       data: createUserDto,
     });
     return 'Usuario creado correctamente';
@@ -40,28 +40,30 @@ export class UsersService {
    * @returns Lista de usuarios sin contraseñas
    */
   findAll() {
-    return this.prisma.user.findMany({
+    return this.prisma.usuario.findMany({
       select: {
         id: true,
-        name: true,
-        email: true,
+        nombre: true,
+        mail: true,
         rol: true,
         dni: true,
-        telephone: true,
+        telefono: true,
+        cuit: true,
       },
     });
   }
 
   async findOne(id: number) {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.usuario.findUnique({
       where: { id },
       select: {
         id: true,
-        name: true,
-        email: true,
+        nombre: true,
+        mail: true,
         rol: true,
         dni: true,
-        telephone: true,
+        telefono: true,
+        cuit: true,
       },
     });
     if (!user) {
@@ -72,7 +74,7 @@ export class UsersService {
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     await this.findOne(id);
-    await this.prisma.user.update({
+    await this.prisma.usuario.update({
       where: { id },
       data: updateUserDto,
     });
@@ -81,7 +83,7 @@ export class UsersService {
 
   async remove(id: number) {
     await this.findOne(id);
-    await this.prisma.user.delete({
+    await this.prisma.usuario.delete({
       where: { id },
     });
     return 'Usuario eliminado correctamente';
