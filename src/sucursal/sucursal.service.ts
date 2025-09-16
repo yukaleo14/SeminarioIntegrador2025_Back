@@ -78,18 +78,48 @@ export class SucursalService {
   }
   
   findAll() {
-    return `This action returns all sucursal`;
+    return this.prisma.sucursal.findMany({
+      select: {
+        id: true,
+        name: true,
+        address: true,
+        user: { select: { id: true, name: true }},
+        estado: { select: { id: true, nombre: true }},
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} sucursal`;
+  async findOne(id: number) {
+    const sucursal = await this.prisma.sucursal.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        address: true,
+        user: { select: { id: true, name: true }},
+        estado: { select: { id: true, nombre: true }},
+      },
+    });
+    if (!sucursal) {
+      throw new HttpException('Sucursal no encontrada', HttpStatus.NOT_FOUND);
+    }
+    return sucursal;
   }
 
-  update(id: number, updateSucursalDto: UpdateSucursalDto) {
-    return `This action updates a #${id} sucursal`;
+  async update(id: number, updateSucursalDto: UpdateSucursalDto) {
+    await this.findOne(id);
+    await this.prisma.user.update({
+      where: { id },
+      data: updateSucursalDto,
+    });
+    return 'Sucursal actualizada correctamente';
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} sucursal`;
+  async remove(id: number) {
+    await this.findOne(id);
+    await this.prisma.sucursal.delete({
+      where: { id },
+    });
+    return 'Sucursal eliminada correctamente';
   }
 }
