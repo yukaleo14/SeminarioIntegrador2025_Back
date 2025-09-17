@@ -12,13 +12,13 @@ export class CreateSucursalDto {
     @IsString()
   @IsNotEmpty()
   @ApiProperty({ required: true })
-  name: string;
+  nombre: string;
 
   @IsString()
   @IsNotEmpty()
   @MinLength(5)
   @ApiProperty({ required: true })
-  address: string;
+  direccion: string;
 
   @ApiProperty()
   @IsInt()
@@ -26,7 +26,7 @@ export class CreateSucursalDto {
 
   @ApiProperty()
   @IsInt()
-  userId: number;
+  usuarioId: number;
 
 }
 

@@ -16,8 +16,8 @@ export class SucursalService {
     const estadoExists = await this.prisma.estado.findUnique({
       where: { id: createSucursalDto.estadoId },
     });
-    const userExists = await this.prisma.user.findUnique({
-      where: { id: createSucursalDto.userId },
+    const userExists = await this.prisma.usuario.findUnique({
+      where: { id: createSucursalDto.usuarioId },
     });
 
     if (!estadoExists) {
@@ -28,7 +28,7 @@ export class SucursalService {
     }
     if (!userExists) {
       throw new HttpException(
-        `El usuario con ID ${createSucursalDto.userId} no existe.`,
+        `El usuario con ID ${createSucursalDto.usuarioId} no existe.`,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -37,17 +37,17 @@ export class SucursalService {
     const existingSucursal = await this.prisma.sucursal.findFirst({
       where: {
         OR: [
-          { name: createSucursalDto.name },
-          { address: createSucursalDto.address },
+          { nombre: createSucursalDto.nombre },
+          { direccion: createSucursalDto.direccion },
         ],
       },
     });
 
     if (existingSucursal) {
       throw new HttpException(
-        existingSucursal.name === createSucursalDto.name
-          ? `Ya existe una sucursal con el nombre "${createSucursalDto.name}".`
-          : `Ya existe una sucursal con la dirección "${createSucursalDto.address}".`,
+        existingSucursal.nombre === createSucursalDto.nombre
+          ? `Ya existe una sucursal con el nombre "${createSucursalDto.nombre}".`
+          : `Ya existe una sucursal con la dirección "${createSucursalDto.direccion}".`,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -57,13 +57,13 @@ export class SucursalService {
       // Crear la sucursal
       const newSucursal = await this.prisma.sucursal.create({
         data: {
-          name: createSucursalDto.name,
-          address: createSucursalDto.address,
+          nombre: createSucursalDto.nombre,
+          direccion: createSucursalDto.direccion,
           estado: {
             connect: { id: createSucursalDto.estadoId },
           },
-          user: {
-            connect: { id: createSucursalDto.userId },
+          usuario: {
+            connect: { id: createSucursalDto.usuarioId },
           },
         },
       });
@@ -81,9 +81,9 @@ export class SucursalService {
     return this.prisma.sucursal.findMany({
       select: {
         id: true,
-        name: true,
-        address: true,
-        user: { select: { id: true, name: true }},
+        nombre: true,
+        direccion: true,
+        usuario: { select: { id: true, nombre: true }},
         estado: { select: { id: true, nombre: true }},
       },
     });
@@ -94,9 +94,9 @@ export class SucursalService {
       where: { id },
       select: {
         id: true,
-        name: true,
-        address: true,
-        user: { select: { id: true, name: true }},
+        nombre: true,
+        direccion: true,
+        usuario: { select: { id: true, nombre: true }},
         estado: { select: { id: true, nombre: true }},
       },
     });
@@ -108,7 +108,7 @@ export class SucursalService {
 
   async update(id: number, updateSucursalDto: UpdateSucursalDto) {
     await this.findOne(id);
-    await this.prisma.user.update({
+    await this.prisma.usuario.update({
       where: { id },
       data: updateSucursalDto,
     });

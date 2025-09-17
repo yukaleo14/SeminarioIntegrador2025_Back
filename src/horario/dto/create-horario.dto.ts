@@ -19,12 +19,12 @@ export class CreateHorarioDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty({ required: true })
-    openTime: string;
+    desde: string;
     
     @IsString()
     @IsNotEmpty()
     @ApiProperty({ required: true })
-    closeTime: string;
+    hasta: string;
 
     @ApiProperty()
     @IsInt()

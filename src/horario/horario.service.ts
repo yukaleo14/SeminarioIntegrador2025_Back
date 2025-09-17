@@ -12,8 +12,10 @@ export class HorarioService {
     try {
       const newHorario = await this.prisma.horario.create({
         data: {
-          ...createHorarioDto,
-          Sucursal: {
+          dia: createHorarioDto.dia,
+          desde: createHorarioDto.desde,
+          hasta: createHorarioDto.hasta,
+          sucursal: {
             connect: { id: createHorarioDto.sucursalId } 
           }
         }, 
@@ -30,8 +32,8 @@ export class HorarioService {
       select: {
         id: true,
         dia: true,
-        openTime: true,
-        closeTime: true,
+        desde: true,
+        hasta: true,
       }
     }
     );
@@ -43,8 +45,8 @@ export class HorarioService {
       select: {
         id: true,
         dia: true,
-        openTime: true,
-        closeTime: true,}
+        desde: true,
+        hasta: true,}
     });
     if (!horario) {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
