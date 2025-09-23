@@ -42,6 +42,21 @@ npx prisma migrate dev --name init
 npx prisma generate
 ```
 
+### Correr consulta.sql
+
+Con este comando corremos la consulta sql que se encuentra en db/consulta.sql, en caso de dar error deberemos detener
+y borrar los contenedores, volverlos a crear, realizar puntos 1 y 2 de prisma y luego el siguiente comando:
+
+```bash
+sudo docker exec -i mysql_nest mysql -u root -prootpass nestdb < ./db/consulta.sql
+```
+
+Para windows
+```bash
+docker cp .\db\consulta.sql mysql_nest:/consulta.sql
+docker exec -i mysql_nest mysql -u root -prootpass nestdb -e "source /consulta.sql"
+
+```
 ## 🚀 Levantar la aplicación
 
 ### 1 Levantar la base de datos con Docker
@@ -56,6 +71,12 @@ O podemos apagar los contenedores con
 
 ```bash
 docker compose down
+```
+
+agregando -v ademas de detener los contendedores, los borramos
+
+```bash
+docker compose down -v
 ```
 
 ### 2 Luego ya podemos correr el programa con
