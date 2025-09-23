@@ -51,6 +51,12 @@ y borrar los contenedores, volverlos a crear, realizar puntos 1 y 2 de prisma y 
 sudo docker exec -i mysql_nest mysql -u root -prootpass nestdb < ./db/consulta.sql
 ```
 
+Para windows
+```bash
+docker cp .\db\consulta.sql mysql_nest:/consulta.sql
+docker exec -i mysql_nest mysql -u root -prootpass nestdb -e "source /consulta.sql"
+
+```
 ## 🚀 Levantar la aplicación
 
 ### 1 Levantar la base de datos con Docker
