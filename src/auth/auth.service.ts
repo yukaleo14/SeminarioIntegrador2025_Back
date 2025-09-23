@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -25,8 +26,10 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    const isMatch = await bcrypt.compare(loginDto.contraseña, user.contraseña);
+    console.log(user.contraseña, loginDto.contraseña, isMatch);
     // Contraseña correcta
-    if (user.contraseña === loginDto.contraseña) {
+    if (isMatch) {
       return this.jwtService.sign({
         id: user.id,
         mail: user.mail,
@@ -42,7 +45,6 @@ export class AuthService {
 
   async registerUser(registerDto: CreateUserDto) {
     await this.userService.create(registerDto);
-
     const postValues = {
       mail: registerDto.mail,
       contraseña: registerDto.contraseña,

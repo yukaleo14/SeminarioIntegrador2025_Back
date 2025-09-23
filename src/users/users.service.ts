@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -29,8 +30,20 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    const password = createUserDto.contraseña;
+    const saltOrRounds = 10;
+    const hash = await bcrypt.hash(password, saltOrRounds);
     await this.prisma.usuario.create({
-      data: createUserDto,
+      data: {
+        mail: createUserDto.mail,
+        contraseña: hash,
+        nombre: createUserDto.nombre,
+        apellido: createUserDto.apellido,
+        rol: createUserDto.rol,
+        dni: createUserDto.dni,
+        telefono: createUserDto.telefono,
+        cuit: createUserDto.cuit,
+      },
     });
     return 'Usuario creado correctamente';
   }
