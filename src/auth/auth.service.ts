@@ -2,12 +2,15 @@ import { LoginDto } from './dto/login-dto';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
+    private readonly userService: UsersService,
   ) {}
 
   // Validar usuario y generar token JWT
@@ -35,5 +38,17 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  async registerUser(registerDto: CreateUserDto) {
+    await this.userService.create(registerDto);
+
+    const postValues = {
+      mail: registerDto.mail,
+      contraseña: registerDto.contraseña,
+    };
+    const userToken = await this.validateUser(postValues);
+
+    return userToken;
   }
 }
