@@ -27,7 +27,6 @@ export class AuthService {
       );
     }
     const isMatch = await bcrypt.compare(loginDto.contraseña, user.contraseña);
-    console.log(user.contraseña, loginDto.contraseña, isMatch);
     // Contraseña correcta
     if (isMatch) {
       return this.jwtService.sign({
