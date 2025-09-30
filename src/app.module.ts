@@ -8,6 +8,7 @@ import { SucursalModule } from './sucursal/sucursal.module';
 import { HorarioModule } from './horario/horario.module';
 import { PagoModule } from './pago/pago.module';
 import { FormaPagoModule } from './forma-pago/forma-pago.module';
+import { PedidoModule } from './pedido/pedido.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { FormaPagoModule } from './forma-pago/forma-pago.module';
     HorarioModule,
     PagoModule,
     FormaPagoModule,
+    PedidoModule,
   ],
   controllers: [],
   providers: [PrismaService],
