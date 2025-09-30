@@ -46,7 +46,7 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ required: true })
-  cuit: string;
+  cuit?: string;
 
   @ApiProperty({ required: false, default: Rol.CLIENTE })
   rol?: Rol = Rol.CLIENTE;

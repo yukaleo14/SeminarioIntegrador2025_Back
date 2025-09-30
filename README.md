@@ -28,35 +28,6 @@ npm install
 DATABASE_URL: conexión usada por NestJS
 SHADOW_DATABASE_URL: conexión usada por Prisma Migrate para la shadow database
 
-## Migraciones con Prisma
-
-### 1 Crear y ejecutar migraciones según el schema definido en prisma/schema.prisma:
-
-```bash
-npx prisma migrate dev --name init
-```
-
-### 2 Generar Prisma Client (para que NestJS pueda usarlo):
-
-```bash
-npx prisma generate
-```
-
-### Correr consulta.sql
-
-Con este comando corremos la consulta sql que se encuentra en db/consulta.sql, en caso de dar error deberemos detener
-y borrar los contenedores, volverlos a crear, realizar puntos 1 y 2 de prisma y luego el siguiente comando:
-
-```bash
-sudo docker exec -i mysql_nest mysql -u root -prootpass nestdb < ./db/consulta.sql
-```
-
-Para windows
-```bash
-docker cp .\db\consulta.sql mysql_nest:/consulta.sql
-docker exec -i mysql_nest mysql -u root -prootpass nestdb -e "source /consulta.sql"
-
-```
 ## 🚀 Levantar la aplicación
 
 ### 1 Levantar la base de datos con Docker
@@ -79,7 +50,38 @@ agregando -v ademas de detener los contendedores, los borramos
 docker compose down -v
 ```
 
-### 2 Luego ya podemos correr el programa con
+## Migraciones con Prisma
+
+### 1 Crear y ejecutar migraciones según el schema definido en prisma/schema.prisma:
+
+```bash
+npx prisma migrate dev --name init
+```
+
+### 2 Generar Prisma Client (para que NestJS pueda usarlo):
+
+```bash
+npx prisma generate
+```
+
+### 3 Correr consulta.sql
+
+Con este comando corremos la consulta sql que se encuentra en db/consulta.sql, en caso de dar error deberemos detener
+y borrar los contenedores, volverlos a crear, realizar puntos 1 y 2 de prisma y luego el siguiente comando:
+
+```bash
+sudo docker exec -i mysql_nest mysql -u root -prootpass nestdb < ./db/consulta.sql
+```
+
+Para windows
+
+```bash
+docker cp .\db\consulta.sql mysql_nest:/consulta.sql
+docker exec -i mysql_nest mysql -u root -prootpass nestdb -e "source /consulta.sql"
+
+```
+
+### 4 Luego ya podemos correr el programa con
 
 ```bash
 $ npm run start:dev

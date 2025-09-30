@@ -15,7 +15,7 @@ model Usuario {
   dni   String @unique
   telefono String @unique
   fechaHora DateTime @default(now())
-  cuit String
+  cuit String?
   contraseña String
 
   //en caso de ser sucursal, tendra una ubicacion
@@ -52,7 +52,6 @@ model Producto {
 
   categoria Categoria @relation(fields: [categoriaId], references: [id])
   categoriaId Int
-  fechaHora DateTime @default(now())
 
   estado Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
