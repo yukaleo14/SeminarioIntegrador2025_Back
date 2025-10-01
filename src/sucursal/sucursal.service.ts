@@ -66,6 +66,7 @@ export class SucursalService {
             connect: { id: createSucursalDto.usuarioId },
           },
         },
+        include : { usuario: true, estado: true }
       });
 
       return newSucursal;
@@ -108,7 +109,7 @@ export class SucursalService {
 
   async update(id: number, updateSucursalDto: UpdateSucursalDto) {
     await this.findOne(id);
-    await this.prisma.usuario.update({
+    await this.prisma.sucursal.update({
       where: { id },
       data: updateSucursalDto,
     });
