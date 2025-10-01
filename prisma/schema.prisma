@@ -180,7 +180,7 @@ model DetalleDePedido {
   pedido Pedido @relation(fields: [pedidoId], references: [id])
   pedidoId Int
 
-  categoria Producto @relation(fields: [productoId], references: [id])
+  producto Producto @relation(fields: [productoId], references: [id])
   productoId Int
 }
 
