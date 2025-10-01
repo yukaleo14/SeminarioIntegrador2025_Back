@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-    IsDate,
+  IsDate,
   IsIn,
   IsInt,
   IsNotEmpty,
@@ -10,23 +10,22 @@ import {
 import { Dia } from '@prisma/client';
 
 export class CreateHorarioDto {
-    
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    dia: Dia ;
-    
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    desde: string;
-    
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    hasta: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  dia: Dia;
 
-    @ApiProperty()
-    @IsInt()
-    sucursalId: number;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  desde: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  hasta: string;
+
+  @ApiProperty()
+  @IsInt()
+  sucursalId: number;
 }

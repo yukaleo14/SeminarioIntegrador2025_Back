@@ -7,7 +7,7 @@ CREATE TABLE `Usuario` (
     `dni` VARCHAR(191) NOT NULL,
     `telefono` VARCHAR(191) NOT NULL,
     `fechaHora` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `cuit` VARCHAR(191) NOT NULL,
+    `cuit` VARCHAR(191) NULL,
     `contraseña` VARCHAR(191) NOT NULL,
     `ubicacionId` INTEGER NULL,
     `rol` ENUM('CLIENTE', 'DELIVERY', 'BUSINESS') NOT NULL DEFAULT 'CLIENTE',
@@ -34,7 +34,6 @@ CREATE TABLE `Producto` (
     `nombre` VARCHAR(191) NOT NULL,
     `precioUnidad` DOUBLE NOT NULL,
     `categoriaId` INTEGER NOT NULL,
-    `fechaHora` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `estadoId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)

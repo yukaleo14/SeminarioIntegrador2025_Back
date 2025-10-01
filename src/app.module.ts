@@ -10,6 +10,8 @@ import { PagoModule } from './pago/pago.module';
 import { FormaPagoModule } from './forma-pago/forma-pago.module';
 import { PedidoModule } from './pedido/pedido.module';
 import { DetallePedidoModule } from './detalle-pedido/detalle-pedido.module';
+import { CategoriaModule } from './categoria/categoria.module';
+import { ProductoModule } from './producto/producto.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { DetallePedidoModule } from './detalle-pedido/detalle-pedido.module';
     FormaPagoModule,
     PedidoModule,
     DetallePedidoModule,
+    CategoriaModule,
+    ProductoModule,
   ],
   controllers: [],
   providers: [PrismaService],
