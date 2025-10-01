@@ -42,7 +42,7 @@ export class UsersService {
         rol: createUserDto.rol,
         dni: createUserDto.dni,
         telefono: createUserDto.telefono,
-        cuit: createUserDto.cuit,
+        cuit: createUserDto.cuit ?? '',
       },
     });
     return 'Usuario creado correctamente';
