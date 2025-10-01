@@ -64,5 +64,5 @@ export class CreatePedidoDto {
 
     @IsArray()
     @ApiProperty({ required: true, type: [Object] })
-    detallePedidos: any[];
+    detalle: any[];
 }

@@ -62,6 +62,7 @@ export class PedidoService {
           rutaId: Number(createPedidoDto.rutaId),
           pagoId: Number(createPedidoDto.pagoId),
           estadoId: Number(createPedidoDto.estadoId),
+          
           // detalle pedido 
 
         }
@@ -73,18 +74,60 @@ export class PedidoService {
   }
 
   findAll() {
-    return `This action returns all pedido`;
+    return this.prisma.pedido.findMany({
+      select: {
+        id: true,
+        numero: true,
+        montoTotal: true,
+        fechaHora: true,
+        cliente: {select: {id: true, nombre: true}},
+        delivery: {select: {id: true, nombre: true}},
+        company: {select: {id: true, nombre: true}}
+      }
+    })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pedido`;
+  async findOne(id: number) {
+    const pedido = await this.prisma.pedido.findUnique({
+      where: {id},
+      select : {
+        id: true,
+        numero: true,
+        montoTotal: true,
+        fechaHora: true,
+        cliente: {select: {id: true, nombre: true}},
+        delivery: {select: {id: true, nombre: true}},
+        company: {select: {id: true, nombre: true}}
+      }
+    })
+    if (!pedido) {
+      throw new HttpException('Pedido no encontrado', HttpStatus.NOT_FOUND)
+    }
+    return pedido
   }
 
-  update(id: number, updatePedidoDto: UpdatePedidoDto) {
-    return `This action updates a #${id} pedido`;
+  async update(id: number, updatePedidoDto: UpdatePedidoDto) {
+    await this.findOne(id)
+    // Convert string IDs to numbers if present
+    const data: any = { ...updatePedidoDto };
+    if (data.usuarioId !== undefined) data.usuarioId = Number(data.usuarioId);
+    if (data.deliveryId !== undefined) data.deliveryId = Number(data.deliveryId);
+    if (data.companyId !== undefined) data.companyId = Number(data.companyId);
+    if (data.rutaId !== undefined) data.rutaId = Number(data.rutaId);
+    if (data.pagoId !== undefined) data.pagoId = Number(data.pagoId);
+    if (data.estadoId !== undefined) data.estadoId = Number(data.estadoId);
+    await this.prisma.pedido.update({
+      where: {id},
+      data,
+    })
+    return 'Pedido actualizado correctamente'
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pedido`;
+  async remove(id: number) {
+    await this.findOne(id);
+    await this.prisma.pedido.delete({
+      where: {id}
+    });
+    return 'Pedido eliminado correctamente';
   }
 }
