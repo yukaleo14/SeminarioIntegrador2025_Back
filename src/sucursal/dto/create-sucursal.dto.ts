@@ -1,15 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsIn,
-  IsInt,
-  IsNotEmpty,
-  IsString,
-  MinLength,
-} from 'class-validator';
+import { IsInt, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class CreateSucursalDto {
-    
-    @IsString()
+  @IsString()
   @IsNotEmpty()
   @ApiProperty({ required: true })
   nombre: string;
@@ -27,6 +20,4 @@ export class CreateSucursalDto {
   @ApiProperty()
   @IsInt()
   usuarioId: number;
-
 }
-

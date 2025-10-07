@@ -45,8 +45,9 @@ CREATE TABLE `Sucursal` (
     `nombre` VARCHAR(191) NOT NULL,
     `direccion` VARCHAR(191) NOT NULL,
     `estadoId` INTEGER NOT NULL,
-    `usuarioId` INTEGER NULL,
+    `usuarioId` INTEGER NOT NULL,
 
+    UNIQUE INDEX `Sucursal_usuarioId_key`(`usuarioId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -86,8 +87,8 @@ CREATE TABLE `FormaPago` (
 CREATE TABLE `Estado` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `fechaHora` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `ambito` ENUM('PEDIDO', 'PRODUCTO', 'PAGO') NOT NULL,
-    `nombre` ENUM('CREADO', 'ENPREPARACION', 'PUBLICADO', 'TOMADO', 'ENRUTA', 'ENTREGADO', 'CANCELADO', 'DEMORADO', 'PENDIENTE') NOT NULL,
+    `ambito` ENUM('PEDIDO', 'PRODUCTO', 'PAGO', 'SUCURSAL') NOT NULL,
+    `nombre` ENUM('CREADO', 'ENPREPARACION', 'PUBLICADO', 'TOMADO', 'ENRUTA', 'ENTREGADO', 'CANCELADO', 'DEMORADO', 'PENDIENTE', 'ABIERTO', 'CERRADO') NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -166,7 +167,7 @@ ALTER TABLE `Producto` ADD CONSTRAINT `Producto_estadoId_fkey` FOREIGN KEY (`est
 ALTER TABLE `Sucursal` ADD CONSTRAINT `Sucursal_estadoId_fkey` FOREIGN KEY (`estadoId`) REFERENCES `Estado`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Sucursal` ADD CONSTRAINT `Sucursal_usuarioId_fkey` FOREIGN KEY (`usuarioId`) REFERENCES `Usuario`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Sucursal` ADD CONSTRAINT `Sucursal_usuarioId_fkey` FOREIGN KEY (`usuarioId`) REFERENCES `Usuario`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Horario` ADD CONSTRAINT `Horario_sucursalId_fkey` FOREIGN KEY (`sucursalId`) REFERENCES `Sucursal`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

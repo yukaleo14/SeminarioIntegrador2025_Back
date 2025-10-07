@@ -67,8 +67,8 @@ model Sucursal {
 
   estado Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
-  usuario Usuario? @relation(fields: [usuarioId], references: [id])
-  usuarioId Int?
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int @unique
 }
 
 model Horario {
@@ -128,6 +128,7 @@ enum Ambito {
   PEDIDO
   PRODUCTO
   PAGO
+  SUCURSAL
 }
 
 enum Nombre {
@@ -140,6 +141,8 @@ enum Nombre {
   CANCELADO
   DEMORADO
   PENDIENTE
+  ABIERTO
+  CERRADO
 }
 
 model Pedido {

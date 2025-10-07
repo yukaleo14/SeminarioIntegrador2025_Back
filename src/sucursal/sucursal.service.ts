@@ -11,7 +11,7 @@ export class SucursalService {
 
   @Post()
   @ApiOperation({ summary: 'Crear una nueva sucursal' })
-  async create(createSucursalDto: CreateSucursalDto): Promise<Sucursal> {
+  async create(createSucursalDto: CreateSucursalDto) {
     // Validar si los IDs de estado y usuario existen
     const estadoExists = await this.prisma.estado.findUnique({
       where: { id: createSucursalDto.estadoId },
@@ -19,6 +19,17 @@ export class SucursalService {
     const userExists = await this.prisma.usuario.findUnique({
       where: { id: createSucursalDto.usuarioId },
     });
+
+    const userUnique = await this.prisma.sucursal.findUnique({
+      where: { usuarioId: createSucursalDto.usuarioId },
+    });
+
+    if (userUnique) {
+      throw new HttpException(
+        `El usuario ${userUnique.nombre} ya está asociado a otra sucursal.`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     if (!estadoExists) {
       throw new HttpException(
@@ -66,10 +77,10 @@ export class SucursalService {
             connect: { id: createSucursalDto.usuarioId },
           },
         },
-        include : { usuario: true, estado: true }
+        include: { usuario: true, estado: true },
       });
 
-      return newSucursal;
+      return `Sucursal creada correctamente: ${newSucursal.nombre}`;
     } catch (error) {
       throw new HttpException(
         'Error al crear la sucursal. Por favor, intenta nuevamente.',
@@ -77,15 +88,15 @@ export class SucursalService {
       );
     }
   }
-  
+
   findAll() {
     return this.prisma.sucursal.findMany({
       select: {
         id: true,
         nombre: true,
         direccion: true,
-        usuario: { select: { id: true, nombre: true }},
-        estado: { select: { id: true, nombre: true }},
+        usuario: { select: { id: true, nombre: true } },
+        estado: { select: { id: true, nombre: true } },
       },
     });
   }
@@ -97,8 +108,8 @@ export class SucursalService {
         id: true,
         nombre: true,
         direccion: true,
-        usuario: { select: { id: true, nombre: true }},
-        estado: { select: { id: true, nombre: true }},
+        usuario: { select: { id: true, nombre: true } },
+        estado: { select: { id: true, nombre: true } },
       },
     });
     if (!sucursal) {

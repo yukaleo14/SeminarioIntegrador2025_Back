@@ -22,6 +22,11 @@ INSERT INTO Estado (fechaHora, ambito, nombre) VALUES
   (NOW(), 'PAGO', 'PENDIENTE'),
   (NOW(), 'PAGO', 'CANCELADO');
 
+-- Estados para SUCURSAL
+INSERT INTO Estado (fechaHora, ambito, nombre) VALUES
+  (NOW(), 'SUCURSAL', 'ABIERTO'),
+  (NOW(), 'SUCURSAL', 'CERRADO');
+
 
 INSERT INTO FormaPago (nombre) VALUES
   ('Debito'),
