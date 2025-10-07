@@ -111,7 +111,8 @@ model FormaPago {
   pago Pago[]
 }
 
-model Estado {
+//TODO: Falta ABM para estados
+model Estado { 
   id    Int    @id @default(autoincrement())
   fechaHora DateTime @default(now())
   ambito Ambito
@@ -183,6 +184,7 @@ model DetalleDePedido {
   productoId Int
 }
 
+//TODO: Falta ABM para rutas y ubicaciones
 model Ruta {
   id    Int    @id @default(autoincrement())
   tarifaDistancia Float

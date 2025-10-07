@@ -44,8 +44,7 @@ export class CreateUserDto {
   telefono: string;
 
   @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ required: true })
+  @ApiProperty({ default: '', required: false })
   cuit?: string;
 
   @ApiProperty({ required: false, default: Rol.CLIENTE })
