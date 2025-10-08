@@ -8,6 +8,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe()); // Agregar globalmente el class Validator
 
+  app.enableCors({
+    origin: ['http://localhost:4200'], // dominios permitidos
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // permite cookies o cabeceras de autenticación
+  });
+
   const config = new DocumentBuilder()
     .setTitle('Seminario Integrador 2025')
     .setDescription('Trabajo integrador Fuber Delivery')
