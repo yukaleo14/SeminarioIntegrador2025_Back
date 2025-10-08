@@ -13,7 +13,7 @@ export class AuthController {
   @Public()
   async login(@Body() loginDto: LoginDto) {
     const userToken = await this.authService.validateUser(loginDto);
-    return userToken;
+    return { token: userToken };
   }
 
   @Post('register')
