@@ -18,4 +18,8 @@ export class CreateProductoDto {
   @IsNotEmpty()
   @ApiProperty({ required: true })
   estadoId: number;
+
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  sucursalId: number;
 }
