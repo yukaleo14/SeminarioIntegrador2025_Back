@@ -22,6 +22,9 @@ model Usuario {
   ubicacion Ubicacion? @relation(fields: [ubicacionId], references: [id])
   ubicacionId Int?
 
+  //agregar producto para que la empresa pueda tener varios productos a la venta, si se desea
+
+  // cambiar, solo debe tener una sucursal
   sucursales Sucursal[]
 
   //el usuario puede tener varios Roles
@@ -35,7 +38,7 @@ model Usuario {
 enum Rol {
   CLIENTE
   DELIVERY
-  BUSINESS
+  EMPRESA
 }
 
 model Categoria {
@@ -56,15 +59,24 @@ model Producto {
   estado Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
 
+  //debe tener el id de usuario en caso de ser empresa
+
   detalleDePedido DetalleDePedido[]
+
+  sucarsal Sucursal[]
 }
 
 model Sucursal {
   id    Int    @id @default(autoincrement())
   nombre  String
-  direccion String
+  descripcion String
   horario Horario[]
 
+  productos Producto @relation(fields: [productoId], references: [id])
+  productoId Int
+
+  ubicacion Ubicacion @relation(fields: [ubicacionId], references: [id])
+  ubicacionId Int
   estado Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
   usuario Usuario @relation(fields: [usuarioId], references: [id])
@@ -206,7 +218,8 @@ model Ubicacion {
   coordenadaY Float
   fechaHora DateTime @default(now())
   
+  sucursal Sucursal[]
   origen Ruta[] @relation("OrigenUbicacion")
   destino Ruta[] @relation("DestinoUbicacion")
-  sucursal Usuario[]
+  casa Usuario[]
 }
