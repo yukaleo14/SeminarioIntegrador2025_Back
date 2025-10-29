@@ -17,22 +17,99 @@ export class ProductoService {
         estado: {
           connect: { id: Number(createProductoDto.estadoId) },
         },
+        sucarsal: {
+          connect: { id: Number(createProductoDto.sucursalId) },
+        },
       },
-      include: { categoria: true, estado: true },
+      include: { categoria: true, estado: true, sucarsal: true},
     });
     return 'This action adds a new producto';
   }
 
+  findAllBySucursal(sucursalId: number) {
+    return this.prisma.producto.findMany({
+      where: {
+        sucursalId: sucursalId,
+      },
+      include: {
+        categoria: true,
+        estado: true,
+      },
+    });
+  }
+
   findAll() {
-    return `This action returns all producto`;
+    return this.prisma.producto.findMany({
+      select: {
+        id: true,
+        nombre: true,
+        precioUnidad: true,
+        categoria: {
+          select: {
+            nombre: true,
+          },
+        },
+        estado: {
+          select: {
+            nombre: true,
+          },
+        },
+        sucursal: {
+          select: {
+            nombre: true,
+          },
+        },
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} producto`;
+  async findOne(id: number) {
+    const producto = await this.prisma.producto.findUnique({
+      where: {
+        id: id,
+      },select: {
+        nombre: true,
+        precioUnidad: true,
+        categoria: {
+          select: {
+            nombre: true,
+          },
+        },
+        estado: {
+          select: {
+            nombre: true,
+          },
+        },
+        sucursal: {
+          select: {
+            nombre: true,
+          },
+        },
+      },
+    })
+    if (!producto) {
+      throw new Error('Producto no encontrado');
+    }
+    return producto;
   }
 
-  update(id: number, updateProductoDto: UpdateProductoDto) {
-    return `This action updates a #${id} producto`;
+  async update(id: number, updateProductoDto: UpdateProductoDto) {
+    await this.findOne(id);
+    await this.prisma.producto.update({
+      where: { id },
+      data: {
+        nombre: updateProductoDto.nombre,
+        precioUnidad: updateProductoDto.precioUnidad,
+        categoria: {
+          connect: { id: Number(updateProductoDto.categoriaId) },
+        },
+        estado: {
+          connect: { id: Number(updateProductoDto.estadoId) },
+        },
+      },
+    });
+    return 'producto actualizado';
+
   }
 
   remove(id: number) {

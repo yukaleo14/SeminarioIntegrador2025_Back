@@ -63,7 +63,8 @@ model Producto {
 
   detalleDePedido DetalleDePedido[]
 
-  sucarsal Sucursal[]
+  sucursal Sucursal @relation(fields: [sucursalId], references: [id])
+  sucursalId Int
 }
 
 model Sucursal {
@@ -72,8 +73,7 @@ model Sucursal {
   descripcion String
   horario Horario[]
 
-  productos Producto @relation(fields: [productoId], references: [id])
-  productoId Int
+  productos Producto[]
 
   ubicacion Ubicacion @relation(fields: [ubicacionId], references: [id])
   ubicacionId Int
