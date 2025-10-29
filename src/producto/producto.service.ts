@@ -17,11 +17,11 @@ export class ProductoService {
         estado: {
           connect: { id: Number(createProductoDto.estadoId) },
         },
-        sucarsal: {
+        sucursal: {
           connect: { id: Number(createProductoDto.sucursalId) },
         },
       },
-      include: { categoria: true, estado: true, sucarsal: true},
+      include: { categoria: true, estado: true, sucursal: true },
     });
     return 'This action adds a new producto';
   }
@@ -67,7 +67,8 @@ export class ProductoService {
     const producto = await this.prisma.producto.findUnique({
       where: {
         id: id,
-      },select: {
+      },
+      select: {
         nombre: true,
         precioUnidad: true,
         categoria: {
@@ -86,7 +87,7 @@ export class ProductoService {
           },
         },
       },
-    })
+    });
     if (!producto) {
       throw new Error('Producto no encontrado');
     }
@@ -109,7 +110,6 @@ export class ProductoService {
       },
     });
     return 'producto actualizado';
-
   }
 
   remove(id: number) {

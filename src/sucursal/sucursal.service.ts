@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable, Post } from '@nestjs/common';
 import { CreateSucursalDto } from './dto/create-sucursal.dto';
 import { UpdateSucursalDto } from './dto/update-sucursal.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Sucursal } from '@prisma/client';
 import { ApiOperation } from '@nestjs/swagger';
 
 @Injectable()
@@ -47,39 +46,16 @@ export class SucursalService {
     // Verificar duplicados en name o address con una sola consulta
     const existingSucursal = await this.prisma.sucursal.findFirst({
       where: {
-        OR: [
-          { nombre: createSucursalDto.nombre },
-          { direccion: createSucursalDto.direccion },
-        ],
+        OR: [{ nombre: createSucursalDto.nombre }],
       },
     });
-
-    if (existingSucursal) {
-      throw new HttpException(
-        existingSucursal.nombre === createSucursalDto.nombre
-          ? `Ya existe una sucursal con el nombre "${createSucursalDto.nombre}".`
-          : `Ya existe una sucursal con la dirección "${createSucursalDto.direccion}".`,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
 
     // realizo un try catch para manejar errores inesperados
     try {
       // Crear la sucursal
       const newSucursal = await this.prisma.sucursal.create({
-        data: {
-          nombre: createSucursalDto.nombre,
-          direccion: createSucursalDto.direccion,
-          estado: {
-            connect: { id: createSucursalDto.estadoId },
-          },
-          usuario: {
-            connect: { id: createSucursalDto.usuarioId },
-          },
-        },
-        include: { usuario: true, estado: true },
+        data: createSucursalDto,
       });
-
       return `Sucursal creada correctamente: ${newSucursal.nombre}`;
     } catch (error) {
       throw new HttpException(
@@ -94,9 +70,12 @@ export class SucursalService {
       select: {
         id: true,
         nombre: true,
-        direccion: true,
+        descripcion: true,
         usuario: { select: { id: true, nombre: true } },
         estado: { select: { id: true, nombre: true } },
+        ubicacion: {
+          select: { id: true, coordenadaX: true, coordenadaY: true },
+        },
       },
     });
   }
@@ -107,7 +86,7 @@ export class SucursalService {
       select: {
         id: true,
         nombre: true,
-        direccion: true,
+        descripcion: true,
         usuario: { select: { id: true, nombre: true } },
         estado: { select: { id: true, nombre: true } },
       },
