@@ -11,7 +11,7 @@ export class CreateSucursalDto {
   @IsNotEmpty()
   @MinLength(5)
   @ApiProperty({ required: true })
-  direccion: string;
+  descripcion: string;
 
   @ApiProperty()
   @IsInt()
@@ -20,4 +20,8 @@ export class CreateSucursalDto {
   @ApiProperty()
   @IsInt()
   usuarioId: number;
+
+  @ApiProperty()
+  @IsInt()
+  ubicacionId: number;
 }
