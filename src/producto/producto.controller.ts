@@ -7,10 +7,12 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('producto')
 export class ProductoController {
@@ -30,6 +32,19 @@ export class ProductoController {
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productoService.findOne(id);
   }
+
+  @Get('sucursal/')
+  @Public()
+  findAllBySucursalAndCategoria(
+    @Query('sucursalId', ParseIntPipe) sucursalId: number,
+    @Query('categoriaId', ParseIntPipe) categoriaId: number,
+  ) {
+    return this.productoService.findAllBySucursalAndCategoria(
+      sucursalId,
+      categoriaId
+    );
+  }
+
 
   @Patch(':id')
   update(
