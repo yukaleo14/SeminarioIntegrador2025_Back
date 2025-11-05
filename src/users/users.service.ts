@@ -85,6 +85,20 @@ export class UsersService {
     return user;
   }
 
+  async getProfileFromPayload(payload: any) {
+    const user = await this.prisma.usuario.findUnique({
+      where: { mail: payload.mail },
+      select: {
+        nombre: true,
+        mail: true,
+        rol: true,
+        dni: true,
+        telefono: true,
+        cuit: true,
+      },
+    });
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     await this.findOne(id);
     await this.prisma.usuario.update({

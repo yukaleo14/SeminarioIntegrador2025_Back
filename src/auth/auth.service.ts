@@ -11,6 +11,7 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { Request } from 'express';
+import { use } from 'passport';
 
 @Injectable()
 export class AuthService {
@@ -75,7 +76,7 @@ export class AuthService {
 
     try {
       const payload: object = this.jwtService.verify(token);
-      return payload;
+      return this.userService.getProfileFromPayload(payload);
     } catch (error) {
       throw new UnauthorizedException('Token inválido o expirado');
     }
