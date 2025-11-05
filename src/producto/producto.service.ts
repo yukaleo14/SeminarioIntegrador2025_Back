@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { find } from 'rxjs';
 
 @Injectable()
 export class ProductoService {
@@ -37,6 +38,38 @@ export class ProductoService {
       },
     });
   }
+
+  findAllBySucursalAndCategoria(sucursalId: number, categoriaId: number) {
+    if (!sucursalId)
+      return this.findAllByCategoria(categoriaId);
+    if (!categoriaId)
+      return this.findAllBySucursal(sucursalId);
+    if (!sucursalId && !categoriaId)
+      return this.prisma.producto.findMany({
+      where: {
+        sucursalId: sucursalId,
+        categoriaId: categoriaId,
+      },
+      include: {
+        categoria: true,
+        estado: true,
+      },
+    });
+    
+  }
+
+  findAllByCategoria(categoriaId: number) {
+    return this.prisma.producto.findMany({
+      where: {
+        categoriaId: categoriaId,
+      },
+      include: {
+        categoria: true,
+        estado: true,
+      },
+    });
+  }
+
 
   findAll() {
     return this.prisma.producto.findMany({
