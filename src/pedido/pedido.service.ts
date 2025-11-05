@@ -3,6 +3,7 @@ import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiOperation } from '@nestjs/swagger';
+import { DetallePedidoService } from 'src/detalle-pedido/detalle-pedido.service';
 
 @Injectable()
 export class PedidoService {
@@ -62,9 +63,24 @@ export class PedidoService {
           rutaId: Number(createPedidoDto.rutaId),
           pagoId: Number(createPedidoDto.pagoId),
           estadoId: Number(createPedidoDto.estadoId),
-          
-          // detalle pedido 
-
+          detalle: {
+            create: createPedidoDto.detalle.map((detalle) => ({
+              cantidad: detalle.cantidad,
+              montoSubtotal: detalle.montoSubtotal,
+              fechaHora: detalle.fechaHora,
+              productoId: detalle.productoId,
+            })),
+        },
+      },
+      include:
+        {
+          detalle: true,
+          cliente: true,
+          delivery: true,
+          company: true,
+          ruta: true,
+          pago: true,
+          estado: true,
         }
     });
       return newPedido;
@@ -82,7 +98,9 @@ export class PedidoService {
         fechaHora: true,
         cliente: {select: {id: true, nombre: true}},
         delivery: {select: {id: true, nombre: true}},
-        company: {select: {id: true, nombre: true}}
+        company: {select: {id: true, nombre: true}},
+        detalle: true,
+        estado: true,
       }
     })
   }
@@ -97,7 +115,9 @@ export class PedidoService {
         fechaHora: true,
         cliente: {select: {id: true, nombre: true}},
         delivery: {select: {id: true, nombre: true}},
-        company: {select: {id: true, nombre: true}}
+        company: {select: {id: true, nombre: true}},
+        detalle: true,
+        estado: true,
       }
     })
     if (!pedido) {

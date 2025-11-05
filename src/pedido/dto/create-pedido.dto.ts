@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsDate, IsIn, IsInt, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { CreateDetallePedidoDto } from "src/detalle-pedido/dto/create-detalle-pedido.dto";
 
 
 export class CreatePedidoDto {
@@ -63,6 +64,6 @@ export class CreatePedidoDto {
     estadoId: string;
 
     @IsArray()
-    @ApiProperty({ required: true, type: [Object] })
-    detalle: any[];
+    @ApiProperty({ required: true, type: () => [CreateDetallePedidoDto] })
+    detalle: CreateDetallePedidoDto[];
 }
