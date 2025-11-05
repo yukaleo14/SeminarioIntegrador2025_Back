@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { SucursalService } from './sucursal.service';
 import { CreateSucursalDto } from './dto/create-sucursal.dto';
 import { UpdateSucursalDto } from './dto/update-sucursal.dto';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('sucursal')
 export class SucursalController {
@@ -13,11 +14,13 @@ export class SucursalController {
   }
 
   @Get()
+  @Public()
   findAll() {
     return this.sucursalService.findAll();
   }
 
   @Get(':id')
+  @Public()
   findOne(@Param('id') id: string) {
     return this.sucursalService.findOne(+id);
   }

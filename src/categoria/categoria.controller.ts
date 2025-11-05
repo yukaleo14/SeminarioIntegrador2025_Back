@@ -11,6 +11,7 @@ import {
 import { CategoriaService } from './categoria.service';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('categoria')
 export class CategoriaController {
@@ -22,11 +23,13 @@ export class CategoriaController {
   }
 
   @Get()
+  @Public()
   findAll() {
     return this.categoriaService.findAll();
   }
 
   @Get(':id')
+  @Public()
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.categoriaService.findOne(id);
   }
