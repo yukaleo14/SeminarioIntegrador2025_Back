@@ -9,7 +9,12 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe()); // Agregar globalmente el class Validator
 
   app.enableCors({
-    origin: ['http://localhost:4200'], // dominios permitidos
+    origin: [
+      'http://localhost:4200',
+      'http://localhost:3000',
+      'https://localhost:4200',
+      'https://localhost:3000',
+    ], // dominios permitidos
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true, // permite cookies o cabeceras de autenticación
