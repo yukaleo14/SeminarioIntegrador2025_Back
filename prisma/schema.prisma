@@ -41,6 +41,60 @@ enum Rol {
   EMPRESA
 }
 
+<<<<<<< Updated upstream
+=======
+// Cheakeada
+model Empresa {
+  id    Int    @id @default(autoincrement())
+  nombre  String
+  cuitCuil String @unique
+  imagenPerfil String?
+
+  pedidos Pedido[]
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int @unique
+  sucursal Sucursal @relation(fields: [sucursalId], references: [id])
+  sucursalId Int @unique
+  //productos Producto[]
+}
+
+// Chekeada
+model Comprador {
+  id    Int    @id @default(autoincrement())
+  nombre  String
+  apellido String
+  cuitCuil String @unique
+  dni   String @unique
+  telefono String @unique
+  imagenPerfil String?
+
+  ubicacion Ubicacion @relation(fields: [ubicacionId], references: [id])
+  ubicacionId Int @unique
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int @unique
+
+  pedidos Pedido[]
+}
+
+// Chekeada
+model Repartidor {
+  id    Int    @id @default(autoincrement())
+  nombre  String
+  apellido String
+  cuitCuil String @unique
+  dni   String @unique
+  telefono String @unique
+  imagenPerfil String?
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int @unique
+
+  pedidos Pedido[]
+}
+
+// Chekeada
+>>>>>>> Stashed changes
 model Categoria {
   id    Int    @id @default(autoincrement())
   nombre  String @unique
@@ -51,7 +105,17 @@ model Categoria {
 model Producto {
   id    Int    @id @default(autoincrement())
   nombre  String
+<<<<<<< Updated upstream
   precioUnidad Float
+=======
+  descripcion String
+  precio Float
+  imagen String?
+  tiempoPreparacionEstimado Int
+
+  /* empresa Empresa @relation(fields: [empresaId], references: [id])
+  empresaId Int */
+>>>>>>> Stashed changes
 
   categoria Categoria @relation(fields: [categoriaId], references: [id])
   categoriaId Int
@@ -59,7 +123,13 @@ model Producto {
   estado Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
 
+<<<<<<< Updated upstream
   //debe tener el id de usuario en caso de ser empresa
+=======
+  // surcursal, empresa non
+  sucursal Sucursal @relation(fields: [sucursalId], references: [id])
+  sucursalId Int
+>>>>>>> Stashed changes
 
   detalleDePedido DetalleDePedido[]
 
@@ -72,6 +142,8 @@ model Sucursal {
   nombre  String
   descripcion String
   horario Horario[]
+
+  productos Producto[]
 
   productos Producto[]
 
@@ -209,13 +281,29 @@ model Ruta {
   origenId Int
   destino Ubicacion @relation("DestinoUbicacion", fields: [destinoId], references: [id])
   destinoId Int
+
+  // que hacemo con esto?
   ubicacionId Int
 }
 
 model Ubicacion {
   id    Int    @id @default(autoincrement())
+<<<<<<< Updated upstream
   coordenadaX Float
   coordenadaY Float
+=======
+
+  // altura no seria int?
+  altura String?
+  calle String?
+
+  // nombre de que? barrio, zona, ciudad, pais?
+  nombre String?
+
+  posicion Posicion @relation(fields: [posicionId], references: [id])
+  posicionId Int @unique
+  
+>>>>>>> Stashed changes
   fechaHora DateTime @default(now())
   
   sucursal Sucursal[]
