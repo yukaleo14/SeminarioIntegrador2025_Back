@@ -38,29 +38,29 @@ export class CreatePedidoDto {
     @ApiProperty({ required: true })
     fechaHora: Date;
 
-    @IsInt()
+    @IsNotEmpty()
     @ApiProperty({ required: true })
-    usuarioId: string;
+    compradorId: number;
+
+    @IsNotEmpty()
+    @ApiProperty({ required: true })
+    empresaId: number;
+
+    @IsNotEmpty()
+    @ApiProperty({ required: true })
+    repartidorId: number;
 
     @IsInt()
     @ApiProperty({ required: true })
-    deliveryId: string;
+    rutaId: number;
 
     @IsInt()
     @ApiProperty({ required: true })
-    companyId: string;
+    pagoId: number;
 
     @IsInt()
     @ApiProperty({ required: true })
-    rutaId: string;
-
-    @IsInt()
-    @ApiProperty({ required: true })
-    pagoId: string;
-
-    @IsString()
-    @ApiProperty({ required: true })
-    estadoId: string;
+    estadoId: number;
 
     @IsArray()
     @ApiProperty({ required: true, type: [Object] })

@@ -54,7 +54,16 @@ export class SucursalService {
     try {
       // Crear la sucursal
       const newSucursal = await this.prisma.sucursal.create({
-        data: createSucursalDto,
+        data: {
+          nombre: createSucursalDto.nombre,
+          descripcion: createSucursalDto.descripcion,
+          usuarioId: createSucursalDto.usuarioId,
+          estadoId: createSucursalDto.estadoId,
+        },
+        include: {
+          usuario: true,
+          estado: true,
+        },
       });
       return `Sucursal creada correctamente: ${newSucursal.nombre}`;
     } catch (error) {

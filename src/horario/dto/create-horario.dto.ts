@@ -13,11 +13,6 @@ export class CreateHorarioDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ required: true })
-  dia: Dia;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ required: true })
   desde: string;
 
   @IsString()
@@ -28,4 +23,9 @@ export class CreateHorarioDto {
   @ApiProperty()
   @IsInt()
   sucursalId: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  dia: Dia;
 }

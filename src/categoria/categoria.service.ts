@@ -6,11 +6,43 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class CategoriaService {
   constructor(private prisma: PrismaService) {}
+
   async create(createCategoriaDto: CreateCategoriaDto) {
-    await this.prisma.categoria.create({
-      data: createCategoriaDto,
-    });
-    return 'Categoria creada correctamente';
+    try {
+      // Validar que los productos existan (opcional, pero recomendado)
+      if (createCategoriaDto.productoIds && createCategoriaDto.productoIds.length > 0) {
+        for (const productoId of createCategoriaDto.productoIds) {
+          const producto = await this.prisma.producto.findUnique({
+            where: { id: Number(productoId) },
+          });
+          if (!producto) {
+            throw new Error(`El producto con ID ${productoId} no existe`);
+          }
+        }
+      }
+
+      // Crear la categoría y conectar los productos existentes
+      const newCategoria = await this.prisma.categoria.create({
+        data: {
+          nombre: createCategoriaDto.nombre,
+          fechaHora: createCategoriaDto.fechaHora,
+          productos: createCategoriaDto.productoIds
+            ? {
+                connect: createCategoriaDto.productoIds.map((id) => ({
+                  id: Number(id),
+                })),
+              }
+            : undefined,
+        },
+        include: {
+          productos: true,
+        },
+      });
+
+      return newCategoria;
+    } catch (error) {
+      //throw new Error(`Error al crear la categoría: ${error.message}`);
+    }
   }
 
   async findAll() {
