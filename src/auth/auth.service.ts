@@ -11,13 +11,30 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { Request } from 'express';
+import { CompradorService } from 'src/comprador/comprador.service';
+import { EmpresaService } from 'src/empresa/empresa.service';
+import { UbicacionService } from 'src/ubicacion/ubicacion.service';
+import { PosicionService } from 'src/posicion/posicion.service';
+import { Posicion } from 'src/posicion/entities/posicion.entity';
+import { Ubicacion } from 'src/ubicacion/entities/ubicacion.entity';
+import { Comprador } from 'src/comprador/entities/comprador.entity';
+import { Empresa } from 'src/empresa/entities/empresa.entity';
 
 @Injectable()
 export class AuthService {
+  // public ubicacion: Ubicacion;
+  // public posicion: Posicion;
+  public cliente: Comprador;
+  public empresa: Empresa;
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
     private readonly userService: UsersService,
+    private readonly compradorSvc: CompradorService,
+    private readonly empresaSvc: EmpresaService,
+    private readonly ubicacionSvc: UbicacionService,
+    private readonly posicionSvc: PosicionService,
   ) {}
 
   // Validar usuario y generar token JWT
@@ -48,18 +65,97 @@ export class AuthService {
     }
   }
 
-  async registerUser(registerDto: CreateUserDto) {
-    await this.userService.create(registerDto);
-    const postValues = {
-      mail: registerDto.mail,
-      contraseña: registerDto.contraseña,
-    };
-    const userToken = await this.validateUser(postValues);
+  public async crearCliente(registerDto: CreateUserDto) {
+    const {
+      coordenadaX,
+      coordenadaY,
+      calle,
+      nombreUbicacion,
+      altura,
+      nombre,
+      apellido,
+      telefono,
+      cuitCuil,
+      dni,
+      imagenPerfil,
+    } = registerDto;
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        let ubi: Ubicacion;
+        let pos: Posicion;
+        // Crear el usuario primero y luego lo asignamos al comprador
+        const usuario = await this.userService.create(registerDto, tx);
+        const posicionDup = await this.posicionSvc.findByCoordinates(
+          coordenadaX,
+          coordenadaY,
+        );
+        if (posicionDup) {
+          ubi = await this.ubicacionSvc.findByPosicionId(posicionDup.id);
+        } else {
+          // Crear posición y la asignamos a la ubicación
+          pos = await this.posicionSvc.create(
+            {
+              coordenadaX,
+              coordenadaY,
+            },
+            tx,
+          );
+          ubi = await this.ubicacionSvc.create(
+            {
+              calle,
+              nombre: nombreUbicacion,
+              altura,
+              posicionId: pos.id,
+            },
+            tx,
+          );
+        }
+        await this.compradorSvc.create(
+          {
+            nombre,
+            apellido,
+            telefono,
+            cuitCuil,
+            dni,
+            imagenPerfil: imagenPerfil ?? '',
+            ubicacionId: ubi.id,
+            usuarioId: usuario.id,
+          },
+          tx,
+        );
+      });
+    } catch (error: any) {
+      throw new HttpException(
+        'No se pudo crear el comprador. ' + error,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 
+  public async crearEmpresa(registerDto: CreateUserDto) {}
+
+  public async crearRepartidor(registerDto: CreateUserDto) {}
+
+  async registerUser(registerDto: CreateUserDto) {
+    const { mail, contraseña, rol } = registerDto;
+    if (rol === 'CLIENTE') {
+      await this.crearCliente(registerDto);
+    }
+    if (rol === 'EMPRESA') {
+      await this.crearEmpresa(registerDto);
+    }
+    if (rol === 'REPARTIDOR') {
+      await this.crearRepartidor(registerDto);
+    }
+    const postValuesValidate = {
+      mail,
+      contraseña,
+    };
+    const userToken = await this.validateUser(postValuesValidate);
     return userToken;
   }
 
-  getProfile(req: Request) {
+  async getProfile(req: Request) {
     const authHeader = req.headers.authorization;
 
     // Validamos que el header exista y sea string
@@ -75,7 +171,8 @@ export class AuthService {
 
     try {
       const payload: object = this.jwtService.verify(token);
-      return payload;
+      const user = await this.userService.findOne(payload['id']);
+      return user;
     } catch (error) {
       throw new UnauthorizedException('Token inválido o expirado');
     }

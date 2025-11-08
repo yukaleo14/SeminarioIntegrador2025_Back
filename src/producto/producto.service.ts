@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { find } from 'rxjs';
 
 @Injectable()
 export class ProductoService {
@@ -11,7 +10,10 @@ export class ProductoService {
     await this.prisma.producto.create({
       data: {
         nombre: createProductoDto.nombre,
-        precioUnidad: createProductoDto.precioUnidad,
+        precio: createProductoDto.precio,
+        imagen: createProductoDto.imagen,
+        tiempoPreparacionEstimado: createProductoDto.tiempoPreparacionEstimado,
+        descripcion: createProductoDto.descripcion,
         categoria: {
           connect: { id: Number(createProductoDto.categoriaId) },
         },
@@ -40,22 +42,19 @@ export class ProductoService {
   }
 
   findAllBySucursalAndCategoria(sucursalId: number, categoriaId: number) {
-    if (!sucursalId)
-      return this.findAllByCategoria(categoriaId);
-    if (!categoriaId)
-      return this.findAllBySucursal(sucursalId);
+    if (!sucursalId) return this.findAllByCategoria(categoriaId);
+    if (!categoriaId) return this.findAllBySucursal(sucursalId);
     if (!sucursalId && !categoriaId)
       return this.prisma.producto.findMany({
-      where: {
-        sucursalId: sucursalId,
-        categoriaId: categoriaId,
-      },
-      include: {
-        categoria: true,
-        estado: true,
-      },
-    });
-    
+        where: {
+          sucursalId: sucursalId,
+          categoriaId: categoriaId,
+        },
+        include: {
+          categoria: true,
+          estado: true,
+        },
+      });
   }
 
   findAllByCategoria(categoriaId: number) {
@@ -70,13 +69,12 @@ export class ProductoService {
     });
   }
 
-
   findAll() {
     return this.prisma.producto.findMany({
       select: {
         id: true,
         nombre: true,
-        precioUnidad: true,
+        precio: true,
         categoria: {
           select: {
             nombre: true,
@@ -103,7 +101,7 @@ export class ProductoService {
       },
       select: {
         nombre: true,
-        precioUnidad: true,
+        precio: true,
         categoria: {
           select: {
             nombre: true,
@@ -133,7 +131,7 @@ export class ProductoService {
       where: { id },
       data: {
         nombre: updateProductoDto.nombre,
-        precioUnidad: updateProductoDto.precioUnidad,
+        precio: updateProductoDto.precio,
         categoria: {
           connect: { id: Number(updateProductoDto.categoriaId) },
         },

@@ -1,24 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
-import { Dia } from '@prisma/client';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateHorarioDto {
+export class CreateUbicacionDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ required: true })
-  dia: Dia;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ required: true })
-  desde: string;
+  altura: string;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ required: true })
-  hasta: string;
+  calle: string;
 
-  @ApiProperty()
-  @IsInt()
-  sucursalId: number;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  nombre: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  posicionId: number;
 }

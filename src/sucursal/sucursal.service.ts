@@ -11,21 +11,21 @@ export class SucursalService {
   @Post()
   @ApiOperation({ summary: 'Crear una nueva sucursal' })
   async create(createSucursalDto: CreateSucursalDto) {
-    // Validar si los IDs de estado y usuario existen
+    // Validar si los IDs de estado y empresa existen
     const estadoExists = await this.prisma.estado.findUnique({
       where: { id: createSucursalDto.estadoId },
     });
-    const userExists = await this.prisma.usuario.findUnique({
-      where: { id: createSucursalDto.usuarioId },
+    const empresaExists = await this.prisma.empresa.findUnique({
+      where: { id: createSucursalDto.empresaId },
     });
 
-    const userUnique = await this.prisma.sucursal.findUnique({
-      where: { usuarioId: createSucursalDto.usuarioId },
+    const empresaUnique = await this.prisma.sucursal.findUnique({
+      where: { empresaId: createSucursalDto.empresaId },
     });
 
-    if (userUnique) {
+    if (empresaUnique) {
       throw new HttpException(
-        `El usuario ${userUnique.nombre} ya está asociado a otra sucursal.`,
+        `La empresa ${empresaUnique.nombre} ya está asociada a otra sucursal.`,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -36,9 +36,9 @@ export class SucursalService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    if (!userExists) {
+    if (!empresaExists) {
       throw new HttpException(
-        `El usuario con ID ${createSucursalDto.usuarioId} no existe.`,
+        `La empresa con ID ${createSucursalDto.empresaId} no existe.`,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -71,10 +71,10 @@ export class SucursalService {
         id: true,
         nombre: true,
         descripcion: true,
-        usuario: { select: { id: true, nombre: true } },
+        empresa: { select: { id: true, nombre: true } },
         estado: { select: { id: true, nombre: true } },
         ubicacion: {
-          select: { id: true, coordenadaX: true, coordenadaY: true },
+          select: { id: true, altura: true, calle: true, nombre: true },
         },
       },
     });
@@ -87,7 +87,7 @@ export class SucursalService {
         id: true,
         nombre: true,
         descripcion: true,
-        usuario: { select: { id: true, nombre: true } },
+        empresa: { select: { id: true, nombre: true } },
         estado: { select: { id: true, nombre: true } },
       },
     });

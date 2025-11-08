@@ -8,6 +8,10 @@ export class CreateSucursalDto {
   nombre: string;
 
   @IsString()
+  @ApiProperty({ required: false, default: '' })
+  imagen: string;
+
+  @IsString()
   @IsNotEmpty()
   @MinLength(5)
   @ApiProperty({ required: true })
@@ -19,7 +23,7 @@ export class CreateSucursalDto {
 
   @ApiProperty()
   @IsInt()
-  usuarioId: number;
+  empresaId: number;
 
   @ApiProperty()
   @IsInt()

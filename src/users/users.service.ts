@@ -3,49 +3,33 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const emailDup = await this.prisma.usuario.findUnique({
+  async create(createUserDto: CreateUserDto, tx?: Prisma.TransactionClient) {
+    const prisma = tx ?? this.prisma;
+    const emailDup = await prisma.usuario.findUnique({
       where: { mail: createUserDto.mail },
     });
-    const dniDup = await this.prisma.usuario.findUnique({
-      where: { dni: createUserDto.dni },
-    });
-    const phoneDup = await this.prisma.usuario.findUnique({
-      where: { telefono: createUserDto.telefono },
-    });
-    if (emailDup || dniDup) {
+    if (emailDup) {
       throw new HttpException(
         'No se pudo crear el usuario. Verifica los datos e intenta nuevamente.',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    if (phoneDup) {
-      throw new HttpException(
-        'El telefono ya esta registrado',
         HttpStatus.BAD_REQUEST,
       );
     }
     const password = createUserDto.contraseña;
     const saltOrRounds = 10;
     const hash = await bcrypt.hash(password, saltOrRounds);
-    await this.prisma.usuario.create({
+    return await prisma.usuario.create({
       data: {
         mail: createUserDto.mail,
         contraseña: hash,
-        nombre: createUserDto.nombre,
-        apellido: createUserDto.apellido,
         rol: createUserDto.rol,
-        dni: createUserDto.dni,
-        telefono: createUserDto.telefono,
-        cuit: createUserDto.cuit ?? '',
       },
     });
-    return 'Usuario creado correctamente';
   }
 
   /**
@@ -56,12 +40,8 @@ export class UsersService {
     return this.prisma.usuario.findMany({
       select: {
         id: true,
-        nombre: true,
         mail: true,
         rol: true,
-        dni: true,
-        telefono: true,
-        cuit: true,
       },
     });
   }
@@ -71,12 +51,28 @@ export class UsersService {
       where: { id },
       select: {
         id: true,
-        nombre: true,
         mail: true,
         rol: true,
-        dni: true,
-        telefono: true,
-        cuit: true,
+        empresa: true,
+        comprador: {
+          select: {
+            id: true,
+            nombre: true,
+            apellido: true,
+            dni: true,
+            telefono: true,
+            imagenPerfil: true,
+            ubicacion: {
+              select: {
+                id: true,
+                nombre: true,
+                calle: true,
+                altura: true,
+              },
+            },
+          },
+        },
+        repartidor: true,
       },
     });
     if (!user) {

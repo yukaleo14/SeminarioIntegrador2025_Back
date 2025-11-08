@@ -9,7 +9,20 @@ export class CreateProductoDto {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({ required: true })
-  precioUnidad: number;
+  precio: number;
+
+  @IsString()
+  @ApiProperty({ required: false, default: '' })
+  imagen: string;
+
+  @IsString()
+  @ApiProperty({ required: false, default: '' })
+  descripcion: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  tiempoPreparacionEstimado: number;
 
   @IsNotEmpty()
   @ApiProperty({ required: true })

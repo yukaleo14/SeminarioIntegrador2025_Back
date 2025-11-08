@@ -9,6 +9,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UsersService } from 'src/users/users.service';
+import { CompradorService } from 'src/comprador/comprador.service';
+import { EmpresaService } from 'src/empresa/empresa.service';
+import { UbicacionService } from 'src/ubicacion/ubicacion.service';
+import { PosicionService } from 'src/posicion/posicion.service';
 
 @Module({
   imports: [
@@ -32,6 +36,10 @@ import { UsersService } from 'src/users/users.service';
     JwtAuthGuard,
     PrismaService,
     UsersService,
+    CompradorService,
+    EmpresaService,
+    UbicacionService,
+    PosicionService,
   ],
 })
 export class AuthModule {}

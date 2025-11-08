@@ -36,7 +36,7 @@ INSERT INTO FormaPago (nombre) VALUES
 INSERT INTO Categoria (nombre) VALUES
   ('Bebidas'),
   ('Snacks'),
-  ('Lácteos'),
+  ('Lacteos'),
   ('Carnes'),
   ('Frutas'),
   ('Verduras'),
