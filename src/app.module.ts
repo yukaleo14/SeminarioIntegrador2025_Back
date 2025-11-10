@@ -16,6 +16,7 @@ import { CompradorModule } from './comprador/comprador.module';
 import { EmpresaModule } from './empresa/empresa.module';
 import { UbicacionModule } from './ubicacion/ubicacion.module';
 import { PosicionModule } from './posicion/posicion.module';
+import { RepartidorModule } from './repartidor/repartidor.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { PosicionModule } from './posicion/posicion.module';
     EmpresaModule,
     UbicacionModule,
     PosicionModule,
+    RepartidorModule,
   ],
   controllers: [],
   providers: [PrismaService],

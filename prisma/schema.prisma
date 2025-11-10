@@ -76,7 +76,7 @@ model Repartidor {
 model Categoria {
   id    Int    @id @default(autoincrement())
   nombre  String @unique
-  imagen String?
+  imagen String? @default("")
   fechaHora DateTime @default(now())
   productos Producto[]
 }

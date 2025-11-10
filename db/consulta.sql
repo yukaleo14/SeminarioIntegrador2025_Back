@@ -33,14 +33,14 @@ INSERT INTO FormaPago (nombre) VALUES
   ('Credito'),
   ('Mercado Pago');
 
-INSERT INTO Categoria (nombre) VALUES
-  ('Bebidas'),
-  ('Snacks'),
-  ('Lacteos'),
-  ('Carnes'),
-  ('Frutas'),
-  ('Verduras'),
-  ('Panificados'),
-  ('Dulces'),
-  ('Congelados'),
-  ('Comidas Preparadas');
+INSERT INTO Categoria (nombre, imagen) VALUES
+  ('Bebidas', ''),
+  ('Snacks', ''),
+  ('Lacteos', ''),
+  ('Carnes', ''),
+  ('Frutas', ''),
+  ('Verduras', ''),
+  ('Panificados', ''),
+  ('Dulces', ''),
+  ('Congelados', ''),
+  ('Comidas Preparadas', '');

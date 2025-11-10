@@ -7,26 +7,15 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ProductoService {
   constructor(private prisma: PrismaService) {}
   async create(createProductoDto: CreateProductoDto) {
-    await this.prisma.producto.create({
-      data: {
-        nombre: createProductoDto.nombre,
-        precio: createProductoDto.precio,
-        imagen: createProductoDto.imagen,
-        tiempoPreparacionEstimado: createProductoDto.tiempoPreparacionEstimado,
-        descripcion: createProductoDto.descripcion,
-        categoria: {
-          connect: { id: Number(createProductoDto.categoriaId) },
-        },
-        estado: {
-          connect: { id: Number(createProductoDto.estadoId) },
-        },
-        sucursal: {
-          connect: { id: Number(createProductoDto.sucursalId) },
-        },
+    const estadoPorDefecto = await this.prisma.estado.findFirst({
+      where: {
+        ambito: 'PRODUCTO',
+        nombre: 'CREADO',
       },
-      include: { categoria: true, estado: true, sucursal: true },
     });
-    return 'This action adds a new producto';
+    createProductoDto.estadoId = estadoPorDefecto!.id;
+    await this.prisma.producto.create({ data: createProductoDto });
+    return 'Producto creado correctamente';
   }
 
   findAllBySucursal(sucursalId: number) {
@@ -75,18 +64,24 @@ export class ProductoService {
         id: true,
         nombre: true,
         precio: true,
+        imagen: true,
+        tiempoPreparacionEstimado: true,
+        descripcion: true,
         categoria: {
           select: {
+            id: true,
             nombre: true,
           },
         },
         estado: {
           select: {
+            id: true,
             nombre: true,
           },
         },
         sucursal: {
           select: {
+            id: true,
             nombre: true,
           },
         },

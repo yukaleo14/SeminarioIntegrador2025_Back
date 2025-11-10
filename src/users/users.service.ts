@@ -53,7 +53,14 @@ export class UsersService {
         id: true,
         mail: true,
         rol: true,
-        empresa: true,
+        empresa: {
+          select: {
+            id: true,
+            nombre: true,
+            cuitCuil: true,
+            imagenPerfil: true,
+          },
+        },
         comprador: {
           select: {
             id: true,
@@ -72,7 +79,17 @@ export class UsersService {
             },
           },
         },
-        repartidor: true,
+        repartidor: {
+          select: {
+            id: true,
+            nombre: true,
+            apellido: true,
+            cuitCuil: true,
+            dni: true,
+            telefono: true,
+            imagenPerfil: true,
+          },
+        },
       },
     });
     if (!user) {

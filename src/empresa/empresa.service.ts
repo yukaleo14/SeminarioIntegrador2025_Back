@@ -2,11 +2,16 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateEmpresaDto } from './dto/create-empresa.dto';
 import { UpdateEmpresaDto } from './dto/update-empresa.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class EmpresaService {
   constructor(private prisma: PrismaService) {}
-  async create(createEmpresaDto: CreateEmpresaDto) {
+  async create(
+    createEmpresaDto: CreateEmpresaDto,
+    tx?: Prisma.TransactionClient,
+  ) {
+    const prisma = tx ?? this.prisma;
     const nombreDup = await this.prisma.empresa.findFirst({
       where: { nombre: createEmpresaDto.nombre },
     });
@@ -28,7 +33,7 @@ export class EmpresaService {
       );
     }
 
-    await this.prisma.empresa.create({
+    await prisma.empresa.create({
       data: {
         nombre: createEmpresaDto.nombre,
         cuitCuil: createEmpresaDto.cuitCuil,

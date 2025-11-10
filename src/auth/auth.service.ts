@@ -19,11 +19,10 @@ import { Posicion } from 'src/posicion/entities/posicion.entity';
 import { Ubicacion } from 'src/ubicacion/entities/ubicacion.entity';
 import { Comprador } from 'src/comprador/entities/comprador.entity';
 import { Empresa } from 'src/empresa/entities/empresa.entity';
+import { RepartidorService } from 'src/repartidor/repartidor.service';
 
 @Injectable()
 export class AuthService {
-  // public ubicacion: Ubicacion;
-  // public posicion: Posicion;
   public cliente: Comprador;
   public empresa: Empresa;
 
@@ -35,6 +34,7 @@ export class AuthService {
     private readonly empresaSvc: EmpresaService,
     private readonly ubicacionSvc: UbicacionService,
     private readonly posicionSvc: PosicionService,
+    private readonly repartidorSvc: RepartidorService,
   ) {}
 
   // Validar usuario y generar token JWT
@@ -132,9 +132,56 @@ export class AuthService {
     }
   }
 
-  public async crearEmpresa(registerDto: CreateUserDto) {}
+  public async crearEmpresa(registerDto: CreateUserDto) {
+    const { nombre, cuitCuil, imagenPerfil } = registerDto;
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        // Crear el usuario primero y luego lo asignamos al comprador
+        const usuario = await this.userService.create(registerDto, tx);
+        await this.empresaSvc.create(
+          {
+            nombre,
+            cuitCuil,
+            imagenPerfil: imagenPerfil ?? '',
+            usuarioId: usuario.id,
+          },
+          tx,
+        );
+      });
+    } catch (error: any) {
+      throw new HttpException(
+        'No se pudo crear la empresa. ' + error,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 
-  public async crearRepartidor(registerDto: CreateUserDto) {}
+  public async crearRepartidor(registerDto: CreateUserDto) {
+    const { nombre, apellido, telefono, cuitCuil, dni, imagenPerfil } =
+      registerDto;
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        const usuario = await this.userService.create(registerDto, tx);
+        await this.repartidorSvc.create(
+          {
+            nombre,
+            apellido,
+            cuitCuil,
+            dni,
+            telefono,
+            imagenPerfil: imagenPerfil ?? '',
+            usuarioId: usuario.id,
+          },
+          tx,
+        );
+      });
+    } catch (error: any) {
+      throw new HttpException(
+        'No se pudo crear el repartidor. ' + error,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 
   async registerUser(registerDto: CreateUserDto) {
     const { mail, contraseña, rol } = registerDto;

@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  MinLength,
+} from 'class-validator';
 
 export class CreateSucursalDto {
   @IsString()
@@ -23,9 +29,26 @@ export class CreateSucursalDto {
 
   @ApiProperty()
   @IsInt()
-  empresaId: number;
+  ubicacionId: number;
 
   @ApiProperty()
   @IsInt()
-  ubicacionId: number;
+  empresaId: number;
+
+  @IsString()
+  @ApiProperty({ required: false, default: '' })
+  altura?: string;
+  @IsString()
+  @ApiProperty({ required: false, default: '' })
+  calle?: string;
+  @IsString()
+  @ApiProperty({ required: false, default: '' })
+  nombreUbicacion?: string;
+
+  @IsNumber()
+  @ApiProperty({ required: false, default: 0 })
+  coordenadaX?: number;
+  @IsNumber()
+  @ApiProperty({ required: false, default: 0 })
+  coordenadaY?: number;
 }

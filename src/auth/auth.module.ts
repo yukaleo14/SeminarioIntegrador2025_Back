@@ -13,6 +13,7 @@ import { CompradorService } from 'src/comprador/comprador.service';
 import { EmpresaService } from 'src/empresa/empresa.service';
 import { UbicacionService } from 'src/ubicacion/ubicacion.service';
 import { PosicionService } from 'src/posicion/posicion.service';
+import { RepartidorService } from 'src/repartidor/repartidor.service';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { PosicionService } from 'src/posicion/posicion.service';
     EmpresaService,
     UbicacionService,
     PosicionService,
+    RepartidorService,
   ],
 })
 export class AuthModule {}
