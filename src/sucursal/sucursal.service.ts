@@ -143,7 +143,35 @@ export class SucursalService {
     productos.forEach((prod) => {
       sucursalesId.add(prod.sucursalId);
     });
-    console.log(sucursalesId);
+    return await this.prisma.sucursal.findMany({
+      where: {
+        id: {
+          in: Array.from(sucursalesId),
+        },
+      },
+      select: {
+        id: true,
+        nombre: true,
+        descripcion: true,
+        empresa: { select: { id: true, nombre: true, imagenPerfil: true } },
+        estado: { select: { id: true, nombre: true } },
+        ubicacion: {
+          select: {
+            id: true,
+            altura: true,
+            calle: true,
+            nombre: true,
+            posicion: {
+              select: {
+                id: true,
+                coordenadaX: true,
+                coordenadaY: true,
+              },
+            },
+          },
+        },
+      },
+    });
   }
 
   async cambiarEstadoSucursal(id: number) {
@@ -177,7 +205,7 @@ export class SucursalService {
         id: true,
         nombre: true,
         descripcion: true,
-        empresa: { select: { id: true, nombre: true } },
+        empresa: { select: { id: true, nombre: true, imagenPerfil: true } },
         estado: { select: { id: true, nombre: true } },
         ubicacion: {
           select: {
