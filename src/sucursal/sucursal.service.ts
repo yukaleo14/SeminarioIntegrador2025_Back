@@ -7,6 +7,7 @@ import { PosicionService } from 'src/posicion/posicion.service';
 import { Posicion } from 'src/posicion/entities/posicion.entity';
 import { Ubicacion } from 'src/ubicacion/entities/ubicacion.entity';
 import { UbicacionService } from 'src/ubicacion/ubicacion.service';
+import { ProductoService } from 'src/producto/producto.service';
 import { Sucursal } from './entities/sucursal.entity';
 
 @Injectable()
@@ -15,6 +16,7 @@ export class SucursalService {
     private prisma: PrismaService,
     private posicionSvc: PosicionService,
     private ubicacionSvc: UbicacionService,
+    private productoSvc: ProductoService,
   ) {}
 
   async createSucursal(createSucursalDto: CreateSucursalDto) {
@@ -135,6 +137,15 @@ export class SucursalService {
     }
   }
 
+  async findSucursalesByCategoria(categoriaId: number) {
+    const productos = await this.productoSvc.findAllByCategoria(categoriaId);
+    const sucursalesId = new Set<number>();
+    productos.forEach((prod) => {
+      sucursalesId.add(prod.sucursalId);
+    });
+    console.log(sucursalesId);
+  }
+
   async cambiarEstadoSucursal(id: number) {
     const sucursal = await this.findOne(id);
     const sucu = {
@@ -194,7 +205,7 @@ export class SucursalService {
         id: true,
         nombre: true,
         descripcion: true,
-        empresa: { select: { id: true, nombre: true } },
+        empresa: { select: { id: true, nombre: true, imagenPerfil: true } },
         estado: { select: { id: true, nombre: true } },
         ubicacion: {
           select: {

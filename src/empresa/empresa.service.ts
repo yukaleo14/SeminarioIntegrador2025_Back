@@ -43,12 +43,12 @@ export class EmpresaService {
     });
   }
 
-  findAll() {
-    return `This action returns all empresa`;
+  async findAll() {
+    return await this.prisma.empresa.findMany();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} empresa`;
+    return this.prisma.empresa.findUnique({ where: { id } });
   }
 
   update(id: number, updateEmpresaDto: UpdateEmpresaDto) {
