@@ -26,6 +26,11 @@ export class SucursalController {
     return this.sucursalService.findAll();
   }
 
+  @Get('categoria/:id')
+  findAllByCategoria(@Param('id', ParseIntPipe) id: number) {
+    return this.sucursalService.findSucursalesByCategoria(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.sucursalService.findOne(+id);

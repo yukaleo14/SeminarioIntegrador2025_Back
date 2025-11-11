@@ -46,12 +46,13 @@ export class ProductoService {
       });
   }
 
-  findAllByCategoria(categoriaId: number) {
-    return this.prisma.producto.findMany({
+  async findAllByCategoria(categoriaId: number) {
+    return await this.prisma.producto.findMany({
       where: {
         categoriaId: categoriaId,
       },
-      include: {
+      select: {
+        sucursalId: true,
         categoria: true,
         estado: true,
       },
