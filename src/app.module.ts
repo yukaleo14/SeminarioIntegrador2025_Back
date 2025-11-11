@@ -12,13 +12,11 @@ import { PedidoModule } from './pedido/pedido.module';
 import { DetallePedidoModule } from './detalle-pedido/detalle-pedido.module';
 import { CategoriaModule } from './categoria/categoria.module';
 import { ProductoModule } from './producto/producto.module';
-import { EmpresaModule } from './empresa/empresa.module';
-import { PosicionModule } from './posicion/posicion.module';
-import { UbicacionModule } from './ubicacion/ubicacion.module';
-import { RutaModule } from './ruta/ruta.module';
-import { RepartidorModule } from './repartidor/repartidor.module';
 import { CompradorModule } from './comprador/comprador.module';
 import { EmpresaModule } from './empresa/empresa.module';
+import { UbicacionModule } from './ubicacion/ubicacion.module';
+import { PosicionModule } from './posicion/posicion.module';
+import { RepartidorModule } from './repartidor/repartidor.module';
 
 @Module({
   imports: [
@@ -36,12 +34,11 @@ import { EmpresaModule } from './empresa/empresa.module';
     DetallePedidoModule,
     CategoriaModule,
     ProductoModule,
-    EmpresaModule,
     CompradorModule,
-    RepartidorModule,
-    RutaModule,
+    EmpresaModule,
     UbicacionModule,
     PosicionModule,
+    RepartidorModule,
   ],
   controllers: [],
   providers: [PrismaService],

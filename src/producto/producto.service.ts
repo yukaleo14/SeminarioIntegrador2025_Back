@@ -2,29 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { find } from 'rxjs';
 
 @Injectable()
 export class ProductoService {
   constructor(private prisma: PrismaService) {}
   async create(createProductoDto: CreateProductoDto) {
-    await this.prisma.producto.create({
-      data: {
-        nombre: createProductoDto.nombre,
-        precioUnidad: createProductoDto.precioUnidad,
-        categoria: {
-          connect: { id: Number(createProductoDto.categoriaId) },
-        },
-        estado: {
-          connect: { id: Number(createProductoDto.estadoId) },
-        },
-        sucursal: {
-          connect: { id: Number(createProductoDto.sucursalId) },
-        },
+    const estadoPorDefecto = await this.prisma.estado.findFirst({
+      where: {
+        ambito: 'PRODUCTO',
+        nombre: 'CREADO',
       },
-      include: { categoria: true, estado: true, sucursal: true },
     });
-    return 'This action adds a new producto';
+    createProductoDto.estadoId = estadoPorDefecto!.id;
+    await this.prisma.producto.create({ data: createProductoDto });
+    return 'Producto creado correctamente';
   }
 
   findAllBySucursal(sucursalId: number) {
@@ -40,22 +31,19 @@ export class ProductoService {
   }
 
   findAllBySucursalAndCategoria(sucursalId: number, categoriaId: number) {
-    if (!sucursalId)
-      return this.findAllByCategoria(categoriaId);
-    if (!categoriaId)
-      return this.findAllBySucursal(sucursalId);
+    if (!sucursalId) return this.findAllByCategoria(categoriaId);
+    if (!categoriaId) return this.findAllBySucursal(sucursalId);
     if (!sucursalId && !categoriaId)
       return this.prisma.producto.findMany({
-      where: {
-        sucursalId: sucursalId,
-        categoriaId: categoriaId,
-      },
-      include: {
-        categoria: true,
-        estado: true,
-      },
-    });
-    
+        where: {
+          sucursalId: sucursalId,
+          categoriaId: categoriaId,
+        },
+        include: {
+          categoria: true,
+          estado: true,
+        },
+      });
   }
 
   findAllByCategoria(categoriaId: number) {
@@ -70,25 +58,30 @@ export class ProductoService {
     });
   }
 
-
   findAll() {
     return this.prisma.producto.findMany({
       select: {
         id: true,
         nombre: true,
-        precioUnidad: true,
+        precio: true,
+        imagen: true,
+        tiempoPreparacionEstimado: true,
+        descripcion: true,
         categoria: {
           select: {
+            id: true,
             nombre: true,
           },
         },
         estado: {
           select: {
+            id: true,
             nombre: true,
           },
         },
         sucursal: {
           select: {
+            id: true,
             nombre: true,
           },
         },
@@ -103,7 +96,7 @@ export class ProductoService {
       },
       select: {
         nombre: true,
-        precioUnidad: true,
+        precio: true,
         categoria: {
           select: {
             nombre: true,
@@ -133,7 +126,7 @@ export class ProductoService {
       where: { id },
       data: {
         nombre: updateProductoDto.nombre,
-        precioUnidad: updateProductoDto.precioUnidad,
+        precio: updateProductoDto.precio,
         categoria: {
           connect: { id: Number(updateProductoDto.categoriaId) },
         },

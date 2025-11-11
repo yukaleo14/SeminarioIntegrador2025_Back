@@ -20,7 +20,7 @@ export class AuthController {
   @Public()
   async register(@Body() registerDto: CreateUserDto) {
     const userToken = await this.authService.registerUser(registerDto);
-    return userToken;
+    return { token: userToken };
   }
 
   @Get('profile')

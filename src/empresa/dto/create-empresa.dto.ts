@@ -1,30 +1,21 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsDate, IsIn, IsInt, IsNotEmpty, IsNumber, IsString } from "class-validator";
-import { CreatePedidoDto } from "src/pedido/dto/create-pedido.dto";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateEmpresaDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  nombre: string;
 
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    @IsString()
-    nombre: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  cuitCuil: string;
 
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    @IsNumber()
-    cuitCuil: number;
+  @IsString()
+  @ApiProperty({ default: '' })
+  imagenPerfil: string;
 
-    @IsArray()
-    @ApiProperty({ required: true, type: () => [CreatePedidoDto] })
-    pedidos: CreatePedidoDto[];
-
-    @IsInt()
-    @ApiProperty({ required: true })
-    @IsNotEmpty()
-    usuarioId: number;
-
-    @IsInt()
-    @ApiProperty({ required: true })
-    @IsNotEmpty()
-    sucursalId: number;
+  @ApiProperty({ required: true })
+  usuarioId: number;
 }

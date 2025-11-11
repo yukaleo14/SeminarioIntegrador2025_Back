@@ -1,39 +1,36 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsDate, IsIn, IsInt, IsNotEmpty, IsNumber, IsString } from "class-validator";
-import { CreatePedidoDto } from "src/pedido/dto/create-pedido.dto";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateRepartidorDto {
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    @IsString()
-    nombre: string;
-    
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    @IsString()
-    apellido: string;
-    
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    @IsNumber()
-    cuilCuit: number;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  nombre: string;
 
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    @IsNumber()
-    dni: number;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  apellido: string;
 
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    @IsString()
-    telefono: number;
-    
-    @IsArray()
-    @ApiProperty({ required: true, type: () => [CreatePedidoDto] })
-    pedidos: CreatePedidoDto[];
-    
-    @IsInt()
-    @ApiProperty({ required: true })
-    @IsNotEmpty()
-    usuarioId: number;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  cuitCuil: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  dni: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  telefono: string;
+
+  @IsString()
+  @ApiProperty()
+  imagenPerfil: string;
+
+  @ApiProperty({ required: true })
+  usuarioId: number;
 }

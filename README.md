@@ -80,6 +80,12 @@ docker exec -i mysql_nest mysql -u root -prootpass nestdb -e "source /consulta.s
 
 ```
 
+### Si cambiamos en el esquema y da error, correr el siguiente comando, luego volver al paso 1 de prisma
+
+```bash
+$ npx prisma migrate reset
+```
+
 ### 4 Luego ya podemos correr el programa con
 
 ```bash

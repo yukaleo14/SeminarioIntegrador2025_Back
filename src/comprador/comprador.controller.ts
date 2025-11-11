@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { CompradorService } from './comprador.service';
 import { CreateCompradorDto } from './dto/create-comprador.dto';
 import { UpdateCompradorDto } from './dto/update-comprador.dto';
@@ -18,17 +27,20 @@ export class CompradorController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.compradorService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.compradorService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCompradorDto: UpdateCompradorDto) {
-    return this.compradorService.update(+id, updateCompradorDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateCompradorDto: UpdateCompradorDto,
+  ) {
+    return this.compradorService.update(id, updateCompradorDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.compradorService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.compradorService.remove(id);
   }
 }

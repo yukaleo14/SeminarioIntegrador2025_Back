@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
+  IsNumber,
   IsString,
   MaxLength,
   MinLength,
@@ -17,7 +18,7 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(5)
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   apellido: string;
 
   @IsString()
@@ -27,8 +28,7 @@ export class CreateUserDto {
   mail: string;
 
   @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   dni: string;
 
   @IsString()
@@ -45,8 +45,28 @@ export class CreateUserDto {
 
   @IsString()
   @ApiProperty({ default: '', required: false })
-  cuit?: string;
+  cuitCuil: string;
 
   @ApiProperty({ required: false, default: Rol.CLIENTE })
   rol?: Rol = Rol.CLIENTE;
+
+  @ApiProperty({ required: false })
+  imagenPerfil?: string;
+
+  @IsString()
+  @ApiProperty({ required: false })
+  altura: string;
+  @IsString()
+  @ApiProperty({ required: false })
+  calle: string;
+  @IsString()
+  @ApiProperty({ required: false })
+  nombreUbicacion: string;
+
+  @IsNumber()
+  @ApiProperty({ required: false })
+  coordenadaX: number;
+  @IsNumber()
+  @ApiProperty({ required: false })
+  coordenadaY: number;
 }
