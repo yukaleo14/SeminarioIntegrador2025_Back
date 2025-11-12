@@ -17,6 +17,7 @@ import { EmpresaModule } from './empresa/empresa.module';
 import { UbicacionModule } from './ubicacion/ubicacion.module';
 import { PosicionModule } from './posicion/posicion.module';
 import { RepartidorModule } from './repartidor/repartidor.module';
+import { FileController } from './file/file.controller';
 
 @Module({
   imports: [
@@ -40,7 +41,7 @@ import { RepartidorModule } from './repartidor/repartidor.module';
     PosicionModule,
     RepartidorModule,
   ],
-  controllers: [],
+  controllers: [FileController],
   providers: [PrismaService],
 })
 export class AppModule {}

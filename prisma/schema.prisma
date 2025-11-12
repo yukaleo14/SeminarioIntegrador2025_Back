@@ -150,8 +150,7 @@ model Pago {
   fechaHora DateTime @default(now())
   monto Float
   
-  formaPago FormaPago @relation(fields: [formaPagoId], references: [id])
-  formaPagoId Int
+  
   estado Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
 
@@ -162,7 +161,7 @@ model Pago {
 model FormaPago {
   id    Int  @id @default(autoincrement())
   nombre String
-  pago Pago[]
+
 }
 
 // Chekeada

@@ -24,21 +24,18 @@ export class PagoService {
         numero: createPagoDto.numero,
         monto: createPagoDto.monto,
         fechaHora: createPagoDto.fechaHora,
-        formaPago: {
-          connect: { id: createPagoDto.formaPagoId },
-        },
         estado: {
           connect: { id: estadoPorDefecto.id },
         },
       },
-      include: { formaPago: true, estado: true },
+      include: {  estado: true },
     });
     return 'Pago creado correctamente';
   }
 
   async findAll() {
     const pagos = await this.prisma.pago.findMany({
-      include: { formaPago: true, estado: true },
+      include: { estado: true },
     });
     if (!pagos || pagos.length === 0) {
       return [];
@@ -49,7 +46,7 @@ export class PagoService {
   async findOne(id: number) {
     const pago = await this.prisma.pago.findUnique({
       where: { id },
-      include: { formaPago: true, estado: true },
+      include: { estado: true },
     });
     return pago;
   }
@@ -61,14 +58,11 @@ export class PagoService {
         numero: updatePagoDto.numero,
         monto: updatePagoDto.monto,
         fechaHora: updatePagoDto.fechaHora,
-        formaPago: {
-          connect: { id: updatePagoDto.formaPagoId },
-        },
         estado: {
           connect: { id: updatePagoDto.estadoId },
         },
       },
-      include: { formaPago: true, estado: true },
+      include: {  estado: true },
     });
     return 'Pago actualizado correctamente';
   }

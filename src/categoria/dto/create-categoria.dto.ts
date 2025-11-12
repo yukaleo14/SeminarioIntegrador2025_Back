@@ -13,6 +13,6 @@ export class CreateCategoriaDto {
   fechaHora: Date;
 
   @IsNotEmpty()
-  @ApiProperty({ required: true, type: () => [] })
+  @ApiProperty({ required: true, type: () => [Number] })
   productoIds: number[];
 }
