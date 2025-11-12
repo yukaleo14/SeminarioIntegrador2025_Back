@@ -1,69 +1,74 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsDate, IsIn, IsInt, IsNotEmpty, IsNumber, IsString } from "class-validator";
-import { CreateDetallePedidoDto } from "src/detalle-pedido/dto/create-detalle-pedido.dto";
-
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsArray,
+  IsDate,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 
 export class CreatePedidoDto {
-    @IsNotEmpty()
-    @IsString()
-    @ApiProperty({ required: true })
-    numero : string;
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({ required: true })
+  numero: string;
 
-    @IsDate()
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    fechaHoraPedido: Date;
+  @IsDate()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  fechaHoraPedido: Date;
 
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    horaLlegadaEstimada: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  horaLlegadaEstimada: string;
 
-    @IsNumber()
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    montoTotal: number;
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  montoTotal: number;
 
-    @IsNumber()
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    tiempoPreparacionEstimado: number;
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  tiempoPreparacionEstimado: number;
 
-    @IsNumber()
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    tiempoRepartoEstimado: number;
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  tiempoRepartoEstimado: number;
 
-    @IsDate()
-    @IsNotEmpty()
-    @ApiProperty({ required: true })
-    fechaHora: Date;
+  @IsDate()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  fechaHora: Date;
 
-    @IsInt()
-    @ApiProperty({ required: true })
-    usuarioId: string;
+  @IsInt()
+  @ApiProperty({ required: true })
+  compradorId: number;
 
-    @IsInt()
-    @ApiProperty({ required: true })
-    deliveryId: string;
+  @IsInt()
+  @ApiProperty({ required: true })
+  repartidorId: number;
 
-    @IsInt()
-    @ApiProperty({ required: true })
-    companyId: string;
+  @IsInt()
+  @ApiProperty({ required: true })
+  empresaId: number;
 
-    @IsInt()
-    @ApiProperty({ required: true })
-    rutaId: string;
+  @IsInt()
+  @ApiProperty({ required: true })
+  rutaId: number;
 
-    @IsInt()
-    @ApiProperty({ required: true })
-    pagoId: string;
+  @IsInt()
+  @ApiProperty({ required: true })
+  pagoId: number;
 
-    @IsString()
-    @ApiProperty({ required: true })
-    estadoId: string;
+  @IsNumber()
+  @ApiProperty({ required: true })
+  estadoId: number;
 
-    @IsArray()
-    @ApiProperty({ required: true, type: () => [CreateDetallePedidoDto] })
-    detalle: CreateDetallePedidoDto[];
+  @IsArray()
+  @ApiProperty({ required: true, type: [Object] })
+  detalle: any[];
 }

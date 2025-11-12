@@ -1,5 +1,6 @@
 import { IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { CreatePedidoDto } from 'src/pedido/dto/create-pedido.dto';
 
 export class CreatePagoDto {
   @IsString()
@@ -23,4 +24,8 @@ export class CreatePagoDto {
   @ApiProperty()
   @IsInt()
   estadoId: number;
+
+  @IsNotEmpty()
+  @ApiProperty({ type: () => [CreatePedidoDto] })
+  pedido: CreatePedidoDto[];
 }

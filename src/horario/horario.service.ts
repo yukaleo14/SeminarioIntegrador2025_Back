@@ -8,21 +8,14 @@ import { Horario } from '@prisma/client';
 export class HorarioService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createHorarioDto: CreateHorarioDto) : Promise<Horario> {
+  async create(createHorarioDto: CreateHorarioDto): Promise<Horario> {
     try {
       const newHorario = await this.prisma.horario.create({
-        data: {
-          dia: createHorarioDto.dia,
-          desde: createHorarioDto.desde,
-          hasta: createHorarioDto.hasta,
-          sucursal: {
-            connect: { id: createHorarioDto.sucursalId } 
-          }
-        }, 
+        data: createHorarioDto,
       });
       return newHorario;
     } catch (error) {
-      console.error('Error creating horario:', error);
+      console.error('Error al crear horario:', error);
       throw error;
     }
   }
@@ -34,9 +27,8 @@ export class HorarioService {
         dia: true,
         desde: true,
         hasta: true,
-      }
-    }
-    );
+      },
+    });
   }
 
   async findOne(id: number) {
@@ -46,7 +38,8 @@ export class HorarioService {
         id: true,
         dia: true,
         desde: true,
-        hasta: true,}
+        hasta: true,
+      },
     });
     if (!horario) {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);

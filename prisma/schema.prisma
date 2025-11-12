@@ -27,16 +27,14 @@ enum Rol {
 // Cheakeada
 model Empresa {
   id    Int    @id @default(autoincrement())
-  nombre  String
+  nombre  String @unique
   cuitCuil String @unique
   imagenPerfil String?
 
   pedidos Pedido[]
   usuario Usuario @relation(fields: [usuarioId], references: [id])
   usuarioId Int @unique
-  sucursal Sucursal @relation(fields: [sucursalId], references: [id])
-  sucursalId Int @unique
-  productos Producto[]
+  sucursal Sucursal?
 }
 
 // Chekeada
@@ -50,7 +48,7 @@ model Comprador {
   imagenPerfil String?
 
   ubicacion Ubicacion @relation(fields: [ubicacionId], references: [id])
-  ubicacionId Int @unique
+  ubicacionId Int 
 
   usuario Usuario @relation(fields: [usuarioId], references: [id])
   usuarioId Int @unique
@@ -78,7 +76,7 @@ model Repartidor {
 model Categoria {
   id    Int    @id @default(autoincrement())
   nombre  String @unique
-  imagen String?
+  imagen String? @default("")
   fechaHora DateTime @default(now())
   productos Producto[]
 }
@@ -90,9 +88,11 @@ model Producto {
   precio Float
   imagen String?
   tiempoPreparacionEstimado Int
+  descripcion String
 
-  empresa Empresa @relation(fields: [empresaId], references: [id])
-  empresaId Int
+
+  sucursal Sucursal @relation(fields: [sucursalId], references: [id])
+  sucursalId Int
 
   categoria Categoria @relation(fields: [categoriaId], references: [id])
   categoriaId Int
@@ -111,19 +111,22 @@ model Sucursal {
   horario Horario[]
   imagen String?
 
-  empresa Empresa?
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+  empresaId Int @unique
 
   ubicacion Ubicacion @relation(fields: [ubicacionId], references: [id])
   ubicacionId Int
 
   estado Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
+
+  productos Producto[]
 }
 // Chekeada
 model Horario {
   id    Int    @id @default(autoincrement())
-  desde String
-  hasta String
+  desde String // 21
+  hasta String // 24
 
   sucursal Sucursal @relation(fields: [sucursalId], references: [id])
   sucursalId Int
@@ -147,8 +150,7 @@ model Pago {
   fechaHora DateTime @default(now())
   monto Float
   
-  formaPago FormaPago @relation(fields: [formaPagoId], references: [id])
-  formaPagoId Int
+  
   estado Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
 
@@ -159,7 +161,7 @@ model Pago {
 model FormaPago {
   id    Int  @id @default(autoincrement())
   nombre String
-  pago Pago[]
+
 }
 
 // Chekeada
@@ -261,7 +263,7 @@ model Ubicacion {
   calle String?
   nombre String?
 
-  posicion Posicion @relation(fields: [posicionId], references: [id])
+  posicion Posicion @relation(fields: [posicionId], references: [id], onDelete: Cascade)
   posicionId Int @unique
   
   fechaHora DateTime @default(now())
@@ -269,7 +271,7 @@ model Ubicacion {
   sucursal Sucursal[]
   origen Ruta[] @relation("OrigenUbicacion")
   destino Ruta[] @relation("DestinoUbicacion")
-  comprador Comprador?
+  comprador Comprador[]
 }
 //Chekeada
 model Posicion {

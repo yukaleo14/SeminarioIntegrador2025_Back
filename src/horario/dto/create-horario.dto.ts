@@ -1,20 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsDate,
-  IsIn,
-  IsInt,
-  IsNotEmpty,
-  IsString,
-  MinLength,
-} from 'class-validator';
+import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 import { Dia } from '@prisma/client';
 
 export class CreateHorarioDto {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ required: true })
-  dia: Dia;
-
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ required: true })
@@ -28,4 +16,9 @@ export class CreateHorarioDto {
   @ApiProperty()
   @IsInt()
   sucursalId: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  dia: Dia;
 }

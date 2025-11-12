@@ -12,6 +12,12 @@ import { PedidoModule } from './pedido/pedido.module';
 import { DetallePedidoModule } from './detalle-pedido/detalle-pedido.module';
 import { CategoriaModule } from './categoria/categoria.module';
 import { ProductoModule } from './producto/producto.module';
+import { CompradorModule } from './comprador/comprador.module';
+import { EmpresaModule } from './empresa/empresa.module';
+import { UbicacionModule } from './ubicacion/ubicacion.module';
+import { PosicionModule } from './posicion/posicion.module';
+import { RepartidorModule } from './repartidor/repartidor.module';
+import { FileController } from './file/file.controller';
 
 @Module({
   imports: [
@@ -29,8 +35,13 @@ import { ProductoModule } from './producto/producto.module';
     DetallePedidoModule,
     CategoriaModule,
     ProductoModule,
+    CompradorModule,
+    EmpresaModule,
+    UbicacionModule,
+    PosicionModule,
+    RepartidorModule,
   ],
-  controllers: [],
+  controllers: [FileController],
   providers: [PrismaService],
 })
 export class AppModule {}
