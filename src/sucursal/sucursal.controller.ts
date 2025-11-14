@@ -11,6 +11,7 @@ import {
 import { SucursalService } from './sucursal.service';
 import { CreateSucursalDto } from './dto/create-sucursal.dto';
 import { UpdateSucursalDto } from './dto/update-sucursal.dto';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('sucursal')
 export class SucursalController {
@@ -22,16 +23,19 @@ export class SucursalController {
   }
 
   @Get()
+  @Public()
   findAll() {
     return this.sucursalService.findAll();
   }
 
   @Get('categoria/:id')
+  @Public()
   findAllByCategoria(@Param('id', ParseIntPipe) id: number) {
     return this.sucursalService.findSucursalesByCategoria(id);
   }
 
   @Get(':id')
+  @Public()
   findOne(@Param('id') id: string) {
     return this.sucursalService.findOne(+id);
   }

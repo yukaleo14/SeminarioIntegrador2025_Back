@@ -24,11 +24,13 @@ export class ProductoController {
   }
 
   @Get()
+  @Public()
   findAll() {
     return this.productoService.findAll();
   }
 
   @Get(':id')
+  @Public()
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productoService.findOne(id);
   }
@@ -41,10 +43,9 @@ export class ProductoController {
   ) {
     return this.productoService.findAllBySucursalAndCategoria(
       sucursalId,
-      categoriaId
+      categoriaId,
     );
   }
-
 
   @Patch(':id')
   update(

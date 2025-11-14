@@ -1,14 +1,13 @@
 import { HttpException, HttpStatus, Injectable, Post } from '@nestjs/common';
-import { CreateSucursalDto } from './dto/create-sucursal.dto';
-import { UpdateSucursalDto } from './dto/update-sucursal.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiOperation } from '@nestjs/swagger';
-import { PosicionService } from 'src/posicion/posicion.service';
 import { Posicion } from 'src/posicion/entities/posicion.entity';
+import { PosicionService } from 'src/posicion/posicion.service';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { ProductoService } from 'src/producto/producto.service';
 import { Ubicacion } from 'src/ubicacion/entities/ubicacion.entity';
 import { UbicacionService } from 'src/ubicacion/ubicacion.service';
-import { ProductoService } from 'src/producto/producto.service';
-import { Sucursal } from './entities/sucursal.entity';
+import { CreateSucursalDto } from './dto/create-sucursal.dto';
+import { UpdateSucursalDto } from './dto/update-sucursal.dto';
 
 @Injectable()
 export class SucursalService {
