@@ -154,6 +154,7 @@ export class SucursalService {
         descripcion: true,
         empresa: { select: { id: true, nombre: true, imagenPerfil: true } },
         estado: { select: { id: true, nombre: true } },
+        imagen: true,
         ubicacion: {
           select: {
             id: true,
@@ -206,6 +207,7 @@ export class SucursalService {
         descripcion: true,
         empresa: { select: { id: true, nombre: true, imagenPerfil: true } },
         estado: { select: { id: true, nombre: true } },
+        imagen: true,
         ubicacion: {
           select: {
             id: true,
@@ -234,6 +236,7 @@ export class SucursalService {
         descripcion: true,
         empresa: { select: { id: true, nombre: true, imagenPerfil: true } },
         estado: { select: { id: true, nombre: true } },
+        imagen: true,
         ubicacion: {
           select: {
             id: true,

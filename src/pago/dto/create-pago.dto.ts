@@ -24,8 +24,4 @@ export class CreatePagoDto {
   @ApiProperty()
   @IsInt()
   estadoId: number;
-
-  @IsNotEmpty()
-  @ApiProperty({ type: () => [CreatePedidoDto] })
-  pedido: CreatePedidoDto[];
 }

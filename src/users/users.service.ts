@@ -59,6 +59,15 @@ export class UsersService {
             nombre: true,
             cuitCuil: true,
             imagenPerfil: true,
+            sucursal: {
+              select: {
+                id: true,
+                estadoId: true,
+                descripcion: true,
+                imagen: true,
+                nombre: true,
+              },
+            },
           },
         },
         comprador: {

@@ -8,7 +8,7 @@ import {
   Post,
   StreamableFile,
   UploadedFile,
-  UseInterceptors
+  UseInterceptors,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -19,7 +19,7 @@ import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('file')
 export class FileController {
-  constructor(private readonly configService: ConfigService) { }
+  constructor(private readonly configService: ConfigService) {}
 
   @Post('upload')
   @UseInterceptors(
@@ -63,16 +63,7 @@ export class FileController {
       },
     }),
   )
-  async uploadFile(
-    @UploadedFile() file: Express.Multer.File,
-    @Body()
-    body: {
-      tipo?: string;
-      sucursalId?: string;
-      productoId?: string;
-      categoriaId?: string;
-    },
-  ) {
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('No se proporcionó un archivo');
     }
