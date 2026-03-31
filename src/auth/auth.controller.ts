@@ -16,13 +16,17 @@ export class AuthController {
     return { token: userToken };
   }
 
+  // @Post('register')
+  // @Public()
+  // async register(@Body() registerDto: CreateUserDto) {
+  //   const userToken = await this.authService.registerUser(registerDto);
+  //   return { token: userToken };
+  // }
   @Post('register')
   @Public()
-  async register(@Body() registerDto: CreateUserDto) {
-    const userToken = await this.authService.registerUser(registerDto);
-    return { token: userToken };
+  register(@Body() registerDto: CreateUserDto) {
+    return this.authService.registerUser(registerDto);
   }
-
   @Get('profile')
   getProfile(@Req() req: Request) {
     return this.authService.getProfile(req);

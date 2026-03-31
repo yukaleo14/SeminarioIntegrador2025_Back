@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
@@ -18,6 +17,7 @@ import { UbicacionModule } from './ubicacion/ubicacion.module';
 import { PosicionModule } from './posicion/posicion.module';
 import { RepartidorModule } from './repartidor/repartidor.module';
 import { FileController } from './file/file.controller';
+import { StrategyModule } from './strategy/strategy.module';
 
 @Module({
   imports: [
@@ -40,8 +40,9 @@ import { FileController } from './file/file.controller';
     UbicacionModule,
     PosicionModule,
     RepartidorModule,
+    StrategyModule,
   ],
   controllers: [FileController],
-  providers: [PrismaService],
+  providers: [],
 })
 export class AppModule {}

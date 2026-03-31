@@ -47,8 +47,8 @@ export class CreateUserDto {
   @ApiProperty({ default: '', required: false })
   cuitCuil: string;
 
-  @ApiProperty({ required: false, default: Rol.CLIENTE })
-  rol?: Rol = Rol.CLIENTE;
+  @ApiProperty({ required: false, default: Rol.COMPRADOR })
+  rol?: Rol = Rol.COMPRADOR;
 
   @ApiProperty({ required: false })
   imagenPerfil?: string;
