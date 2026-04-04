@@ -3,10 +3,13 @@ import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiOperation } from '@nestjs/swagger';
+import { PedidoGateway } from './pedido.gateway';
 
 @Injectable()
 export class PedidoService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo pedido' })
@@ -71,10 +74,11 @@ export class PedidoService {
           rutaId: Number(createPedidoDto.rutaId),
           pagoId: Number(createPedidoDto.pagoId),
           estadoId: Number(createPedidoDto.estadoId),
-
           // detalle pedido
         },
       });
+
+
       return newPedido;
     } catch (error) {
       throw new HttpException(
@@ -97,6 +101,13 @@ export class PedidoService {
       },
     });
   }
+
+  findBySucursal(empresaId: number) {
+    return this.prisma.pedido.findMany({
+      where: { empresaId },
+    });
+  }
+
 
   async findOne(id: number) {
     const pedido = await this.prisma.pedido.findUnique({
