@@ -10,7 +10,7 @@ datasource db {
 model Usuario {
   id    Int    @id @default(autoincrement())
   mail String @unique
-  contraseña String
+  contrasena String
   rol Rol @default(COMPRADOR)
 
   empresa Empresa?
@@ -75,7 +75,7 @@ model Repartidor {
 // Chekeada
 model Categoria {
   id    Int    @id @default(autoincrement())
-  nombre  String @unique
+  nombre  String 
   imagen String? @default("")
   fechaHora DateTime @default(now())
   productos Producto[]
@@ -201,24 +201,24 @@ enum Nombre {
 // Chekeada
 model Pedido {
   id    Int    @id @default(autoincrement())
-  numero String @unique
-  horaLlegadaEstimada DateTime @unique
-  montoTotal Int @unique
-  tiempoPreparacionEstimado Int @unique
-  tiempoRepartoEstimado Int @unique
+  numero String 
+  horaLlegadaEstimada DateTime 
+  montoTotal Int 
+  tiempoPreparacionEstimado Int 
+  tiempoRepartoEstimado Int 
   fechaHora DateTime @default(now())
 
   comprador Comprador @relation(fields: [compradorId], references: [id])
-  compradorId Int @unique
+  compradorId Int 
 
   repartidor Repartidor @relation(fields: [repartidorId], references: [id])
-  repartidorId Int @unique
+  repartidorId Int 
 
   empresa Empresa @relation(fields: [empresaId], references: [id])
-  empresaId Int @unique
+  empresaId Int 
   
   ruta Ruta @relation(fields: [rutaId], references: [id])
-  rutaId Int @unique
+  rutaId Int 
 
   pago Pago @relation(fields: [pagoId], references: [id])
   pagoId Int
@@ -264,7 +264,7 @@ model Ubicacion {
   nombre String?
 
   posicion Posicion @relation(fields: [posicionId], references: [id], onDelete: Cascade)
-  posicionId Int @unique
+  posicionId Int 
   
   fechaHora DateTime @default(now())
   
