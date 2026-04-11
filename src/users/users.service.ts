@@ -20,13 +20,13 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const password = createUserDto.contraseña;
+    const password = createUserDto.contrasena;
     const saltOrRounds = 10;
     const hash = await bcrypt.hash(password, saltOrRounds);
     return await prisma.usuario.create({
       data: {
         mail: createUserDto.mail,
-        contraseña: hash,
+        contrasena: hash,
         rol: createUserDto.rol,
       },
     });

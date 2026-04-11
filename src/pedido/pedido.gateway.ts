@@ -12,10 +12,10 @@ import { PedidoService } from './pedido.service';
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:4200', // ← tu Angular
+    origin: ['http://localhost:4200'], // ← tu Angular
     credentials: true,
   },
-  namespace: 'pedidos', // opcional pero recomendado
+  namespace: '/pedidos', // opcional pero recomendado
 })
 export class PedidoGateway implements OnGatewayConnection, OnGatewayDisconnect {
 @WebSocketServer() server!: Server;
@@ -36,24 +36,24 @@ console.log(`Cliente conectado: ${client.id}`);
   @SubscribeMessage('joinCompanyRoom')
   async handleJoinCompanyRoom(
     @ConnectedSocket() client: Socket,
-    @MessageBody() companyId: string | number,   // Angular te enviará el id
+    @MessageBody() sucursalId: string | number,   // Angular te enviará el id
   ) {
     try {
-      const sucursalId = Number(companyId);
+      const id = Number(sucursalId);
 
-      if (isNaN(sucursalId)) {
+      if (isNaN(id)) {
         client.emit('error', { message: 'ID de sucursal inválido' });
         return;
       }
 
       // 1. Unir al cliente a la sala privada
-      const room = `company-${sucursalId}`;
+      const room = `company-${id}`;
       client.join(room);
 
       console.log(`Cliente ${client.id} se unió a la sala: ${room}`);
 
       // 2. Obtener los pedidos de esa sucursal
-      const pedidos = await this.pedidoService.findBySucursal(sucursalId);
+      const pedidos = await this.pedidoService.findBySucursal(id);
 
       // 3. Enviar SOLO a este cliente (no a toda la sala)
       client.emit('pedidosList', pedidos);
@@ -65,6 +65,16 @@ console.log(`Cliente conectado: ${client.id}`);
         details: error instanceof Error ? error.message : String(error),
       });
     }
+  }
+  // Método público para que el PedidoService pueda notificar a todos en la sala
+  notifyNewPedido(sucursalId: number, pedido: any) {
+    const room = `company-${sucursalId}`;
+    this.server.to(room).emit('nuevoPedido', pedido);   // nombre consistente
+  }
+
+  notifyPedidoActualizado(sucursalId: number, pedido: any) {
+    const room = `company-${sucursalId}`;
+    this.server.to(room).emit('pedidoActualizado', pedido);
   }
 
 }
