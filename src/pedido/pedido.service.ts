@@ -4,6 +4,7 @@ import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { PedidoGateway } from './pedido.gateway';
+import { Pedido } from '@prisma/client';
 
 @Injectable()
 export class PedidoService {
@@ -50,8 +51,8 @@ export class PedidoService {
         Comprador ID: ${createPedidoDto.compradorId}`);
     }
 
-    const existentePedido = await this.prisma.pedido.findUnique({
-      where: { numero: createPedidoDto.numero },
+    const existentePedido = await this.prisma.pedido.findFirst({
+      where: { numero: String(createPedidoDto.numero) },
     });
     if (existentePedido) {
       throw new Error(
@@ -107,7 +108,31 @@ export class PedidoService {
       where: { empresaId },
     });
   }
+  
+  async actualizarEstado(pedidoId: number, nuevoEstadoNombre: string): Promise<Pedido> {
+    const estado = await this.prisma.estado.findFirst({
+      where: {
+        nombre: nuevoEstadoNombre.toUpperCase().trim() as any,
+        ambito: 'PEDIDO',
+      },
+    });
+    if (!estado) {
+      throw new HttpException(`Estado '${nuevoEstadoNombre}' no encontrado para pedidos`, HttpStatus.NOT_FOUND);
+    }
 
+    const pedidoActualizado = await this.prisma.pedido.update({
+      where: { id: pedidoId },
+      data: { estadoId: estado.id },
+      include: {
+        estado: true,
+        repartidor: true,
+        empresa: true,
+      },
+    });
+
+    return pedidoActualizado;
+  }
+  
 
   async findOne(id: number) {
     const pedido = await this.prisma.pedido.findUnique({

@@ -109,7 +109,7 @@ model Sucursal {
   nombre  String
   descripcion String
   horario Horario[]
-  imagen String?
+  imagen String? @default("")
 
   empresa Empresa @relation(fields: [empresaId], references: [id])
   empresaId Int @unique
@@ -218,7 +218,7 @@ model Pedido {
   empresaId Int 
   
   ruta Ruta @relation(fields: [rutaId], references: [id])
-  rutaId Int 
+  rutaId Int @unique
 
   pago Pago @relation(fields: [pagoId], references: [id])
   pagoId Int
@@ -264,7 +264,7 @@ model Ubicacion {
   nombre String?
 
   posicion Posicion @relation(fields: [posicionId], references: [id], onDelete: Cascade)
-  posicionId Int 
+  posicionId Int @unique
   
   fechaHora DateTime @default(now())
   
