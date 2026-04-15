@@ -1,194 +1,91 @@
-# SeminarioIntegrador2025
+# SeminarioIntegrador2025 — Backend
 
-Aplicación basada de aplicaciones de pedidos de comida
+Backend de una aplicación de pedidos de comida a domicilio, desarrollado con **NestJS**, **MySQL 8** y **Prisma ORM**. Todo el entorno de desarrollo corre en Docker; no se requiere Node.js instalado localmente.
 
-# 🏗️ Proyecto NestJS + MySQL + Prisma
+## Requisitos previos
 
-Este proyecto es un backend desarrollado con **NestJS**, utilizando **MySQL** como base de datos y **Prisma** como ORM. La base de datos se levanta fácilmente con **Docker**, y las migraciones se gestionan con Prisma.
-
-## ⚡ Requisitos previos
-
-- [Node.js](https://nodejs.org/) >= 18
-- [npm](https://www.npmjs.com/)
-- [NestJS CLI](https://docs.nestjs.com/cli/overview) (`npm i -g @nestjs/cli`)
 - [Docker](https://www.docker.com/) y [Docker Compose](https://docs.docker.com/compose/)
 
 ---
 
-## 🛠️ Instalación del proyecto
+## Levantar el entorno
 
-### Instalar las dependencias de Node.js:
-
-```bash
-npm install
-```
-
-### Crear el archivo de variables de entorno .env en la raíz del proyecto
-
-DATABASE_URL: conexión usada por NestJS
-SHADOW_DATABASE_URL: conexión usada por Prisma Migrate para la shadow database
-
-## 🚀 Levantar la aplicación
-
-### 1 Levantar la base de datos con Docker
-
-Primero, iniciamos los contenedores definidos en `docker-compose.yml`:
+### Primera vez (o luego de borrar los volúmenes)
 
 ```bash
-sudo docker compose up -d
+docker compose up -d --build
 ```
 
-O podemos apagar los contenedores con
+Esto:
+1. Levanta MySQL y crea la base de datos `nestdb`
+2. Construye la imagen de la aplicación
+3. Ejecuta las migraciones de Prisma (`prisma migrate deploy`)
+4. Carga los datos iniciales (`prisma db seed`)
+5. Inicia el servidor en modo desarrollo con hot reload
+
+La API queda disponible en `http://localhost:3000/openapi` (Swagger UI).
+
+### Usos frecuentes
 
 ```bash
-sudo docker compose down
+# Iniciar contenedores (sin reconstruir)
+docker compose up -d
+
+# Ver logs en tiempo real
+docker compose logs -f app
+
+# Detener contenedores
+docker compose down
+
+# Detener y borrar volúmenes (reset completo de la BD)
+docker compose down -v
 ```
 
-agregando -v ademas de detener los contendedores, los borramos
+---
+
+## Variables de entorno
+
+La aplicación espera las siguientes variables, ya configuradas en `docker-compose.yml` para desarrollo:
+
+| Variable | Descripción |
+|---|---|
+| `DATABASE_URL` | Conexión principal usada por NestJS/Prisma |
+| `SHADOW_DATABASE_URL` | Base de datos sombra usada por `prisma migrate dev` |
+| `JWT_SECRET` | Clave para firmar tokens JWT |
+| `JWT_EXPIRES_IN` | Duración del token (ej. `3600s`) |
+
+Para entornos fuera de Docker, crear un archivo `.env` en la raíz con esos valores apuntando a `localhost`.
+
+---
+
+## Comandos útiles (dentro del contenedor)
 
 ```bash
-sudo docker compose down -v
+# Crear una nueva migración tras modificar prisma/schema.prisma
+docker compose exec app npx prisma migrate dev --name <nombre>
+
+# Regenerar el cliente de Prisma
+docker compose exec app npx prisma generate
+
+# Correr tests
+docker compose exec app npm run test
+
+# Ver la BD con Prisma Studio
+docker compose exec app npx prisma studio
 ```
 
-## Migraciones con Prisma
+---
 
-### 1 Crear y ejecutar migraciones según el schema definido en prisma/schema.prisma:
+## Arquitectura
 
-```bash
-npx prisma migrate dev --name init
-```
+El proyecto modela un marketplace de delivery con tres roles de usuario:
 
-### 2 Generar Prisma Client (para que NestJS pueda usarlo):
+- **Empresa** — restaurante/vendedor con sucursales y productos
+- **Comprador** — cliente que realiza pedidos
+- **Repartidor** — encargado de la entrega
 
-```bash
-npx prisma generate
-```
+Cada dominio (`pedido`, `producto`, `empresa`, etc.) tiene su propio módulo NestJS con controlador, servicio y DTOs. La autenticación es por JWT con un guard global; las rutas públicas se marcan con `@Public()`.
 
-### 3 Correr consulta.sql
+Los estados de pedidos, productos, pagos y sucursales se manejan a través de una entidad `Estado` con un campo `ambito` que actúa como discriminador (máquina de estados).
 
-Con este comando corremos la consulta sql que se encuentra en db/consulta.sql, en caso de dar error deberemos detener y borrar los contenedores, volverlos a crear, realizar puntos 1 y 2 de prisma y luego el siguiente comando:
-
-```bash
-sudo docker exec -i mysql_nest mysql -u root -prootpass nestdb < ./db/consulta.sql
-```
-
-Para windows
-
-```bash
-docker cp .\db\consulta.sql mysql_nest:/consulta.sql
-docker exec -i mysql_nest mysql -u root -prootpass nestdb -e "source /consulta.sql"
-
-```
-
-### Si cambiamos en el esquema y da error, correr el siguiente comando, luego volver al paso 1 de prisma
-
-```bash
-$ npx prisma migrate reset
-```
-
-### 4 Luego ya podemos correr el programa con
-
-```bash
-$ npm run start:dev
-```
-
-Podemos Acceder a la aplicacion con http://localhost:3000/openapi
-
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ npm install
-```
-
-## Compile and run the project
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Los datos iniciales (estados, formas de pago y categorías) se cargan automáticamente desde `prisma/seed.ts` al iniciar el contenedor.
