@@ -12,7 +12,24 @@ services:
       - '3307:3306'
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./db/consulta.sql:/docker-entrypoint-initdb.d/consulta.sql:ro
+
+  app:
+    build: .
+    container_name: nest_app
+    restart: always
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - mysql
+    environment:
+      DATABASE_URL: mysql://root:rootpass@mysql:3306/nestdb
+      SHADOW_DATABASE_URL: mysql://root:rootpass@mysql:3306/shadowdb
+      JWT_SECRET: devsecret
+      JWT_EXPIRES_IN: 3600s
+    command: sh -c "npx prisma migrate deploy && npx prisma db seed && npm run start:dev"
 
 volumes:
   mysql_data:
