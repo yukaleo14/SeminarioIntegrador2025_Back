@@ -61,4 +61,11 @@ export class RepartidorService {
   remove(id: number) {
     return `This action removes a #${id} repartidor`;
   }
+
+  // Buscar repartidor en base al id del usuario
+  async getRepartidorByUserId(usuarioId: number) {
+    return this.prisma.repartidor.findUnique({
+      where: { usuarioId },
+    });
+  }
 }

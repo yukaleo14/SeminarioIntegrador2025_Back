@@ -35,4 +35,8 @@ export default class EmpresaStrategy implements IRegister {
       );
     }
   }
+
+  async buscarNombre(id: number): Promise<any> {
+    return await this.empresaSvc.getEmpresaByUserId(id);
+  }
 }

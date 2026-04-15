@@ -129,4 +129,11 @@ export class CompradorService {
     });
     return 'Comprador eliminado correctamente';
   }
+
+  // Buscar comprador en base al id del usuario
+  async getCompradorByUserId(usuarioId: number) {
+    return this.prisma.comprador.findUnique({
+      where: { usuarioId },
+    });
+  }
 }

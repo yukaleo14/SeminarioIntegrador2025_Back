@@ -35,19 +35,19 @@ SHADOW_DATABASE_URL: conexión usada por Prisma Migrate para la shadow database
 Primero, iniciamos los contenedores definidos en `docker-compose.yml`:
 
 ```bash
-docker compose up -d
+sudo docker compose up -d
 ```
 
 O podemos apagar los contenedores con
 
 ```bash
-docker compose down
+sudo docker compose down
 ```
 
 agregando -v ademas de detener los contendedores, los borramos
 
 ```bash
-docker compose down -v
+sudo docker compose down -v
 ```
 
 ## Migraciones con Prisma

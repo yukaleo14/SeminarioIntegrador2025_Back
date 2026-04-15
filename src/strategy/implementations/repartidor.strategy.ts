@@ -38,4 +38,7 @@ export default class RepartidorStrategy implements IRegister {
       );
     }
   }
+  async buscarNombre(id: number): Promise<any> {
+    return await this.repartidorSvc.getRepartidorByUserId(id);
+  }
 }

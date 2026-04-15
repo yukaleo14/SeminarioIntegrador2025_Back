@@ -47,3 +47,126 @@ INSERT INTO Categoria (nombre, imagen) VALUES
   ('Bebidas', 'Bebidas.png'),
   ('Helados', 'Helados.png'),
   ('Panadería', 'Panadería.png');
+
+INSERT INTO `Pago` (`numero`, `monto`, `estadoId`)
+VALUES
+    ('PAGO-1001', 12500.50, (SELECT id FROM `Estado` WHERE ambito = 'PAGO' AND nombre = 'PENDIENTE' LIMIT 1)),
+    ('PAGO-1002', 8750.00,  (SELECT id FROM `Estado` WHERE ambito = 'PAGO' AND nombre = 'PENDIENTE' LIMIT 1)),
+    ('PAGO-1003', 23400.75, (SELECT id FROM `Estado` WHERE ambito = 'PAGO' AND nombre = 'PENDIENTE' LIMIT 1));
+
+INSERT INTO `Usuario` (`mail`, `rol`, `contrasena`)
+VALUES
+ ('u1@gmail.com', 'COMPRADOR', '123456'),
+ ('u2@gmail.com', 'EMPRESA', '123456'),
+ ('u3@gmail.com', 'REPARTIDOR', '123456');
+
+INSERT INTO `Posicion` (`coordenadaX`, `coordenadaY`) VALUES
+    (-34.603722, -58.381592),
+    (-34.609722, -58.382592),
+    (-34.610722, -58.383592);
+
+INSERT INTO `Ubicacion` (`calle`, `altura`, `nombre`, `posicionId`) VALUES
+    ('Calle Falsa', '123', 'Springfield', 1),
+    ('Avenida Siempre Viva', '742', 'Springfield', 2),
+    ('Calle Principal', '456', 'Shelbyville', 3);
+
+
+-- INSERT INTO `Comprador` (`nombre`, `apellido`, `cuitCuil`, `dni`, `telefono`, `ubicacionId`, `usuarioId`) VALUES
+--     ('Juan', 'Perez', '20-12345678-9', '12345678', '123456789', 1, 1),
+--     ('Maria', 'Gomez', '27-87654321-0', '87654321', '987654321', 2, 3),
+--     ('Carlos', 'Lopez', '20-11111111-2', '11111111', '555555555', 3, 2);
+--
+-- INSERT INTO `Empresa` (`nombre`, `cuitCuil`, `usuarioId`) VALUES
+--     ('Pizzeria La Estrella', '30-12345678-9', 1),
+--     ('Hamburguesería El Sabor', '30-87654321-0', 2),
+--     ('Sushi Bar Tokyo', '30-11111111-2', 3);
+--
+-- INSERT INTO `Repartidor` (`nombre`, `apellido`, `cuitCuil`, `dni`, `telefono`, `usuarioId`)
+-- VALUES
+--     ('Luis', 'Martinez', '20-12345678-9', '12345678', '123456789', 1),
+--     ('Ana', 'Rodriguez', '27-87654321-0', '87654321', '987654321', 2),
+--     ('Sofia', 'Garcia', '20-11111111-2', '11111111', '555555555', 3);
+-- ('Pedro', 'Gomez', '20-22222222-3', '22222222', '666666666', 3);
+
+INSERT INTO `Ruta` (`origenId`, `destinoId`, `tarifaDistancia`, `ubicacionId` ) VALUES
+    (1, 2, 50.00, 1),
+    (2, 3, 75.00, 2),
+    (3, 1, 100.00, 3);
+
+-- INSERT INTO `Pedido` (`numero`, `horaLlegadaEstimada`, `empresaId`, `rutaId`, `repartidorId`, `montoTotal`, `pagoId`,
+--                       `tiempoPreparacionEstimado`, `tiempoRepartoEstimado`, `estadoId`, `compradorId`)
+-- VALUES
+--     ('PED-1001', '2024-07-01 19:30:00', 1, 1, 1, 12500.50,(SELECT id FROM `Pago` WHERE numero = 'PAGO-1001' LIMIT 1), 30, 20,(SELECT id FROM `Estado` WHERE ambito = 'PEDIDO' AND nombre = 'CREADO' LIMIT 1), 1),
+--     ('PED-1002', '2024-07-01 20:00:00', 2, 2, 2, 8750.00, (SELECT id FROM `Pago` WHERE numero = 'PAGO-1002' LIMIT 1), 25, 15, (SELECT id FROM `Estado` WHERE ambito = 'PEDIDO' AND nombre = 'CREADO' LIMIT 1), 2),
+--     ('PED-1003', '2024-07-01 21:00:00', 3, 3, 3, 23400.75, (SELECT id FROM `Pago` WHERE numero = 'PAGO-1003' LIMIT 1), 40, 30, (SELECT id FROM `Estado` WHERE ambito = 'PEDIDO' AND nombre = 'CREADO' LIMIT 1), 3);
+-- ('PED-1004', '2024-07-01 23:00:00', 4, 3, 3, 23500.75, (SELECT id FROM `Pago` WHERE numero = 'PAGO-1003' LIMIT 1), 45, 35, (SELECT id FROM `Estado` WHERE ambito = 'PEDIDO' AND nombre = 'CREADO' LIMIT 1), 3);
+-- Crear comprador
+-- {
+--   "nombre": "gaspar",
+--   "apellido": "string",
+--   "mail": "comprador@gmail.com",
+--   "dni": "40973893",
+--   "contrasena": "123456",
+--   "telefono": "3534199746",
+--   "cuitCuil": "",
+--   "rol": "COMPRADOR",
+--   "imagenPerfil": "string",
+--   "altura": "string",
+--   "calle": "string",
+--   "nombreUbicacion": "string",
+--   "coordenadaX": 0,
+--   "coordenadaY": 0
+-- }
+-- Repartidor
+-- {
+--   "nombre": "repartidor",
+--   "apellido": "string",
+--   "mail": "repartidor@gmail.com",
+--   "dni": "40173893",
+--   "contrasena": "123456",
+--   "telefono": "3531199746",
+--   "cuitCuil": "",
+--   "rol": "REPARTIDOR",
+--   "imagenPerfil": "string",
+--   "altura": "string",
+--   "calle": "string",
+--   "nombreUbicacion": "string",
+--   "coordenadaX": 0,
+--   "coordenadaY": 0
+-- }
+-- Empresa
+-- {
+--   "nombre": "empresa",
+--   "apellido": "string",
+--   "mail": "empresa@gmail.com",
+--   "dni": "40113893",
+--   "contrasena": "123456",
+--   "telefono": "3531399746",
+--   "cuitCuil": "",
+--   "rol": "EMPRESA",
+--   "imagenPerfil": "string",
+--   "altura": "string",
+--   "calle": "string",
+--   "nombreUbicacion": "string",
+--   "coordenadaX": 0,
+--   "coordenadaY": 0
+-- }
+-- Pedido
+-- {
+--   "numero": "PED-1001",
+--   "fechaHoraPedido": "2026-04-13T15:56:45.492Z",
+--   "horaLlegadaEstimada": "2026-04-13T16:56:45.492Z",
+--   "montoTotal": 0,
+--   "tiempoPreparacionEstimado": 0,
+--   "tiempoRepartoEstimado": 0,
+--   "fechaHora": "2026-04-13T15:56:45.492Z",
+--   "compradorId": 1,
+--   "repartidorId": 1,
+--   "empresaId": 1,
+--   "rutaId": 1,
+--   "pagoId": 1,
+--   "estadoId": 1,
+--   "detalle": [
+--     {}
+--   ]
+-- }

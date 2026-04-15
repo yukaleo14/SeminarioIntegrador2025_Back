@@ -58,4 +58,11 @@ export class EmpresaService {
   remove(id: number) {
     return `This action removes a #${id} empresa`;
   }
+
+  // Buscar empresa en base al id del usuario
+  async getEmpresaByUserId(usuarioId: number) {
+    return this.prisma.empresa.findUnique({
+      where: { usuarioId },
+    });
+  }
 }

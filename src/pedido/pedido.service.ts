@@ -77,6 +77,7 @@ export class PedidoService {
       });
       return newPedido;
     } catch (error) {
+      console.log(error);
       throw new HttpException(
         `Error al crear el pedido:`,
         HttpStatus.INTERNAL_SERVER_ERROR,

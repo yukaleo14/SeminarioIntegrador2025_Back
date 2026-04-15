@@ -7,6 +7,7 @@ import {
   IsNumber,
   IsString,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreatePedidoDto {
   @IsNotEmpty()
@@ -15,6 +16,7 @@ export class CreatePedidoDto {
   numero: string;
 
   @IsDate()
+  @Type(() => Date)
   @IsNotEmpty()
   @ApiProperty({ required: true })
   fechaHoraPedido: Date;
@@ -40,6 +42,7 @@ export class CreatePedidoDto {
   tiempoRepartoEstimado: number;
 
   @IsDate()
+  @Type(() => Date)
   @IsNotEmpty()
   @ApiProperty({ required: true })
   fechaHora: Date;
