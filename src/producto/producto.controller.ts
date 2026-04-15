@@ -35,6 +35,12 @@ export class ProductoController {
     return this.productoService.findOne(id);
   }
 
+  @Get('categoria/:id')
+  @Public()
+  findAllByCategoria(@Param('id', ParseIntPipe) categoriaId: number) {
+    return this.productoService.findAllByCategoria(categoriaId);
+  }
+
   @Get('sucursal/')
   @Public()
   findAllBySucursalAndCategoria(
