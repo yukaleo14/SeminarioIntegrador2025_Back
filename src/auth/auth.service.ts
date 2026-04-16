@@ -6,21 +6,21 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { UsersService } from 'src/users/users.service';
+import { PrismaService } from './../prisma/prisma.service';
+import { CreateUserDto } from './../users/dto/create-user.dto';
+import { UsersService } from './../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { Request } from 'express';
-import { Comprador } from 'src/comprador/entities/comprador.entity';
-import { Empresa } from 'src/empresa/entities/empresa.entity';
+import { Comprador } from './../comprador/entities/comprador.entity';
+import { Empresa } from './../empresa/entities/empresa.entity';
 import { StrategyFactory } from '../strategy/strategy.factory';
 import { IRegister } from '../strategy/interfaces/IRegister.interface';
 
 @Injectable()
 export class AuthService {
-  public comprador: Comprador;
-  public empresa: Empresa;
-  public estrategia: IRegister;
+  public comprador!: Comprador;
+  public empresa!: Empresa;
+  public estrategia!: IRegister;
 
   constructor(
     private readonly jwtService: JwtService,

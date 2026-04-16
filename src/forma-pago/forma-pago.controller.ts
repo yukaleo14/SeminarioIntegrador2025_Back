@@ -11,7 +11,7 @@ import {
 import { FormaPagoService } from './forma-pago.service';
 import { CreateFormaPagoDto } from './dto/create-forma-pago.dto';
 import { UpdateFormaPagoDto } from './dto/update-forma-pago.dto';
-import { Public } from 'src/auth/decorators/public.decorator';
+import { Public } from './../auth/decorators/public.decorator';
 import { ApiCreatedResponse } from '@nestjs/swagger';
 import { FormaPago } from './entities/forma-pago.entity';
 

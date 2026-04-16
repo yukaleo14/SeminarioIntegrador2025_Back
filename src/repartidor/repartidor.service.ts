@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateRepartidorDto } from './dto/create-repartidor.dto';
 import { UpdateRepartidorDto } from './dto/update-repartidor.dto';
 import { Prisma } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from './../prisma/prisma.service';
 
 @Injectable()
 export class RepartidorService {

@@ -1,5 +1,5 @@
 import { IsNotEmpty } from "class-validator";
-import { CreatePedidoDto } from "src/pedido/dto/create-pedido.dto";
+import { CreatePedidoDto } from "./../../pedido/dto/create-pedido.dto";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateRutaDto {

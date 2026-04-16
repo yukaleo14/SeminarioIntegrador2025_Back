@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Post } from '@nestjs/common';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from './../prisma/prisma.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { PedidoGateway } from './pedido.gateway';
 import { Pedido } from '@prisma/client';
