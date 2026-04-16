@@ -10,7 +10,7 @@ datasource db {
 model Usuario {
   id    Int    @id @default(autoincrement())
   mail String @unique
-  contraseña String
+  contrasena String
   rol Rol @default(COMPRADOR)
 
   empresa Empresa?

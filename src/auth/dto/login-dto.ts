@@ -17,5 +17,5 @@ export class LoginDto {
   @MinLength(6)
   @MaxLength(20)
   @ApiProperty({ required: true })
-  contraseña: string;
+  contrasena: string;
 }

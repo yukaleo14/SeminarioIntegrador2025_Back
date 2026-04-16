@@ -41,7 +41,7 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const isMatch = await bcrypt.compare(loginDto.contraseña, user.contraseña);
+    const isMatch = await bcrypt.compare(loginDto.contrasena, user.contrasena);
     // Contraseña correcta
     if (isMatch) {
       return this.jwtService.sign({
@@ -58,12 +58,12 @@ export class AuthService {
   }
 
   async registerUser(registerDto: CreateUserDto) {
-    const { mail, contraseña, rol } = registerDto;
+    const { mail, contrasena: contrasena, rol } = registerDto;
     this.estrategia = this.strFactory.getStrategy(rol!.toString());
     await this.estrategia.registerUser(registerDto);
     const postValuesValidate = {
       mail,
-      contraseña,
+      contrasena,
     };
     const userToken = await this.validateUser(postValuesValidate);
     return userToken;

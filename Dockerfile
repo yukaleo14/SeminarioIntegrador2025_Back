@@ -17,7 +17,7 @@ COPY . .
 RUN npx prisma generate
 
 # Exponemos el puerto de Nest
-EXPOSE 3000
+EXPOSE 3000 5555
 
 # Comando de arranque (con migraciones incluidas)
-CMD ["sh", "-c", "npx prisma migrate deploy && npx prisma db seed && npm run start:dev"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss && npx prisma db seed && npm run start:dev"]
