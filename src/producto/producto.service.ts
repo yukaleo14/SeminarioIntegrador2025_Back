@@ -52,6 +52,7 @@ export class ProductoService {
         categoriaId: categoriaId,
       },
       select: {
+        id: true,
         nombre: true,
         precio: true,
         imagen: true,
