@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { PrismaService } from './../prisma/prisma.service';
+import { Sucursal } from '../sucursal/entities/sucursal.entity';
+import { Ubicacion } from '../ubicacion/entities/ubicacion.entity';
 
 @Injectable()
 export class ProductoService {
@@ -14,7 +16,20 @@ export class ProductoService {
       },
     });
     createProductoDto.estadoId = estadoPorDefecto!.id;
-    await this.prisma.producto.create({ data: createProductoDto });
+    await this.prisma.producto.create({
+      data: createProductoDto,
+      include: {
+        sucursal: {
+          include: {
+            ubicacion: {
+              include: {
+                posicion: true,
+              },
+            },
+          },
+        },
+      },
+    });
     return 'Producto creado correctamente';
   }
 

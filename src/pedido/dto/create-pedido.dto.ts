@@ -5,6 +5,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
 } from 'class-validator';
 
@@ -71,4 +72,13 @@ export class CreatePedidoDto {
   @IsArray()
   @ApiProperty({ required: true, type: [Object] })
   detalle: any[];
+
+  @IsNumber() origenLat: number;   // lat de la sucursal
+  @IsNumber() origenLng: number;   // lng de la sucursal
+  @IsNumber() destinoLat: number;  // lat del comprador
+  @IsNumber() destinoLng: number;  // lng del comprador
+
+  @IsOptional() @IsString() nombreSucursal?: string;
+  @IsOptional() @IsString() calleComprador?: string;
+  @IsOptional() @IsString() alturaComprador?: string;
 }

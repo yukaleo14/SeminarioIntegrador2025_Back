@@ -5,11 +5,13 @@ import { PrismaService } from './../prisma/prisma.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { PedidoGateway } from './pedido.gateway';
 import { Pedido } from '@prisma/client';
+import { RutaService } from '../ruta/ruta.service';
 
 @Injectable()
 export class PedidoService {
   constructor(
     private prisma: PrismaService,
+    private rutaService: RutaService,
   ) {}
 
   @Post()
@@ -60,6 +62,23 @@ export class PedidoService {
       );
     }
 
+    const ruta = await this.rutaService.crearRuta({
+      origen: {
+        coordenadas: {
+          lat: createPedidoDto.origenLat,
+          lng: createPedidoDto.origenLng,
+        },
+      },
+      destino: {
+        coordenadas: {
+          lat: createPedidoDto.destinoLat,
+          lng: createPedidoDto.destinoLng,
+        },
+        calle: createPedidoDto.calleComprador,
+        altura: createPedidoDto.alturaComprador,
+      },
+    });
+
     try {
       const newPedido = await this.prisma.pedido.create({
         data: {
@@ -72,7 +91,7 @@ export class PedidoService {
           compradorId: Number(createPedidoDto.compradorId),
           repartidorId: Number(createPedidoDto.repartidorId),
           empresaId: Number(createPedidoDto.empresaId),
-          rutaId: Number(createPedidoDto.rutaId),
+          rutaId: Number(ruta.id),
           pagoId: Number(createPedidoDto.pagoId),
           estadoId: Number(createPedidoDto.estadoId),
           // detalle pedido
@@ -80,7 +99,7 @@ export class PedidoService {
       });
 
 
-      return newPedido;
+      return { ...newPedido, rutaOsmr: ruta.osrm};
     } catch (error) {
       throw new HttpException(
         `Error al crear el pedido:`,
