@@ -3,6 +3,7 @@ import { PedidoService } from './pedido.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { PedidoGateway } from './pedido.gateway';
+import { Public } from '../auth/decorators/public.decorator';
 
 @Controller('pedido')
 export class PedidoController {
