@@ -12,7 +12,7 @@ import {
 import { ProductoService } from './producto.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
-import { Public } from 'src/auth/decorators/public.decorator';
+import { Public } from './../auth/decorators/public.decorator';
 
 @Controller('producto')
 export class ProductoController {
@@ -33,6 +33,12 @@ export class ProductoController {
   @Public()
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productoService.findOne(id);
+  }
+
+  @Get('categoria/:id')
+  @Public()
+  findAllByCategoria(@Param('id', ParseIntPipe) categoriaId: number) {
+    return this.productoService.findAllByCategoria(categoriaId);
   }
 
   @Get('sucursal/')

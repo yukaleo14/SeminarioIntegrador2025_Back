@@ -75,7 +75,7 @@ model Repartidor {
 // Chekeada
 model Categoria {
   id    Int    @id @default(autoincrement())
-  nombre  String @unique
+  nombre  String 
   imagen String? @default("")
   fechaHora DateTime @default(now())
   productos Producto[]
@@ -109,7 +109,7 @@ model Sucursal {
   nombre  String
   descripcion String
   horario Horario[]
-  imagen String?
+  imagen String? @default("")
 
   empresa Empresa @relation(fields: [empresaId], references: [id])
   empresaId Int @unique
@@ -201,21 +201,21 @@ enum Nombre {
 // Chekeada
 model Pedido {
   id    Int    @id @default(autoincrement())
-  numero String @unique
-  horaLlegadaEstimada DateTime @unique
-  montoTotal Int @unique
-  tiempoPreparacionEstimado Int @unique
-  tiempoRepartoEstimado Int @unique
+  numero String 
+  horaLlegadaEstimada DateTime 
+  montoTotal Int 
+  tiempoPreparacionEstimado Int 
+  tiempoRepartoEstimado Int 
   fechaHora DateTime @default(now())
 
   comprador Comprador @relation(fields: [compradorId], references: [id])
-  compradorId Int @unique
+  compradorId Int 
 
   repartidor Repartidor @relation(fields: [repartidorId], references: [id])
-  repartidorId Int @unique
+  repartidorId Int 
 
   empresa Empresa @relation(fields: [empresaId], references: [id])
-  empresaId Int @unique
+  empresaId Int 
   
   ruta Ruta @relation(fields: [rutaId], references: [id])
   rutaId Int @unique

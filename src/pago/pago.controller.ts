@@ -11,7 +11,7 @@ import {
 import { PagoService } from './pago.service';
 import { CreatePagoDto } from './dto/create-pago.dto';
 import { UpdatePagoDto } from './dto/update-pago.dto';
-import { Public } from 'src/auth/decorators/public.decorator';
+import { Public } from './../auth/decorators/public.decorator';
 import { ApiCreatedResponse } from '@nestjs/swagger';
 import { Pago } from './entities/pago.entity';
 

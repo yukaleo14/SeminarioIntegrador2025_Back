@@ -1,6 +1,11 @@
 import { IsNotEmpty } from "class-validator";
-import { CreatePedidoDto } from "src/pedido/dto/create-pedido.dto";
+import { CreatePedidoDto } from "./../../pedido/dto/create-pedido.dto";
 import { ApiProperty } from "@nestjs/swagger";
+
+export interface Coordenadas {
+    lat: number;
+    lng: number;
+}
 
 export class CreateRutaDto {
     
@@ -12,11 +17,21 @@ export class CreateRutaDto {
 
     @IsNotEmpty()
     @ApiProperty({ required: true })
-    origenId: number;
+    origen: {
+        coordenadas: Coordenadas; // [lat, lng]
+        nombre: string;
+        calle: string;
+        altura: string;
+    };
 
     @IsNotEmpty()
     @ApiProperty({ required: true })
-    destinoId: number;
+    destino: {
+        coordenadas: Coordenadas; // [lat, lng]
+        nombre: string;
+        calle: string;
+        altura: string;
+    };
 
     @IsNotEmpty()
     @ApiProperty({ required: true })

@@ -6,28 +6,21 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { UsersService } from 'src/users/users.service';
+import { PrismaService } from './../prisma/prisma.service';
+import { CreateUserDto } from './../users/dto/create-user.dto';
+import { UsersService } from './../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { Request } from 'express';
-import { use } from 'passport';
-import { CompradorService } from 'src/comprador/comprador.service';
-import { EmpresaService } from 'src/empresa/empresa.service';
-import { UbicacionService } from 'src/ubicacion/ubicacion.service';
-import { PosicionService } from 'src/posicion/posicion.service';
-import { Posicion } from 'src/posicion/entities/posicion.entity';
-import { Ubicacion } from 'src/ubicacion/entities/ubicacion.entity';
-import { Comprador } from 'src/comprador/entities/comprador.entity';
-import { Empresa } from 'src/empresa/entities/empresa.entity';
+import { Comprador } from './../comprador/entities/comprador.entity';
+import { Empresa } from './../empresa/entities/empresa.entity';
 import { StrategyFactory } from '../strategy/strategy.factory';
 import { IRegister } from '../strategy/interfaces/IRegister.interface';
 
 @Injectable()
 export class AuthService {
-  public comprador: Comprador;
-  public empresa: Empresa;
-  public estrategia: IRegister;
+  public comprador!: Comprador;
+  public empresa!: Empresa;
+  public estrategia!: IRegister;
 
   constructor(
     private readonly jwtService: JwtService,
@@ -65,7 +58,7 @@ export class AuthService {
   }
 
   async registerUser(registerDto: CreateUserDto) {
-    const { mail, contrasena: contrasena, rol } = registerDto;
+    const { mail, contrasena, rol } = registerDto;
     this.estrategia = this.strFactory.getStrategy(rol!.toString());
     await this.estrategia.registerUser(registerDto);
     const postValuesValidate = {

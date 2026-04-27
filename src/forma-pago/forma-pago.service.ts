@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateFormaPagoDto } from './dto/create-forma-pago.dto';
 import { UpdateFormaPagoDto } from './dto/update-forma-pago.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from './../prisma/prisma.service';
 
 @Injectable()
 export class FormaPagoService {

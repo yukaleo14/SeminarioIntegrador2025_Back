@@ -11,7 +11,7 @@ import {
 import { SucursalService } from './sucursal.service';
 import { CreateSucursalDto } from './dto/create-sucursal.dto';
 import { UpdateSucursalDto } from './dto/update-sucursal.dto';
-import { Public } from 'src/auth/decorators/public.decorator';
+import { Public } from './../auth/decorators/public.decorator';
 
 @Controller('sucursal')
 export class SucursalController {

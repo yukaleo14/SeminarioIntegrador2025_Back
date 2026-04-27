@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePosicionDto } from './dto/create-posicion.dto';
 import { UpdatePosicionDto } from './dto/update-posicion.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from './../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 
 @Injectable()

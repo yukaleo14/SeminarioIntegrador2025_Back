@@ -1,13 +1,18 @@
 import { HttpException, HttpStatus, Injectable, Post } from '@nestjs/common';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from './../prisma/prisma.service';
 import { ApiOperation } from '@nestjs/swagger';
-import { DetallePedidoService } from 'src/detalle-pedido/detalle-pedido.service';
+import { PedidoGateway } from './pedido.gateway';
+import { Pedido } from '@prisma/client';
+import { RutaService } from '../ruta/ruta.service';
 
 @Injectable()
 export class PedidoService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private rutaService: RutaService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo pedido' })
@@ -48,14 +53,31 @@ export class PedidoService {
         Comprador ID: ${createPedidoDto.compradorId}`);
     }
 
-    const existentePedido = await this.prisma.pedido.findUnique({
-      where: { numero: createPedidoDto.numero },
+    const existentePedido = await this.prisma.pedido.findFirst({
+      where: { numero: String(createPedidoDto.numero) },
     });
     if (existentePedido) {
       throw new Error(
         `Ya existe un pedido con el numero ${createPedidoDto.numero}`,
       );
     }
+
+    const ruta = await this.rutaService.crearRuta({
+      origen: {
+        coordenadas: {
+          lat: createPedidoDto.origenLat,
+          lng: createPedidoDto.origenLng,
+        },
+      },
+      destino: {
+        coordenadas: {
+          lat: createPedidoDto.destinoLat,
+          lng: createPedidoDto.destinoLng,
+        },
+        calle: createPedidoDto.calleComprador,
+        altura: createPedidoDto.alturaComprador,
+      },
+    });
 
     try {
       const newPedido = await this.prisma.pedido.create({
@@ -69,30 +91,15 @@ export class PedidoService {
           compradorId: Number(createPedidoDto.compradorId),
           repartidorId: Number(createPedidoDto.repartidorId),
           empresaId: Number(createPedidoDto.empresaId),
-          rutaId: Number(createPedidoDto.rutaId),
+          rutaId: Number(ruta.id),
           pagoId: Number(createPedidoDto.pagoId),
           estadoId: Number(createPedidoDto.estadoId),
-          detalle: {
-            create: createPedidoDto.detalle.map((detalle) => ({
-              cantidad: detalle.cantidad,
-              montoSubtotal: detalle.montoSubtotal,
-              fechaHora: detalle.fechaHora,
-              productoId: detalle.productoId,
-            })),
+          // detalle pedido
         },
-      },
-      include:
-        {
-          detalle: true,
-          cliente: true,
-          delivery: true,
-          company: true,
-          ruta: true,
-          pago: true,
-          estado: true,
-        }
-    });
-      return newPedido;
+      });
+
+
+      return { ...newPedido, rutaOsmr: ruta.osrm};
     } catch (error) {
       throw new HttpException(
         `Error al crear el pedido:`,
@@ -114,6 +121,37 @@ export class PedidoService {
       },
     });
   }
+
+  findBySucursal(empresaId: number) {
+    return this.prisma.pedido.findMany({
+      where: { empresaId },
+    });
+  }
+  
+  async actualizarEstado(pedidoId: number, nuevoEstadoNombre: string): Promise<Pedido> {
+    const estado = await this.prisma.estado.findFirst({
+      where: {
+        nombre: nuevoEstadoNombre.toUpperCase().trim() as any,
+        ambito: 'PEDIDO',
+      },
+    });
+    if (!estado) {
+      throw new HttpException(`Estado '${nuevoEstadoNombre}' no encontrado para pedidos`, HttpStatus.NOT_FOUND);
+    }
+
+    const pedidoActualizado = await this.prisma.pedido.update({
+      where: { id: pedidoId },
+      data: { estadoId: estado.id },
+      include: {
+        estado: true,
+        repartidor: true,
+        empresa: true,
+      },
+    });
+
+    return pedidoActualizado;
+  }
+  
 
   async findOne(id: number) {
     const pedido = await this.prisma.pedido.findUnique({

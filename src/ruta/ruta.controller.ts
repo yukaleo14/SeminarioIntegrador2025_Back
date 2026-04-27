@@ -2,19 +2,16 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { RutaService } from './ruta.service';
 import { CreateRutaDto } from './dto/create-ruta.dto';
 import { UpdateRutaDto } from './dto/update-ruta.dto';
+import { ApiOperation } from '@nestjs/swagger/dist/decorators/api-operation.decorator';
 
 @Controller('ruta')
 export class RutaController {
   constructor(private readonly rutaService: RutaService) {}
 
   @Post()
-  create(@Body() createRutaDto: CreateRutaDto) {
-    return this.rutaService.create(createRutaDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.rutaService.findAll();
+  @ApiOperation({ summary: 'Calcular y persistir una ruta desde OSRM' })
+  create(@Body() dto: CreateRutaDto) {
+    return this.rutaService.crearRuta(dto);
   }
 
   @Get(':id')
@@ -22,13 +19,5 @@ export class RutaController {
     return this.rutaService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRutaDto: UpdateRutaDto) {
-    return this.rutaService.update(+id, updateRutaDto);
-  }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.rutaService.remove(+id);
-  }
 }

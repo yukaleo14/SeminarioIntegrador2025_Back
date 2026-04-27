@@ -15,7 +15,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { createReadStream, existsSync, mkdirSync, unlinkSync } from 'fs';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
-import { Public } from 'src/auth/decorators/public.decorator';
+import { Public } from './../auth/decorators/public.decorator';
 
 @Controller('file')
 export class FileController {
