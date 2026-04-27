@@ -43,10 +43,9 @@ export class ProductoController {
   ) {
     return this.productoService.findAllBySucursalAndCategoria(
       sucursalId,
-      categoriaId
+      categoriaId,
     );
   }
-
 
   @Patch(':id')
   update(

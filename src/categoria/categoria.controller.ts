@@ -34,6 +34,12 @@ export class CategoriaController {
     return this.categoriaService.findOne(id);
   }
 
+  @Get('sucursal/:id')
+  @Public()
+  findAllBySucursal(@Param('id', ParseIntPipe) id: number) {
+    return this.categoriaService.findAllBySucursal(id);
+  }
+
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,

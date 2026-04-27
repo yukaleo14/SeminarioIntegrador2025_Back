@@ -2,15 +2,22 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ProductoService } from 'src/producto/producto.service';
 
 @Injectable()
 export class CategoriaService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private productoSvc: ProductoService,
+  ) {}
 
   async create(createCategoriaDto: CreateCategoriaDto) {
     try {
       // Validar que los productos existan (opcional, pero recomendado)
-      if (createCategoriaDto.productoIds && createCategoriaDto.productoIds.length > 0) {
+      if (
+        createCategoriaDto.productoIds &&
+        createCategoriaDto.productoIds.length > 0
+      ) {
         for (const productoId of createCategoriaDto.productoIds) {
           const producto = await this.prisma.producto.findUnique({
             where: { id: Number(productoId) },
@@ -40,9 +47,29 @@ export class CategoriaService {
       });
 
       return newCategoria;
-    } catch (error) {
-      //throw new Error(`Error al crear la categoría: ${error.message}`);
+    } catch (error: any) {
+      throw new Error(`Error al crear la categoría: ${error}`);
     }
+  }
+
+  async findAllBySucursal(idSucursal: number) {
+    const productos = await this.productoSvc.findAllBySucursal(idSucursal);
+    const categorias = new Set<number>();
+    productos.forEach((prod) => {
+      categorias.add(prod.categoriaId);
+    });
+    return await this.prisma.categoria.findMany({
+      where: {
+        id: {
+          in: Array.from(categorias),
+        },
+      },
+      select: {
+        id: true,
+        nombre: true,
+        imagen: true,
+      },
+    });
   }
 
   async findAll() {

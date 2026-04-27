@@ -24,11 +24,8 @@ export class PagoService {
         numero: createPagoDto.numero,
         monto: createPagoDto.monto,
         fechaHora: createPagoDto.fechaHora,
-        estado: {
-          connect: { id: estadoPorDefecto.id },
-        },
+        estadoId: createPagoDto.estadoId,
       },
-      include: {  estado: true },
     });
     return 'Pago creado correctamente';
   }
@@ -62,7 +59,7 @@ export class PagoService {
           connect: { id: updatePagoDto.estadoId },
         },
       },
-      include: {  estado: true },
+      include: { estado: true },
     });
     return 'Pago actualizado correctamente';
   }

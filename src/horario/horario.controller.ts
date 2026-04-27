@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { HorarioService } from './horario.service';
 import { CreateHorarioDto } from './dto/create-horario.dto';
@@ -20,9 +21,9 @@ export class HorarioController {
     return this.horarioService.create(createHorarioDto);
   }
 
-  @Get()
-  findAll() {
-    return this.horarioService.findAll();
+  @Get('sucursal/:idSucursal')
+  async findAll(@Param('idSucursal', ParseIntPipe) idSucursal: number) {
+    return await this.horarioService.findAllByIdSucursal(idSucursal);
   }
 
   @Get(':id')

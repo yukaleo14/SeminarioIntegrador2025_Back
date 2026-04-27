@@ -30,17 +30,20 @@ INSERT INTO Estado (fechaHora, ambito, nombre) VALUES
 
 INSERT INTO FormaPago (nombre) VALUES
   ('Debito'),
+  ('Efectivo'),
   ('Credito'),
   ('Mercado Pago');
 
 INSERT INTO Categoria (nombre, imagen) VALUES
-  ('Bebidas', ''),
-  ('Snacks', ''),
-  ('Lacteos', ''),
-  ('Carnes', ''),
-  ('Frutas', ''),
-  ('Verduras', ''),
-  ('Panificados', ''),
-  ('Dulces', ''),
-  ('Congelados', ''),
-  ('Comidas Preparadas', '');
+  ('Hamburguesas', 'Hamburguesas.png'),
+  ('Pizzas', 'Pizzas.png'),
+  ('Empanadas', 'Empanadas.png'),
+  ('Lomitos', 'Lomitos.png'),
+  ('Sushi', 'Sushi.png'),
+  ('Ensaladas', 'Ensaladas.png'),
+  ('Pastas', 'Pastas.png'),
+  ('Postres', 'Postres.png'),
+  ('Vegano', 'Vegano.png'),
+  ('Bebidas', 'Bebidas.png'),
+  ('Helados', 'Helados.png'),
+  ('Panadería', 'Panadería.png');

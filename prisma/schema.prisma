@@ -10,8 +10,8 @@ datasource db {
 model Usuario {
   id    Int    @id @default(autoincrement())
   mail String @unique
-  contraseña String
-  rol Rol @default(CLIENTE)
+  contrasena String
+  rol Rol @default(COMPRADOR)
 
   empresa Empresa?
   comprador Comprador?
@@ -19,7 +19,7 @@ model Usuario {
 }
 
 enum Rol {
-  CLIENTE
+  COMPRADOR
   REPARTIDOR
   EMPRESA
 }

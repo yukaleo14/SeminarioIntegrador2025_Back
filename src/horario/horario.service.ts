@@ -8,20 +8,23 @@ import { Horario } from '@prisma/client';
 export class HorarioService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createHorarioDto: CreateHorarioDto): Promise<Horario> {
+  async create(createHorarioDto: CreateHorarioDto): Promise<string> {
     try {
-      const newHorario = await this.prisma.horario.create({
+      await this.prisma.horario.create({
         data: createHorarioDto,
       });
-      return newHorario;
+      return 'Horario Creado Correctamente';
     } catch (error) {
       console.error('Error al crear horario:', error);
       throw error;
     }
   }
 
-  findAll() {
-    return this.prisma.horario.findMany({
+  async findAllByIdSucursal(idSucursal: number) {
+    return await this.prisma.horario.findMany({
+      where: {
+        sucursalId: idSucursal,
+      },
       select: {
         id: true,
         dia: true,

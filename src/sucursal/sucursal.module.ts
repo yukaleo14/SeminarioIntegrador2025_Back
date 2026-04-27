@@ -2,18 +2,13 @@ import { Module } from '@nestjs/common';
 import { SucursalService } from './sucursal.service';
 import { SucursalController } from './sucursal.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { PosicionService } from 'src/posicion/posicion.service';
-import { UbicacionService } from 'src/ubicacion/ubicacion.service';
-import { ProductoService } from 'src/producto/producto.service';
+import { ProductoModule } from '../producto/producto.module';
+import { UbicacionModule } from '../ubicacion/ubicacion.module';
+import { PosicionModule } from '../posicion/posicion.module';
 
 @Module({
   controllers: [SucursalController],
-  providers: [
-    SucursalService,
-    PosicionService,
-    UbicacionService,
-    ProductoService,
-  ],
-  imports: [PrismaModule],
+  providers: [SucursalService],
+  imports: [PrismaModule, ProductoModule, UbicacionModule, PosicionModule],
 })
 export class SucursalModule {}

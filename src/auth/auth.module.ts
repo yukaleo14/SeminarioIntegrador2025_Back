@@ -7,41 +7,28 @@ import { ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { UsersService } from 'src/users/users.service';
-import { CompradorService } from 'src/comprador/comprador.service';
-import { EmpresaService } from 'src/empresa/empresa.service';
-import { UbicacionService } from 'src/ubicacion/ubicacion.service';
-import { PosicionService } from 'src/posicion/posicion.service';
-import { RepartidorService } from 'src/repartidor/repartidor.service';
+import { StrategyModule } from '../strategy/strategy.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
     PassportModule,
     PrismaModule,
+    StrategyModule,
+    UsersModule,
     JwtModule.registerAsync({
       // Configuración asíncrona del módulo JWT
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
+        secret: configService.getOrThrow<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '1h',
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          expiresIn: configService.getOrThrow<string>('JWT_EXPIRES_IN') as any,
         },
       }),
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    JwtStrategy,
-    JwtAuthGuard,
-    PrismaService,
-    UsersService,
-    CompradorService,
-    EmpresaService,
-    UbicacionService,
-    PosicionService,
-    RepartidorService,
-  ],
+  providers: [AuthService, JwtStrategy, JwtAuthGuard],
 })
 export class AuthModule {}
