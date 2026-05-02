@@ -29,7 +29,7 @@ services:
       SHADOW_DATABASE_URL: mysql://root:rootpass@mysql:3306/shadowdb
       JWT_SECRET: devsecret
       JWT_EXPIRES_IN: 3600s
-    command: sh -c "npx prisma migrate deploy && npx prisma db seed && npm run start:dev"
+    command: sh -c "npx prisma migrate deploy && npm run start:dev"
 
 volumes:
   mysql_data:

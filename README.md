@@ -31,6 +31,9 @@ La API queda disponible en `http://localhost:3000/openapi` (Swagger UI).
 # Iniciar contenedores (sin reconstruir)
 docker compose up -d
 
+# Si se hicieron cambios en el código y queremos reconstruir
+docker compose up --build  
+
 # Ver logs en tiempo real
 docker compose logs -f app
 
@@ -72,6 +75,10 @@ docker compose exec app npm run test
 
 # Ver la BD con Prisma Studio
 docker compose exec app npx prisma studio
+
+# Cargar datos desde un archivo SQL
+docker cp .\db\consulta.sql mysql_nest:/consulta.sql
+docker exec -i mysql_nest mysql -u root -prootpass nestdb -e "source /consulta.sql"
 ```
 
 ---
