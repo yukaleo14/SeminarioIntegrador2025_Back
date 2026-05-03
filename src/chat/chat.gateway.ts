@@ -24,7 +24,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) { }
 
   async handleDisconnect(client: Socket) {
-    console.log('Cliente desconectado', client.id);
     await this.chatService.handleDisconnect(client, this.server);
   }
 
@@ -37,7 +36,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() { pedidoId }: { pedidoId: number },
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('Entro a la sala', pedidoId);
     this.chatService.handleJoinRoom({ pedidoId }, client, this.server);
   }
 

@@ -3,10 +3,11 @@ import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiOperation } from '@nestjs/swagger';
+import { Rol } from '@prisma/client';
 
 @Injectable()
 export class PedidoService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo pedido' })
@@ -97,6 +98,26 @@ export class PedidoService {
         empresa: { select: { id: true, nombre: true } },
       },
     });
+  }
+
+  // Buscar si el usuario tiene pedidos asociados (sea como comprador, repartidor o empresa)
+  async findUserPedidoByUserId(userId: number, rol: Rol): Promise<boolean> {
+    let compradorPedidos: any = null;
+    let repartidorPedidos: any = null;
+    console.log('Buscando pedidos para usuarioId:', userId, 'con rol:', rol);
+    if (rol === Rol.COMPRADOR) {
+      compradorPedidos = await this.prisma.pedido.findFirst({
+        where: { compradorId: userId },
+      });
+    }
+
+    if (rol === Rol.REPARTIDOR) {
+      repartidorPedidos = await this.prisma.pedido.findFirst({
+        where: { repartidorId: userId },
+      });
+    }
+
+    return !!(compradorPedidos || repartidorPedidos);
   }
 
   async findOne(id: number) {

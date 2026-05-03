@@ -68,4 +68,18 @@ export class RepartidorService {
       where: { usuarioId },
     });
   }
+
+  async getRepartidorIdByUserId(usuarioId: number) {
+    const repartidor = await this.prisma.repartidor.findUnique({
+      where: { usuarioId },
+      select: { id: true },
+    });
+    if (!repartidor) {
+      throw new HttpException(
+        'Repartidor no encontrado para el usuario dado',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return repartidor?.id;
+  }
 }

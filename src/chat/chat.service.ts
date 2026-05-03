@@ -8,7 +8,7 @@ import { StrategyFactory } from 'src/strategy/strategy.factory';
 interface user {
     id: number;
     mail: string;
-    rol: 'COMPRADOR' | 'REPARTIDOR';
+    rol: 'COMPRADOR' | 'REPARTIDOR' | 'EMPRESA';
     iat: number;
     exp: number;
 }
@@ -36,7 +36,6 @@ export class ChatService {
     }
 
     handleConnection(client: Socket) {
-        console.log('Cliente conectado', client.id);
         // const token = client.handshake.auth.token;
         const token: string = client.handshake.auth?.token || client.handshake.query?.token;
 
@@ -53,12 +52,29 @@ export class ChatService {
             client.emit('error', { message: 'Invalid or expired token' });
             console.log('Error: ', e);
         }
-        console.log('cliente: ', client.data.user);
     }
 
     async handleJoinRoom({ pedidoId }: { pedidoId: number }, client: Socket, server: Server) {
         const user: user = client.data.user;
+        if(user.rol === 'EMPRESA') {
+            client.emit('error', { message: 'Las empresas no pueden unirse a salas de chat' });
+            return;
+        }
+        // Validar pedido existe
         const pedido = await this.pedidoSvc.findOne(pedidoId);
+        if (!pedido) {
+            client.emit('error', { message: 'Pedido no encontrado' });
+            return;
+        }
+        // Validar que el usuario tenga acceso al pedido
+        this.estrategia = this.strFactory.getStrategy(user.rol.toString());
+        const idPersona: any = await this.estrategia.getPersonByUserId(user.id);
+        const hasAccess = await this.pedidoSvc.findUserPedidoByUserId(idPersona, user.rol);
+        if (!hasAccess) {
+            client.emit('error', { message: 'No tienes acceso a este pedido' });
+            return;
+        }
+
         const roomName = `pedido-${pedidoId}`;
         await client.join(roomName);
         const sockets = await server.in(roomName).fetchSockets();

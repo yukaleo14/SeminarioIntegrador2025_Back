@@ -6,7 +6,7 @@ import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CompradorService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(
     createCompradorDto: CreateCompradorDto,
@@ -135,5 +135,17 @@ export class CompradorService {
     return this.prisma.comprador.findUnique({
       where: { usuarioId },
     });
+  }
+
+  // Buscar comprador segun usuarioId y retornar solo el nombre completo
+  async getCompradorIdByUserId(usuarioId: number) {
+    const comprador = await this.prisma.comprador.findUnique({
+      where: { usuarioId },
+      select: { id: true },
+    });
+    if (!comprador) {
+      throw new HttpException('Comprador no encontrado', HttpStatus.NOT_FOUND);
+    }
+    return comprador.id;
   }
 }

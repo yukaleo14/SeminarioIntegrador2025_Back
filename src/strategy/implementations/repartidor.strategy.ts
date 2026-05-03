@@ -41,4 +41,8 @@ export default class RepartidorStrategy implements IRegister {
   async buscarNombre(id: number): Promise<any> {
     return await this.repartidorSvc.getRepartidorByUserId(id);
   }
+
+  async getPersonByUserId(id: number): Promise<any> {
+    return await this.repartidorSvc.getRepartidorIdByUserId(id);
+  }
 }

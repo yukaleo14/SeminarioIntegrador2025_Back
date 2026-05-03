@@ -6,7 +6,7 @@ import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class EmpresaService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
   async create(
     createEmpresaDto: CreateEmpresaDto,
     tx?: Prisma.TransactionClient,
@@ -64,5 +64,19 @@ export class EmpresaService {
     return this.prisma.empresa.findUnique({
       where: { usuarioId },
     });
+  }
+
+  async getEmpresaIdByUserId(usuarioId: number) {
+    const empresa = await this.prisma.empresa.findUnique({
+      where: { usuarioId },
+      select: { id: true },
+    });
+    if (!empresa) {
+      throw new HttpException(
+        'Empresa no encontrada para el usuario dado',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return empresa?.id;
   }
 }
