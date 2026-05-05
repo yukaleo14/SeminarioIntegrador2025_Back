@@ -8,7 +8,7 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { PedidoService } from './pedido.service';
+import { PedidoService } from '../pedido/pedido.service';
 
 @WebSocketGateway({
   cors: {
