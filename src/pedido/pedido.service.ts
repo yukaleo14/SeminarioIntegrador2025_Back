@@ -3,9 +3,10 @@ import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { PrismaService } from './../prisma/prisma.service';
 import { ApiOperation } from '@nestjs/swagger';
-import { PedidoGateway } from './pedido.gateway';
+import { PedidoGateway } from '../websocket/pedido.gateway';
 import { Pedido } from '@prisma/client';
 import { RutaService } from '../ruta/ruta.service';
+import { connect } from 'http2';
 
 @Injectable()
 export class PedidoService {
@@ -20,19 +21,19 @@ export class PedidoService {
     const estadoExists = await this.prisma.estado.findUnique({
       where: { id: Number(createPedidoDto.estadoId) },
     });
-    const deliveryExists = await this.prisma.estado.findUnique({
+    const deliveryExists = await this.prisma.repartidor.findUnique({
       where: { id: Number(createPedidoDto.repartidorId) },
     });
-    const companyExists = await this.prisma.estado.findUnique({
+    const companyExists = await this.prisma.empresa.findUnique({
       where: { id: Number(createPedidoDto.empresaId) },
     });
-    const rutaExists = await this.prisma.estado.findUnique({
+    const rutaExists = await this.prisma.ruta.findUnique({
       where: { id: Number(createPedidoDto.rutaId) },
     });
-    const pagoExists = await this.prisma.estado.findUnique({
+    const pagoExists = await this.prisma.pago.findUnique({
       where: { id: Number(createPedidoDto.pagoId) },
     });
-    const usuarioExists = await this.prisma.estado.findUnique({
+    const usuarioExists = await this.prisma.usuario.findUnique({
       where: { id: Number(createPedidoDto.compradorId) },
     });
 
@@ -62,25 +63,11 @@ export class PedidoService {
       );
     }
 
-    const ruta = await this.rutaService.crearRuta({
-      origen: {
-        coordenadas: {
-          lat: createPedidoDto.origenLat,
-          lng: createPedidoDto.origenLng,
-        },
-      },
-      destino: {
-        coordenadas: {
-          lat: createPedidoDto.destinoLat,
-          lng: createPedidoDto.destinoLng,
-        },
-        calle: createPedidoDto.calleComprador,
-        altura: createPedidoDto.alturaComprador,
-      },
-    });
+    
 
     try {
-      const newPedido = await this.prisma.pedido.create({
+      const rutaCreada = await this.rutaService.crearRuta(createPedidoDto.infoRuta);
+      return await this.prisma.pedido.create({
         data: {
           numero: createPedidoDto.numero,
           horaLlegadaEstimada: createPedidoDto.horaLlegadaEstimada,
@@ -88,21 +75,33 @@ export class PedidoService {
           tiempoPreparacionEstimado: createPedidoDto.tiempoPreparacionEstimado,
           tiempoRepartoEstimado: createPedidoDto.tiempoRepartoEstimado,
           fechaHora: createPedidoDto.fechaHora,
+
           compradorId: Number(createPedidoDto.compradorId),
           repartidorId: Number(createPedidoDto.repartidorId),
           empresaId: Number(createPedidoDto.empresaId),
-          rutaId: Number(ruta.id),
+          rutaId: rutaCreada.id,
           pagoId: Number(createPedidoDto.pagoId),
           estadoId: Number(createPedidoDto.estadoId),
-          // detalle pedido
+
+          detalle: {
+            create: createPedidoDto.detalle.map((item) => ({
+              cantidad: item.cantidad,
+              montoSubtotal: item.montoSubtotal,
+              producto: { connect: { id: item.productoId } }
+            })),
+          },
         },
+        include: {
+          ruta: true,
+          detalle: true,
+          
+        }, 
       });
 
-
-      return { ...newPedido, rutaOsmr: ruta.osrm};
     } catch (error) {
+      console.error('ERROR REAL AL CREAR PEDIDO:', error); // Esto te mostrará el error en la terminal
       throw new HttpException(
-        `Error al crear el pedido:`,
+        `Error al crear el pedido:`, // Esto enviará el detalle a Angular
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

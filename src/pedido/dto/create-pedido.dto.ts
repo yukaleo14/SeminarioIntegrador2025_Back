@@ -1,13 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsDate,
+  IsDateString,
   IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
+  Validate,
+  ValidateNested,
 } from 'class-validator';
+import { CreateRutaDto } from '../../ruta/dto/create-ruta.dto';
 
 export class CreatePedidoDto {
   @IsNotEmpty()
@@ -15,14 +20,8 @@ export class CreatePedidoDto {
   @ApiProperty({ required: true })
   numero: string;
 
-  @IsDate()
-  @IsNotEmpty()
-  @ApiProperty({ required: true })
-  fechaHoraPedido: Date;
-
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ required: true })
   horaLlegadaEstimada: string;
 
   @IsNumber()
@@ -32,18 +31,16 @@ export class CreatePedidoDto {
 
   @IsNumber()
   @IsNotEmpty()
-  @ApiProperty({ required: true })
   tiempoPreparacionEstimado: number;
 
   @IsNumber()
   @IsNotEmpty()
-  @ApiProperty({ required: true })
   tiempoRepartoEstimado: number;
 
-  @IsDate()
+  @IsDateString()
   @IsNotEmpty()
   @ApiProperty({ required: true })
-  fechaHora: Date;
+  fechaHora: string;
 
   @IsInt()
   @ApiProperty({ required: true })
@@ -61,6 +58,13 @@ export class CreatePedidoDto {
   @ApiProperty({ required: true })
   rutaId: number;
 
+  @IsNotEmpty()
+  @ValidateNested()
+  infoRuta: {
+        origen: { coordenadas: { lat: number; lng: number }; calle: string };
+        destino: { coordenadas: { lat: number; lng: number }; calle: string };
+    };
+
   @IsInt()
   @ApiProperty({ required: true })
   pagoId: number;
@@ -70,15 +74,10 @@ export class CreatePedidoDto {
   estadoId: number;
 
   @IsArray()
-  @ApiProperty({ required: true, type: [Object] })
-  detalle: any[];
-
-  @IsNumber() origenLat: number;   // lat de la sucursal
-  @IsNumber() origenLng: number;   // lng de la sucursal
-  @IsNumber() destinoLat: number;  // lat del comprador
-  @IsNumber() destinoLng: number;  // lng del comprador
-
-  @IsOptional() @IsString() nombreSucursal?: string;
-  @IsOptional() @IsString() calleComprador?: string;
-  @IsOptional() @IsString() alturaComprador?: string;
+  @ApiProperty({ type: [Object] })
+  detalle: {
+    productoId: number;
+    cantidad: number;
+    montoSubtotal: number;
+  }[];
 }
