@@ -2,10 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { PedidoService } from './pedido.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
-import { PedidoGateway } from './pedido.gateway';
+import { PedidoGateway } from '../websocket/pedido.gateway';
 import { Public } from '../auth/decorators/public.decorator';
 
-@Controller('pedido')
+@Controller('pedidos')
 export class PedidoController {
   constructor(private readonly pedidoService: PedidoService, private readonly pedidoGateway: PedidoGateway) {}
 

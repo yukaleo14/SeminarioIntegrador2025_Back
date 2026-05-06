@@ -8,7 +8,7 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { PedidoService } from './pedido.service';
+import { PedidoService } from '../pedido/pedido.service';
 
 @WebSocketGateway({
   cors: {
@@ -23,9 +23,29 @@ export class PedidoGateway implements OnGatewayConnection, OnGatewayDisconnect {
 constructor(private readonly pedidoService: PedidoService) {}
 
   // Cuando el cliente (empresa) se conecta
-handleConnection(client: Socket) {
-console.log(`Cliente conectado: ${client.id}`);
-    // Aquí puedes agregar autenticación JWT más adelante
+  handleConnection(client: Socket) {
+  console.log(`Cliente conectado: ${client.id}`);
+      // Aquí puedes agregar autenticación JWT más adelante
+  }
+
+  @SubscribeMessage('joinPedidoRoom')
+  handleJoinPedidoRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { pedidoId: string | number },
+  ) {
+    const room = `pedido-${data.pedidoId}`;
+    client.join(room);
+    console.log(`Cliente ${client.id} se unió al seguimiento del pedido: ${room}`);
+  }
+
+  @SubscribeMessage('actualizarGps')
+  handleActualizarGps(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { pedidoId: string | number, lat: number, lng: number },
+  ) {
+    const room = `pedido-${data.pedidoId}`;
+    this.server.to(room).emit('posicionActualizada', { lat: data.lat, lng: data.lng });
+    console.log(`Actualización GPS para ${room}: (${data.lat}, ${data.lng})`);
   }
 
   handleDisconnect(client: Socket) {
