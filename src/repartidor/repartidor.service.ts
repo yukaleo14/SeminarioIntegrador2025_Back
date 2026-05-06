@@ -61,4 +61,25 @@ export class RepartidorService {
   remove(id: number) {
     return `This action removes a #${id} repartidor`;
   }
+
+  // Buscar repartidor en base al id del usuario
+  async getRepartidorByUserId(usuarioId: number) {
+    return this.prisma.repartidor.findUnique({
+      where: { usuarioId },
+    });
+  }
+
+  async getRepartidorIdByUserId(usuarioId: number) {
+    const repartidor = await this.prisma.repartidor.findUnique({
+      where: { usuarioId },
+      select: { id: true },
+    });
+    if (!repartidor) {
+      throw new HttpException(
+        'Repartidor no encontrado para el usuario dado',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return repartidor?.id;
+  }
 }

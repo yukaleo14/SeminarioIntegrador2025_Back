@@ -6,6 +6,7 @@ import { ApiOperation } from '@nestjs/swagger';
 import { PedidoGateway } from './pedido.gateway';
 import { Pedido } from '@prisma/client';
 import { RutaService } from '../ruta/ruta.service';
+import { Rol } from '@prisma/client';
 
 @Injectable()
 export class PedidoService {
@@ -101,6 +102,7 @@ export class PedidoService {
 
       return { ...newPedido, rutaOsmr: ruta.osrm};
     } catch (error) {
+      console.log(error);
       throw new HttpException(
         `Error al crear el pedido:`,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -152,6 +154,26 @@ export class PedidoService {
     return pedidoActualizado;
   }
   
+
+  // Buscar si el usuario tiene pedidos asociados (sea como comprador, repartidor o empresa)
+  async findUserPedidoByUserId(userId: number, rol: Rol): Promise<boolean> {
+    let compradorPedidos: any = null;
+    let repartidorPedidos: any = null;
+    console.log('Buscando pedidos para usuarioId:', userId, 'con rol:', rol);
+    if (rol === Rol.COMPRADOR) {
+      compradorPedidos = await this.prisma.pedido.findFirst({
+        where: { compradorId: userId },
+      });
+    }
+
+    if (rol === Rol.REPARTIDOR) {
+      repartidorPedidos = await this.prisma.pedido.findFirst({
+        where: { repartidorId: userId },
+      });
+    }
+
+    return !!(compradorPedidos || repartidorPedidos);
+  }
 
   async findOne(id: number) {
     const pedido = await this.prisma.pedido.findUnique({

@@ -35,7 +35,7 @@ services:
       DATABASE_URL: mysql://root:rootpass@mysql:3306/nestdb
       JWT_SECRET: devsecret
       JWT_EXPIRES_IN: 3600s
-    command: sh -c "npx prisma migrate deploy  && npm run start:dev"
+    command: sh -c "npx prisma migrate deploy && npm run start:dev"
 
 volumes:
   mysql_data:

@@ -11,7 +11,7 @@ export default class EmpresaStrategy implements IRegister {
     private prisma: PrismaService,
     private userService: UsersService,
     private empresaSvc: EmpresaService,
-  ) {}
+  ) { }
   async registerUser(registerDto: CreateUserDto): Promise<any> {
     const { nombre, cuitCuil, imagenPerfil } = registerDto;
     try {
@@ -34,5 +34,13 @@ export default class EmpresaStrategy implements IRegister {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  async buscarNombre(id: number): Promise<any> {
+    return await this.empresaSvc.getEmpresaByUserId(id);
+  }
+
+  async getPersonByUserId(id: number): Promise<any> {
+    return await this.empresaSvc.getEmpresaIdByUserId(id);
   }
 }

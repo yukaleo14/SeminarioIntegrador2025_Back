@@ -18,6 +18,7 @@ import { PosicionModule } from './posicion/posicion.module';
 import { RepartidorModule } from './repartidor/repartidor.module';
 import { FileController } from './file/file.controller';
 import { StrategyModule } from './strategy/strategy.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { StrategyModule } from './strategy/strategy.module';
     PosicionModule,
     RepartidorModule,
     StrategyModule,
+    ChatModule,
   ],
   controllers: [FileController],
   providers: [],

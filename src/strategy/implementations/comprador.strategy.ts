@@ -84,4 +84,12 @@ export default class CompradorStrategy implements IRegister {
       );
     }
   }
+
+  async buscarNombre(id: number): Promise<any> {
+    return await this.compradorSvc.getCompradorByUserId(id);
+  }
+
+  async getPersonByUserId(id: number): Promise<any> {
+    return await this.compradorSvc.getCompradorIdByUserId(id);
+  }
 }

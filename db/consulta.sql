@@ -49,22 +49,20 @@ INSERT INTO Categoria (nombre, imagen) VALUES
   ('Vegano', 'Vegano.png'),
   ('Bebidas', 'Bebidas.png'),
   ('Helados', 'Helados.png'),
-  ('Panadería', 'Panaderia.png');
+  ('Panadería', 'Panadería.png');
 
+INSERT INTO `Pago` (`numero`, `monto`, `estadoId`)
+VALUES
+    ('PAGO-1001', 12500.50, (SELECT id FROM `Estado` WHERE ambito = 'PAGO' AND nombre = 'PENDIENTE' LIMIT 1)),
+    ('PAGO-1002', 8750.00,  (SELECT id FROM `Estado` WHERE ambito = 'PAGO' AND nombre = 'PENDIENTE' LIMIT 1)),
+    ('PAGO-1003', 23400.75, (SELECT id FROM `Estado` WHERE ambito = 'PAGO' AND nombre = 'PENDIENTE' LIMIT 1));
 
--- =============================================
--- 3. USUARIOS (CORREGIDO)
--- =============================================
-INSERT INTO `Usuario` (`mail`, `rol`, `contrasena`) VALUES
- ('u1@gmail.com', 'COMPRADOR', '$2b$10$EjemploHashAquiNoUsarEnProduccion'),
- ('u2@gmail.com', 'EMPRESA',   '$2b$14$EjemploHashAquiNoUsarEnProduccion'),
- ('u3@gmail.com', 'REPARTIDOR','$2b$11$EjemploHashAquiNoUsarEnProduccion'),
- ('u5@gmail.com', 'COMPRADOR', '$2b$10$EjemploHashAquiNoUsarEnProduccion');
+INSERT INTO `Usuario` (`mail`, `rol`, `contrasena`)
+VALUES
+ ('u1@gmail.com', 'COMPRADOR', '123456'),
+ ('u2@gmail.com', 'EMPRESA', '123456'),
+ ('u3@gmail.com', 'REPARTIDOR', '123456');
 
-
--- =============================================
--- 4. POSICIONES y UBICACIONES
--- =============================================
 INSERT INTO `Posicion` (`coordenadaX`, `coordenadaY`) VALUES
     (-34.603722, -58.381592),
     (-34.609722, -58.382592),

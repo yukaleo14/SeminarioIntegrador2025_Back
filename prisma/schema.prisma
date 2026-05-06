@@ -8,13 +8,13 @@ datasource db {
 }
 
 model Usuario {
-  id    Int    @id @default(autoincrement())
-  mail String @unique
+  id         Int    @id @default(autoincrement())
+  mail       String @unique
   contrasena String
-  rol Rol @default(COMPRADOR)
+  rol        Rol    @default(COMPRADOR)
 
-  empresa Empresa?
-  comprador Comprador?
+  empresa    Empresa?
+  comprador  Comprador?
   repartidor Repartidor?
 }
 
@@ -26,48 +26,48 @@ enum Rol {
 
 // Cheakeada
 model Empresa {
-  id    Int    @id @default(autoincrement())
-  nombre  String @unique
-  cuitCuil String @unique
+  id           Int     @id @default(autoincrement())
+  nombre       String  @unique
+  cuitCuil     String  @unique
   imagenPerfil String?
 
-  pedidos Pedido[]
-  usuario Usuario @relation(fields: [usuarioId], references: [id])
-  usuarioId Int @unique
-  sucursal Sucursal?
+  pedidos   Pedido[]
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id])
+  usuarioId Int       @unique
+  sucursal  Sucursal?
 }
 
 // Chekeada
 model Comprador {
-  id    Int    @id @default(autoincrement())
-  nombre  String
-  apellido String
-  cuitCuil String @unique
-  dni   String @unique
-  telefono String @unique
+  id           Int     @id @default(autoincrement())
+  nombre       String
+  apellido     String
+  cuitCuil     String  @unique
+  dni          String  @unique
+  telefono     String  @unique
   imagenPerfil String?
 
-  ubicacion Ubicacion @relation(fields: [ubicacionId], references: [id])
-  ubicacionId Int 
+  ubicacion   Ubicacion @relation(fields: [ubicacionId], references: [id])
+  ubicacionId Int
 
-  usuario Usuario @relation(fields: [usuarioId], references: [id])
-  usuarioId Int @unique
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int     @unique
 
   pedidos Pedido[]
 }
 
 // Chekeada
 model Repartidor {
-  id    Int    @id @default(autoincrement())
-  nombre  String
-  apellido String
-  cuitCuil String @unique
-  dni   String @unique
-  telefono String @unique
+  id           Int     @id @default(autoincrement())
+  nombre       String
+  apellido     String
+  cuitCuil     String  @unique
+  dni          String  @unique
+  telefono     String  @unique
   imagenPerfil String?
 
-  usuario Usuario @relation(fields: [usuarioId], references: [id])
-  usuarioId Int @unique
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int     @unique
 
   pedidos Pedido[]
 }
@@ -83,21 +83,20 @@ model Categoria {
 
 // Chekeada
 model Producto {
-  id    Int    @id @default(autoincrement())
-  nombre  String
-  precio Float
-  imagen String?
+  id                        Int     @id @default(autoincrement())
+  nombre                    String
+  precio                    Float
+  imagen                    String?
   tiempoPreparacionEstimado Int
-  descripcion String
+  descripcion               String
 
-
-  sucursal Sucursal @relation(fields: [sucursalId], references: [id])
+  sucursal   Sucursal @relation(fields: [sucursalId], references: [id])
   sucursalId Int
 
-  categoria Categoria @relation(fields: [categoriaId], references: [id])
+  categoria   Categoria @relation(fields: [categoriaId], references: [id])
   categoriaId Int
 
-  estado Estado @relation(fields: [estadoId], references: [id])
+  estado   Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
 
   detalleDePedido DetalleDePedido[]
@@ -105,33 +104,35 @@ model Producto {
 
 // Chekeada
 model Sucursal {
-  id    Int    @id @default(autoincrement())
-  nombre  String
+  id          Int       @id @default(autoincrement())
+  nombre      String
   descripcion String
-  horario Horario[]
-  imagen String? @default("")
+  horario     Horario[]
+  imagen      String?
 
-  empresa Empresa @relation(fields: [empresaId], references: [id])
-  empresaId Int @unique
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+  empresaId Int     @unique
 
-  ubicacion Ubicacion @relation(fields: [ubicacionId], references: [id])
+  ubicacion   Ubicacion @relation(fields: [ubicacionId], references: [id])
   ubicacionId Int
 
-  estado Estado @relation(fields: [estadoId], references: [id])
+  estado   Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
 
   productos Producto[]
 }
+
 // Chekeada
 model Horario {
   id    Int    @id @default(autoincrement())
   desde String // 21
   hasta String // 24
 
-  sucursal Sucursal @relation(fields: [sucursalId], references: [id])
+  sucursal   Sucursal @relation(fields: [sucursalId], references: [id])
   sucursalId Int
-  dia Dia
+  dia        Dia
 }
+
 // Chekeada
 enum Dia {
   LUNES
@@ -145,13 +146,12 @@ enum Dia {
 
 // Chekeada
 model Pago {
-  id    Int    @id @default(autoincrement())
-  numero String @unique
+  id        Int      @id @default(autoincrement())
+  numero    String   @unique
   fechaHora DateTime @default(now())
-  monto Float
-  
-  
-  estado Estado @relation(fields: [estadoId], references: [id])
+  monto     Float
+
+  estado   Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
 
   pedido Pedido[]
@@ -159,21 +159,20 @@ model Pago {
 
 // Chekeada
 model FormaPago {
-  id    Int  @id @default(autoincrement())
+  id     Int    @id @default(autoincrement())
   nombre String
-
 }
 
 // Chekeada
-model Estado { 
-  id    Int    @id @default(autoincrement())
+model Estado {
+  id        Int      @id @default(autoincrement())
   fechaHora DateTime @default(now())
-  ambito Ambito
-  nombre Nombre 
+  ambito    Ambito
+  nombre    Nombre
 
   sucursal Sucursal[]
-  pago Pago[]
-  pedido Pedido[]
+  pago     Pago[]
+  pedido   Pedido[]
   producto Producto[]
 }
 
@@ -220,62 +219,63 @@ model Pedido {
   ruta Ruta @relation(fields: [rutaId], references: [id])
   rutaId Int @unique
 
-  pago Pago @relation(fields: [pagoId], references: [id])
+  pago   Pago @relation(fields: [pagoId], references: [id])
   pagoId Int
 
-  estado Estado @relation(fields: [estadoId], references: [id])
+  estado   Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
 
   detalle DetalleDePedido[]
-
 }
 
 // Chekeada
 model DetalleDePedido {
-  id    Int    @id @default(autoincrement())
-  cantidad Int
+  id            Int      @id @default(autoincrement())
+  cantidad      Int
   montoSubtotal Float
-  fechaHora DateTime @default(now())
+  fechaHora     DateTime @default(now())
 
-  pedido Pedido @relation(fields: [pedidoId], references: [id])
+  pedido   Pedido @relation(fields: [pedidoId], references: [id])
   pedidoId Int
 
-  producto Producto @relation(fields: [productoId], references: [id])
+  producto   Producto @relation(fields: [productoId], references: [id])
   productoId Int
 }
 
 //TODO: Falta ABM para rutas y ubicaciones
 // chekeada
 model Ruta {
-  id    Int    @id @default(autoincrement())
+  id              Int       @id @default(autoincrement())
   tarifaDistancia Float
-  pedido Pedido?
-  origen Ubicacion @relation("OrigenUbicacion", fields: [origenId], references: [id])
-  origenId Int
-  destino Ubicacion @relation("DestinoUbicacion", fields: [destinoId], references: [id])
-  destinoId Int
-  ubicacionId Int
+  pedido          Pedido?
+  origen          Ubicacion @relation("OrigenUbicacion", fields: [origenId], references: [id])
+  origenId        Int
+  destino         Ubicacion @relation("DestinoUbicacion", fields: [destinoId], references: [id])
+  destinoId       Int
+  ubicacionId     Int
 }
+
 //Chekeada
 model Ubicacion {
-  id    Int    @id @default(autoincrement())
+  id     Int     @id @default(autoincrement())
   altura String?
-  calle String?
+  calle  String?
   nombre String?
 
-  posicion Posicion @relation(fields: [posicionId], references: [id], onDelete: Cascade)
-  posicionId Int @unique
-  
+  posicion   Posicion @relation(fields: [posicionId], references: [id], onDelete: Cascade)
+  posicionId Int      @unique
+
   fechaHora DateTime @default(now())
-  
-  sucursal Sucursal[]
-  origen Ruta[] @relation("OrigenUbicacion")
-  destino Ruta[] @relation("DestinoUbicacion")
+
+  sucursal  Sucursal[]
+  origen    Ruta[]      @relation("OrigenUbicacion")
+  destino   Ruta[]      @relation("DestinoUbicacion")
   comprador Comprador[]
 }
+
 //Chekeada
 model Posicion {
-  id    Int    @id @default(autoincrement())
+  id          Int   @id @default(autoincrement())
   coordenadaX Float
   coordenadaY Float
 
