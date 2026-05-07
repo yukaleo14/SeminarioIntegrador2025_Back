@@ -217,7 +217,7 @@ model Pedido {
   empresaId Int 
   
   ruta Ruta @relation(fields: [rutaId], references: [id])
-  rutaId Int @unique
+  rutaId Int
 
   pago   Pago @relation(fields: [pagoId], references: [id])
   pagoId Int
@@ -247,12 +247,12 @@ model DetalleDePedido {
 model Ruta {
   id              Int       @id @default(autoincrement())
   tarifaDistancia Float
-  pedido          Pedido?
-  origen          Ubicacion @relation("OrigenUbicacion", fields: [origenId], references: [id])
-  origenId        Int
-  destino         Ubicacion @relation("DestinoUbicacion", fields: [destinoId], references: [id])
-  destinoId       Int
-  ubicacionId     Int
+  pedido Pedido[]
+  origen Ubicacion @relation("OrigenUbicacion", fields: [origenId], references: [id])
+  origenId Int
+  destino Ubicacion @relation("DestinoUbicacion", fields: [destinoId], references: [id])
+  destinoId Int
+  ubicacionId Int
 }
 
 //Chekeada
