@@ -48,17 +48,16 @@ export class ProductoService {
   findAllBySucursalAndCategoria(sucursalId: number, categoriaId: number) {
     if (!sucursalId) return this.findAllByCategoria(categoriaId);
     if (!categoriaId) return this.findAllBySucursal(sucursalId);
-    if (!sucursalId && !categoriaId)
-      return this.prisma.producto.findMany({
-        where: {
-          sucursalId: sucursalId,
-          categoriaId: categoriaId,
-        },
-        include: {
-          categoria: true,
-          estado: true,
-        },
-      });
+    return this.prisma.producto.findMany({
+      where: {
+        sucursalId: sucursalId,
+        categoriaId: categoriaId,
+      },
+      include: {
+        categoria: true,
+        estado: true,
+      },
+    });
   }
 
   async findAllByCategoria(categoriaId: number) {

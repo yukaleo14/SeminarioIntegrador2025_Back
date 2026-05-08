@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { RepartidorService } from './repartidor.service';
 import { CreateRepartidorDto } from './dto/create-repartidor.dto';
 import { UpdateRepartidorDto } from './dto/update-repartidor.dto';
@@ -23,7 +31,10 @@ export class RepartidorController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRepartidorDto: UpdateRepartidorDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateRepartidorDto: UpdateRepartidorDto,
+  ) {
     return this.repartidorService.update(+id, updateRepartidorDto);
   }
 

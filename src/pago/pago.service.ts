@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePagoDto } from './dto/create-pago.dto';
 import { UpdatePagoDto } from './dto/update-pago.dto';
 import { PrismaService } from './../prisma/prisma.service';
@@ -8,26 +8,25 @@ export class PagoService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createPagoDto: CreatePagoDto) {
-    const estadoPorDefecto = await this.prisma.estado.findFirst({
-      where: {
-        ambito: 'PAGO',
-        nombre: 'PENDIENTE',
-      },
+    const estadoPendiente = await this.prisma.estado.findFirst({
+      where: { ambito: 'PAGO', nombre: 'PENDIENTE' },
     });
 
-    if (!estadoPorDefecto) {
-      return 'Estado por defecto no existe';
+    if (!estadoPendiente) {
+      throw new HttpException(
+        'Estado PAGO/PENDIENTE no encontrado en la base de datos',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
-    await this.prisma.pago.create({
+    return this.prisma.pago.create({
       data: {
         numero: createPagoDto.numero,
         monto: createPagoDto.monto,
-        fechaHora: createPagoDto.fechaHora,
-        estadoId: createPagoDto.estadoId,
+        fechaHora: createPagoDto.fechaHora ?? new Date(),
+        estadoId: estadoPendiente.id,
       },
     });
-    return 'Pago creado correctamente';
   }
 
   async findAll() {

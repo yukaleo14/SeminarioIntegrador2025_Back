@@ -19,9 +19,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server!: Server;
 
-  constructor(
-    private readonly chatService: ChatService,
-  ) { }
+  constructor(private readonly chatService: ChatService) {}
 
   async handleDisconnect(client: Socket) {
     await this.chatService.handleDisconnect(client, this.server);

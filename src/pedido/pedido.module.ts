@@ -8,9 +8,7 @@ import { RutaModule } from '../ruta/ruta.module';
 @Module({
   imports: [PrismaModule, RutaModule], // Importamos RutaModule para usar RutaService
   controllers: [PedidoController],
-  providers: [
-    PedidoService,
-    PedidoGateway,
-  ],
+  providers: [PedidoService, PedidoGateway],
+  exports: [PedidoService],
 })
 export class PedidoModule {}

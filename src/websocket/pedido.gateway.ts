@@ -18,14 +18,14 @@ import { PedidoService } from '../pedido/pedido.service';
   namespace: '/pedidos', // opcional pero recomendado
 })
 export class PedidoGateway implements OnGatewayConnection, OnGatewayDisconnect {
-@WebSocketServer() server!: Server;
+  @WebSocketServer() server!: Server;
 
-constructor(private readonly pedidoService: PedidoService) {}
+  constructor(private readonly pedidoService: PedidoService) {}
 
   // Cuando el cliente (empresa) se conecta
   handleConnection(client: Socket) {
-  console.log(`Cliente conectado: ${client.id}`);
-      // Aquí puedes agregar autenticación JWT más adelante
+    console.log(`Cliente conectado: ${client.id}`);
+    // Aquí puedes agregar autenticación JWT más adelante
   }
 
   @SubscribeMessage('joinPedidoRoom')
@@ -35,16 +35,21 @@ constructor(private readonly pedidoService: PedidoService) {}
   ) {
     const room = `pedido-${data.pedidoId}`;
     client.join(room);
-    console.log(`Cliente ${client.id} se unió al seguimiento del pedido: ${room}`);
+    console.log(
+      `Cliente ${client.id} se unió al seguimiento del pedido: ${room}`,
+    );
   }
 
   @SubscribeMessage('actualizarGps')
   handleActualizarGps(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { pedidoId: string | number, lat: number, lng: number },
+    @MessageBody()
+    data: { pedidoId: string | number; lat: number; lng: number },
   ) {
     const room = `pedido-${data.pedidoId}`;
-    this.server.to(room).emit('posicionActualizada', { lat: data.lat, lng: data.lng });
+    this.server
+      .to(room)
+      .emit('posicionActualizada', { lat: data.lat, lng: data.lng });
     console.log(`Actualización GPS para ${room}: (${data.lat}, ${data.lng})`);
   }
 
@@ -56,7 +61,7 @@ constructor(private readonly pedidoService: PedidoService) {}
   @SubscribeMessage('joinCompanyRoom')
   async handleJoinCompanyRoom(
     @ConnectedSocket() client: Socket,
-    @MessageBody() sucursalId: string | number,   // Angular te enviará el id
+    @MessageBody() sucursalId: string | number, // Angular te enviará el id
   ) {
     try {
       const id = Number(sucursalId);
@@ -77,10 +82,9 @@ constructor(private readonly pedidoService: PedidoService) {}
 
       // 3. Enviar SOLO a este cliente (no a toda la sala)
       client.emit('pedidosList', pedidos);
-
     } catch (error) {
       console.error('Error al obtener pedidos en WebSocket:', error);
-      client.emit('error', { 
+      client.emit('error', {
         message: 'Error al cargar los pedidos',
         details: error instanceof Error ? error.message : String(error),
       });
@@ -89,12 +93,11 @@ constructor(private readonly pedidoService: PedidoService) {}
   // Método público para que el PedidoService pueda notificar a todos en la sala
   notifyNewPedido(sucursalId: number, pedido: any) {
     const room = `company-${sucursalId}`;
-    this.server.to(room).emit('nuevoPedido', pedido);   // nombre consistente
+    this.server.to(room).emit('nuevoPedido', pedido); // nombre consistente
   }
 
   notifyPedidoActualizado(sucursalId: number, pedido: any) {
     const room = `company-${sucursalId}`;
     this.server.to(room).emit('pedidoActualizado', pedido);
   }
-
 }

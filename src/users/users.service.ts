@@ -59,7 +59,7 @@ export class UsersService {
             nombre: true,
             cuitCuil: true,
             imagenPerfil: true,
-            sucursal: {
+            sucursales: {
               select: {
                 id: true,
                 estadoId: true,
@@ -111,14 +111,18 @@ export class UsersService {
     const user = await this.prisma.usuario.findUnique({
       where: { mail: payload.mail },
       select: {
-        nombre: true,
         mail: true,
         rol: true,
-        dni: true,
-        telefono: true,
-        cuit: true,
+        comprador: {
+          select: { nombre: true, apellido: true, dni: true, telefono: true },
+        },
+        repartidor: {
+          select: { nombre: true, apellido: true, dni: true, telefono: true },
+        },
+        empresa: { select: { nombre: true, cuitCuil: true } },
       },
     });
+    return user;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {

@@ -28,7 +28,8 @@ export interface CreateRutaDto {
 @Injectable()
 export class RutaService {
   // API pública de OSRM — sin API key, gratuita
-  private readonly OSRM_BASE = 'https://router.project-osrm.org/route/v1/driving';
+  private readonly OSRM_BASE =
+    'https://router.project-osrm.org/route/v1/driving';
 
   constructor(
     private prisma: PrismaService,
@@ -48,7 +49,6 @@ export class RutaService {
       const response = await firstValueFrom(this.httpService.get<any>(url));
       const data = response.data;
 
-
       if (data.code !== 'Ok' || !data.routes?.length) {
         throw new HttpException(
           'OSRM no pudo calcular la ruta',
@@ -60,7 +60,7 @@ export class RutaService {
       return {
         distanciaKm: +(route.distance / 1000).toFixed(2),
         duracionMin: +(route.duration / 60).toFixed(1),
-        geometria: route.geometry,          // GeoJSON LineString → para el mapa
+        geometria: route.geometry, // GeoJSON LineString → para el mapa
         pasos: route.legs[0].steps.map((s: any) => ({
           instruccion: s.maneuver.instruction ?? s.name,
           distanciaM: s.distance,
@@ -154,7 +154,8 @@ export class RutaService {
         pedido: true,
       },
     });
-    if (!ruta) throw new HttpException('Ruta no encontrada', HttpStatus.NOT_FOUND);
+    if (!ruta)
+      throw new HttpException('Ruta no encontrada', HttpStatus.NOT_FOUND);
     return ruta;
   }
 }

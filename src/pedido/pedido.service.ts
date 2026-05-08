@@ -3,11 +3,9 @@ import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { PrismaService } from './../prisma/prisma.service';
 import { ApiOperation } from '@nestjs/swagger';
-import { PedidoGateway } from '../websocket/pedido.gateway';
-import { Pedido } from '@prisma/client';
 import { RutaService } from '../ruta/ruta.service';
-import { connect } from 'http2';
 import { Rol } from '@prisma/client';
+import { Pedido } from './entities/pedido.entity';
 
 @Injectable()
 export class PedidoService {
@@ -19,17 +17,42 @@ export class PedidoService {
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo pedido' })
   async create(createPedidoDto: CreatePedidoDto) {
-    const estadoExists = await this.prisma.estado.findUnique({
-      where: { id: Number(createPedidoDto.estadoId) },
+    const estadoCreado = await this.prisma.estado.findFirst({
+      where: { ambito: 'PEDIDO', nombre: 'CREADO' },
     });
-    const deliveryExists = await this.prisma.repartidor.findUnique({
-      where: { id: Number(createPedidoDto.repartidorId) },
-    });
+    if (!estadoCreado) {
+      throw new HttpException(
+        'Estado PEDIDO/CREADO no encontrado en la base de datos',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    // Auto-assign first available repartidor if not provided
+    let repartidorId: number;
+    if (createPedidoDto.repartidorId) {
+      const repartidor = await this.prisma.repartidor.findUnique({
+        where: { id: Number(createPedidoDto.repartidorId) },
+      });
+      if (!repartidor) {
+        throw new HttpException(
+          `Repartidor ID ${createPedidoDto.repartidorId} no existe`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      repartidorId = repartidor.id;
+    } else {
+      const primerRepartidor = await this.prisma.repartidor.findFirst();
+      if (!primerRepartidor) {
+        throw new HttpException(
+          'No hay repartidores disponibles',
+          HttpStatus.SERVICE_UNAVAILABLE,
+        );
+      }
+      repartidorId = primerRepartidor.id;
+    }
+
     const companyExists = await this.prisma.empresa.findUnique({
       where: { id: Number(createPedidoDto.empresaId) },
-    });
-    const rutaExists = await this.prisma.ruta.findUnique({
-      where: { id: Number(createPedidoDto.rutaId) },
     });
     const pagoExists = await this.prisma.pago.findUnique({
       where: { id: Number(createPedidoDto.pagoId) },
@@ -38,36 +61,30 @@ export class PedidoService {
       where: { id: Number(createPedidoDto.compradorId) },
     });
 
-    if (
-      !estadoExists ||
-      !deliveryExists ||
-      !companyExists ||
-      !rutaExists ||
-      !pagoExists ||
-      !usuarioExists
-    ) {
-      throw new Error(`Algun ID de los relacionados no existe.
-        Estado ID: ${createPedidoDto.estadoId},
-        Repartidor ID: ${createPedidoDto.repartidorId},
+    if (!companyExists || !pagoExists || !usuarioExists) {
+      throw new HttpException(
+        `Algun ID de los relacionados no existe.
         Empresa ID: ${createPedidoDto.empresaId},
-        Ruta ID: ${createPedidoDto.rutaId},
         Pago ID: ${createPedidoDto.pagoId},
-        Comprador ID: ${createPedidoDto.compradorId}`);
+        Comprador ID: ${createPedidoDto.compradorId}`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const existentePedido = await this.prisma.pedido.findFirst({
       where: { numero: String(createPedidoDto.numero) },
     });
     if (existentePedido) {
-      throw new Error(
+      throw new HttpException(
         `Ya existe un pedido con el numero ${createPedidoDto.numero}`,
+        HttpStatus.CONFLICT,
       );
     }
 
-    
-
     try {
-      const rutaCreada = await this.rutaService.crearRuta(createPedidoDto.infoRuta);
+      const rutaCreada = await this.rutaService.crearRuta(
+        createPedidoDto.infoRuta,
+      );
       return await this.prisma.pedido.create({
         data: {
           numero: createPedidoDto.numero,
@@ -78,27 +95,25 @@ export class PedidoService {
           fechaHora: createPedidoDto.fechaHora,
 
           compradorId: Number(createPedidoDto.compradorId),
-          repartidorId: Number(createPedidoDto.repartidorId),
+          repartidorId,
           empresaId: Number(createPedidoDto.empresaId),
           rutaId: rutaCreada.id,
           pagoId: Number(createPedidoDto.pagoId),
-          estadoId: Number(createPedidoDto.estadoId),
+          estadoId: estadoCreado.id,
 
           detalle: {
             create: createPedidoDto.detalle.map((item) => ({
               cantidad: item.cantidad,
               montoSubtotal: item.montoSubtotal,
-              producto: { connect: { id: item.productoId } }
+              producto: { connect: { id: item.productoId } },
             })),
           },
         },
         include: {
           ruta: true,
           detalle: true,
-          
-        }, 
+        },
       });
-
     } catch (error) {
       console.error('ERROR REAL AL CREAR PEDIDO:', error); // Esto te mostrará el error en la terminal
       throw new HttpException(
@@ -127,8 +142,11 @@ export class PedidoService {
       where: { empresaId },
     });
   }
-  
-  async actualizarEstado(pedidoId: number, nuevoEstadoNombre: string): Promise<Pedido> {
+
+  async actualizarEstado(
+    pedidoId: number,
+    nuevoEstadoNombre: string,
+  ): Promise<Pedido> {
     const estado = await this.prisma.estado.findFirst({
       where: {
         nombre: nuevoEstadoNombre.toUpperCase().trim() as any,
@@ -136,7 +154,10 @@ export class PedidoService {
       },
     });
     if (!estado) {
-      throw new HttpException(`Estado '${nuevoEstadoNombre}' no encontrado para pedidos`, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        `Estado '${nuevoEstadoNombre}' no encontrado para pedidos`,
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const pedidoActualizado = await this.prisma.pedido.update({
@@ -151,7 +172,6 @@ export class PedidoService {
 
     return pedidoActualizado;
   }
-  
 
   // Buscar si el usuario tiene pedidos asociados (sea como comprador, repartidor o empresa)
   async findUserPedidoByUserId(userId: number, rol: Rol): Promise<boolean> {

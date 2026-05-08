@@ -47,31 +47,34 @@ export class CreatePedidoDto {
   compradorId: number;
 
   @IsInt()
-  @ApiProperty({ required: true })
-  repartidorId: number;
+  @IsOptional()
+  @ApiProperty({ required: false })
+  repartidorId?: number;
 
   @IsInt()
   @ApiProperty({ required: true })
   empresaId: number;
 
   @IsInt()
-  @ApiProperty({ required: true })
-  rutaId: number;
+  @IsOptional()
+  @ApiProperty({ required: false })
+  rutaId?: number;
 
   @IsNotEmpty()
   @ValidateNested()
   infoRuta: {
-        origen: { coordenadas: { lat: number; lng: number }; calle: string };
-        destino: { coordenadas: { lat: number; lng: number }; calle: string };
-    };
+    origen: { coordenadas: { lat: number; lng: number }; calle: string };
+    destino: { coordenadas: { lat: number; lng: number }; calle: string };
+  };
 
   @IsInt()
   @ApiProperty({ required: true })
   pagoId: number;
 
   @IsNumber()
-  @ApiProperty({ required: true })
-  estadoId: number;
+  @IsOptional()
+  @ApiProperty({ required: false })
+  estadoId?: number;
 
   @IsArray()
   @ApiProperty({ type: [Object] })

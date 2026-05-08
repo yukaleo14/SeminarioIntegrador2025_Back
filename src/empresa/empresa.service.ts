@@ -6,7 +6,7 @@ import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class EmpresaService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
   async create(
     createEmpresaDto: CreateEmpresaDto,
     tx?: Prisma.TransactionClient,

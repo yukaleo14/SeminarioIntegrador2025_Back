@@ -85,26 +85,12 @@ export class SucursalService {
       where: { id: empresaId },
     });
 
-    const empresaUnique = await this.prisma.sucursal.findUnique({
-      where: { empresaId: empresaId },
-    });
-
-    // Verificar duplicados en name o address con una sola consulta
     const existingSucursal = await this.prisma.sucursal.findFirst({
-      where: {
-        OR: [{ nombre: nombre }],
-      },
+      where: { nombre },
     });
 
     if (existingSucursal) {
       throw new HttpException('La Sucursal ya existe', HttpStatus.BAD_REQUEST);
-    }
-
-    if (empresaUnique) {
-      throw new HttpException(
-        `La empresa ya está asociada a otra sucursal.`,
-        HttpStatus.BAD_REQUEST,
-      );
     }
 
     if (!empresaExists) {

@@ -34,7 +34,7 @@ model Empresa {
   pedidos   Pedido[]
   usuario   Usuario   @relation(fields: [usuarioId], references: [id])
   usuarioId Int       @unique
-  sucursal  Sucursal?
+  sucursales Sucursal[]
 }
 
 // Chekeada
@@ -111,7 +111,7 @@ model Sucursal {
   imagen      String?
 
   empresa   Empresa @relation(fields: [empresaId], references: [id])
-  empresaId Int     @unique
+  empresaId Int
 
   ubicacion   Ubicacion @relation(fields: [ubicacionId], references: [id])
   ubicacionId Int
