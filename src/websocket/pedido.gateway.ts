@@ -8,7 +8,16 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { JwtService } from '@nestjs/jwt';
 import { PedidoService } from '../pedido/pedido.service';
+
+interface PedidoSocketUser {
+  id: number;
+  mail: string;
+  rol: 'COMPRADOR' | 'REPARTIDOR' | 'EMPRESA';
+  iat: number;
+  exp: number;
+}
 
 @WebSocketGateway({
   cors: {
@@ -20,12 +29,31 @@ import { PedidoService } from '../pedido/pedido.service';
 export class PedidoGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server!: Server;
 
-  constructor(private readonly pedidoService: PedidoService) {}
+  constructor(
+    private readonly pedidoService: PedidoService,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  // Cuando el cliente (empresa) se conecta
+  // Cuando el cliente (empresa, comprador o repartidor) se conecta
   handleConnection(client: Socket) {
-    console.log(`Cliente conectado: ${client.id}`);
-    // Aquí puedes agregar autenticación JWT más adelante
+    const token: string =
+      client.handshake.auth?.token || client.handshake.query?.token;
+
+    if (!token) {
+      client.emit('error', { message: 'Token requerido' });
+      client.disconnect();
+      return;
+    }
+
+    try {
+      const payload: PedidoSocketUser = this.jwtService.verify(token);
+      client.data.user = payload;
+      console.log(`Cliente conectado: ${client.id} (user ${payload.id})`);
+    } catch (e) {
+      client.emit('error', { message: 'Token inválido o expirado' });
+      client.disconnect();
+      console.log('Error verificando token en PedidoGateway:', e);
+    }
   }
 
   @SubscribeMessage('joinPedidoRoom')
@@ -97,7 +125,12 @@ export class PedidoGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   notifyPedidoActualizado(sucursalId: number, pedido: any) {
-    const room = `company-${sucursalId}`;
-    this.server.to(room).emit('pedidoActualizado', pedido);
+    const companyRoom = `company-${sucursalId}`;
+    this.server.to(companyRoom).emit('pedidoActualizado', pedido);
+
+    if (pedido?.id) {
+      const pedidoRoom = `pedido-${pedido.id}`;
+      this.server.to(pedidoRoom).emit('pedidoActualizado', pedido);
+    }
   }
 }

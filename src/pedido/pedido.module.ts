@@ -4,9 +4,10 @@ import { PedidoController } from './pedido.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { PedidoGateway } from '../websocket/pedido.gateway';
 import { RutaModule } from '../ruta/ruta.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [PrismaModule, RutaModule], // Importamos RutaModule para usar RutaService
+  imports: [PrismaModule, RutaModule, AuthModule],
   controllers: [PedidoController],
   providers: [PedidoService, PedidoGateway],
   exports: [PedidoService],

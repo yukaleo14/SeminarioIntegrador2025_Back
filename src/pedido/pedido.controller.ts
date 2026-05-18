@@ -21,8 +21,12 @@ export class PedidoController {
   ) {}
 
   @Post()
-  create(@Body() createPedidoDto: CreatePedidoDto) {
-    return this.pedidoService.create(createPedidoDto);
+  async create(@Body() createPedidoDto: CreatePedidoDto) {
+    const pedido = await this.pedidoService.create(createPedidoDto);
+    if (pedido?.empresaId) {
+      this.pedidoGateway.notifyNewPedido(pedido.empresaId, pedido);
+    }
+    return pedido;
   }
 
   @Get()
