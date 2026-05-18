@@ -44,11 +44,14 @@ export class AuthService {
     const isMatch = await bcrypt.compare(loginDto.contrasena, user.contrasena);
     // Contraseña correcta
     if (isMatch) {
-      return this.jwtService.sign({
-        id: user.id,
-        mail: user.mail,
-        rol: user.rol,
-      });
+      const payload: Record<string, any> = { id: user.id, mail: user.mail, rol: user.rol };
+
+      if (user.rol === 'EMPRESA') {
+        const empresa = await this.prisma.empresa.findFirst({ where: { usuarioId: user.id } });
+        if (empresa) payload['empresaId'] = empresa.id;
+      }
+
+      return this.jwtService.sign(payload);
     } else {
       throw new HttpException(
         'Correo o contraseña incorrectos',

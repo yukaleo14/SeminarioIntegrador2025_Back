@@ -34,6 +34,11 @@ export class SucursalController {
     return this.sucursalService.findSucursalesByCategoria(id);
   }
 
+  @Get('empresa/:id')
+  findByEmpresa(@Param('id', ParseIntPipe) id: number) {
+    return this.sucursalService.findByEmpresa(id);
+  }
+
   @Get(':id')
   @Public()
   findOne(@Param('id') id: string) {

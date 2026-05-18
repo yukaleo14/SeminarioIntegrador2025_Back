@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreatePagoDto {
@@ -16,11 +16,13 @@ export class CreatePagoDto {
   @ApiProperty({ required: true })
   fechaHora: Date;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsInt()
-  formaPagoId: number;
+  @IsOptional()
+  formaPagoId?: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsInt()
-  estadoId: number;
+  @IsOptional()
+  estadoId?: number;
 }

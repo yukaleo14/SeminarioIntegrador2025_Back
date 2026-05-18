@@ -185,6 +185,26 @@ export class SucursalService {
     return await this.update(id, sucu);
   }
 
+  findByEmpresa(empresaId: number) {
+    return this.prisma.sucursal.findMany({
+      where: { empresaId },
+      select: {
+        id: true,
+        nombre: true,
+        descripcion: true,
+        empresa: { select: { id: true, nombre: true, imagenPerfil: true } },
+        estado: { select: { id: true, nombre: true } },
+        imagen: true,
+        ubicacion: {
+          select: {
+            id: true, altura: true, calle: true, nombre: true,
+            posicion: { select: { id: true, coordenadaX: true, coordenadaY: true } },
+          },
+        },
+      },
+    });
+  }
+
   findAll() {
     return this.prisma.sucursal.findMany({
       select: {
