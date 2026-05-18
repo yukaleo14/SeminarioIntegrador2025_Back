@@ -7,7 +7,7 @@ export class Pedido {
   tiempoRepartoEstimado: number;
   fechaHora: Date;
   compradorId: number;
-  repartidorId: number;
+  repartidorId: number | null;
   empresaId: number;
   rutaId: number;
   pagoId: number;

@@ -187,7 +187,7 @@ enum Nombre {
   CREADO
   ENPREPARACION
   PUBLICADO
-  TOMADO
+  ASIGNADO
   ENRUTA
   ENTREGADO
   CANCELADO
@@ -210,8 +210,8 @@ model Pedido {
   comprador Comprador @relation(fields: [compradorId], references: [id])
   compradorId Int 
 
-  repartidor Repartidor @relation(fields: [repartidorId], references: [id])
-  repartidorId Int 
+  repartidor   Repartidor? @relation(fields: [repartidorId], references: [id])
+  repartidorId Int?
 
   empresa Empresa @relation(fields: [empresaId], references: [id])
   empresaId Int 

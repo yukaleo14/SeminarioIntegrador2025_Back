@@ -27,30 +27,6 @@ export class PedidoService {
       );
     }
 
-    // Auto-assign first available repartidor if not provided
-    let repartidorId: number;
-    if (createPedidoDto.repartidorId) {
-      const repartidor = await this.prisma.repartidor.findUnique({
-        where: { id: Number(createPedidoDto.repartidorId) },
-      });
-      if (!repartidor) {
-        throw new HttpException(
-          `Repartidor ID ${createPedidoDto.repartidorId} no existe`,
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      repartidorId = repartidor.id;
-    } else {
-      const primerRepartidor = await this.prisma.repartidor.findFirst();
-      if (!primerRepartidor) {
-        throw new HttpException(
-          'No hay repartidores disponibles',
-          HttpStatus.SERVICE_UNAVAILABLE,
-        );
-      }
-      repartidorId = primerRepartidor.id;
-    }
-
     const companyExists = await this.prisma.empresa.findUnique({
       where: { id: Number(createPedidoDto.empresaId) },
     });
@@ -95,7 +71,6 @@ export class PedidoService {
           fechaHora: createPedidoDto.fechaHora,
 
           compradorId: Number(createPedidoDto.compradorId),
-          repartidorId,
           empresaId: Number(createPedidoDto.empresaId),
           rutaId: rutaCreada.id,
           pagoId: Number(createPedidoDto.pagoId),
@@ -147,9 +122,10 @@ export class PedidoService {
     pedidoId: number,
     nuevoEstadoNombre: string,
   ): Promise<Pedido> {
+    const nombreNormalizado = nuevoEstadoNombre.toUpperCase().trim();
     const estado = await this.prisma.estado.findFirst({
       where: {
-        nombre: nuevoEstadoNombre.toUpperCase().trim() as any,
+        nombre: nombreNormalizado as any,
         ambito: 'PEDIDO',
       },
     });
@@ -160,9 +136,33 @@ export class PedidoService {
       );
     }
 
+    const data: { estadoId: number; repartidorId?: number } = {
+      estadoId: estado.id,
+    };
+
+    if (nombreNormalizado === 'ASIGNADO') {
+      const pedidoActual = await this.prisma.pedido.findUnique({
+        where: { id: pedidoId },
+        select: { repartidorId: true },
+      });
+      if (!pedidoActual) {
+        throw new HttpException('Pedido no encontrado', HttpStatus.NOT_FOUND);
+      }
+      if (!pedidoActual.repartidorId) {
+        const repartidor = await this.prisma.repartidor.findFirst();
+        if (!repartidor) {
+          throw new HttpException(
+            'No hay repartidores disponibles para asignar',
+            HttpStatus.SERVICE_UNAVAILABLE,
+          );
+        }
+        data.repartidorId = repartidor.id;
+      }
+    }
+
     const pedidoActualizado = await this.prisma.pedido.update({
       where: { id: pedidoId },
-      data: { estadoId: estado.id },
+      data,
       include: {
         estado: true,
         repartidor: true,

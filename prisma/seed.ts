@@ -14,7 +14,7 @@ async function main() {
     data: [
       { ambito: 'PEDIDO', nombre: 'CREADO' },
       { ambito: 'PEDIDO', nombre: 'ENPREPARACION' },
-      { ambito: 'PEDIDO', nombre: 'TOMADO' },
+      { ambito: 'PEDIDO', nombre: 'ASIGNADO' },
       { ambito: 'PEDIDO', nombre: 'ENRUTA' },
       { ambito: 'PEDIDO', nombre: 'ENTREGADO' },
       { ambito: 'PEDIDO', nombre: 'CANCELADO' },
