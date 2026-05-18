@@ -47,6 +47,19 @@ export class ProductoController {
     );
   }
 
+  @Get('empresa/:id')
+  findAllByEmpresa(@Param('id', ParseIntPipe) empresaId: number) {
+    return this.productoService.findAllByEmpresa(empresaId);
+  }
+
+  @Patch(':id/estado')
+  actualizarEstado(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('estado') nombreEstado: string,
+  ) {
+    return this.productoService.actualizarEstado(id, nombreEstado);
+  }
+
   @Get(':id')
   @Public()
   findOne(@Param('id', ParseIntPipe) id: number) {

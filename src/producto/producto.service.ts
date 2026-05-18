@@ -1,9 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { PrismaService } from './../prisma/prisma.service';
-import { Sucursal } from '../sucursal/entities/sucursal.entity';
-import { Ubicacion } from '../ubicacion/entities/ubicacion.entity';
 
 @Injectable()
 export class ProductoService {
@@ -31,6 +29,39 @@ export class ProductoService {
       },
     });
     return 'Producto creado correctamente';
+  }
+
+  findAllByEmpresa(empresaId: number) {
+    return this.prisma.producto.findMany({
+      where: { sucursal: { empresaId } },
+      include: {
+        categoria: true,
+        estado: true,
+        sucursal: { select: { id: true, nombre: true } },
+      },
+    });
+  }
+
+  async actualizarEstado(id: number, nombreEstado: string) {
+    const nombreNormalizado = nombreEstado.toUpperCase().trim();
+    const estado = await this.prisma.estado.findFirst({
+      where: { ambito: 'PRODUCTO', nombre: nombreNormalizado as any },
+    });
+    if (!estado) {
+      throw new HttpException(
+        `Estado '${nombreEstado}' no encontrado para productos`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    const producto = await this.prisma.producto.findUnique({ where: { id } });
+    if (!producto) {
+      throw new HttpException('Producto no encontrado', HttpStatus.NOT_FOUND);
+    }
+    return this.prisma.producto.update({
+      where: { id },
+      data: { estadoId: estado.id },
+      include: { estado: true },
+    });
   }
 
   findAllBySucursal(sucursalId: number) {
