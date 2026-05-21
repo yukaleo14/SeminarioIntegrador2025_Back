@@ -114,18 +114,18 @@ async function main() {
   // 4. POSICIONES y UBICACIONES
   // =============================================
   const posiciones = await Promise.all([
-    prisma.posicion.create({ data: { coordenadaX: -34.6037, coordenadaY: -58.3816 } }), // Centro
-    prisma.posicion.create({ data: { coordenadaX: -34.5883, coordenadaY: -58.4267 } }), // Palermo
-    prisma.posicion.create({ data: { coordenadaX: -34.6197, coordenadaY: -58.4391 } }), // Caballito
-    prisma.posicion.create({ data: { coordenadaX: -34.5621, coordenadaY: -58.4577 } }), // Belgrano
-    prisma.posicion.create({ data: { coordenadaX: -34.6438, coordenadaY: -58.3780 } }), // Boedo
-    prisma.posicion.create({ data: { coordenadaX: -34.6218, coordenadaY: -58.3730 } }), // San Telmo
-  ]);
+  prisma.posicion.create({ data: { coordenadaX: -32.4082, coordenadaY: -63.2393 } }), // Centro (Zona Plaza Centenario)
+  prisma.posicion.create({ data: { coordenadaX: -32.4120, coordenadaY: -63.2420 } }), // Parque de la Vida / Centro Sur
+  prisma.posicion.create({ data: { coordenadaX: -32.4030, coordenadaY: -63.2450 } }), // Bulevar España
+  prisma.posicion.create({ data: { coordenadaX: -32.4010, coordenadaY: -63.2280 } }), // Costanera
+  prisma.posicion.create({ data: { coordenadaX: -32.4150, coordenadaY: -63.2440 } }), // Zona Terminal (Bv. Alvear)
+  prisma.posicion.create({ data: { coordenadaX: -32.4060, coordenadaY: -63.2360 } }), // Entre Ríos y 9 de Julio (Centro Este)
+]);
 
   const ubicaciones = await Promise.all([
-    prisma.ubicacion.create({ data: { calle: 'Av. Corrientes',    altura: '1234', nombre: 'Centro',   posicionId: posiciones[0].id } }),
+    prisma.ubicacion.create({ data: { calle: 'San Martín',   altura: '150',  nombre: 'Sucursal Centro',    posicionId: posiciones[0].id } }),
     prisma.ubicacion.create({ data: { calle: 'Av. Santa Fe',      altura: '2500', nombre: 'Palermo',  posicionId: posiciones[1].id } }),
-    prisma.ubicacion.create({ data: { calle: 'Av. Rivadavia',     altura: '3000', nombre: 'Caballito',posicionId: posiciones[2].id } }),
+    prisma.ubicacion.create({ data: { calle: 'Bv. España',   altura: '250',  nombre: 'Sucursal Bulevar',   posicionId: posiciones[2].id } }),
     prisma.ubicacion.create({ data: { calle: 'Av. Cabildo',       altura: '1500', nombre: 'Belgrano', posicionId: posiciones[3].id } }),
     prisma.ubicacion.create({ data: { calle: 'Av. Boedo',         altura: '800',  nombre: 'Boedo',    posicionId: posiciones[4].id } }),
     prisma.ubicacion.create({ data: { calle: 'Av. Independencia', altura: '600',  nombre: 'San Telmo',posicionId: posiciones[5].id } }),
