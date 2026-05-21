@@ -71,6 +71,7 @@ export class PedidoService {
           fechaHora: createPedidoDto.fechaHora,
 
           compradorId: Number(createPedidoDto.compradorId),
+          repartidorId: Number(createPedidoDto.repartidorId),
           empresaId: Number(createPedidoDto.empresaId),
           rutaId: rutaCreada.id,
           pagoId: Number(createPedidoDto.pagoId),
@@ -204,6 +205,38 @@ export class PedidoService {
         comprador: { select: { id: true, nombre: true } },
         repartidor: { select: { id: true, nombre: true } },
         empresa: { select: { id: true, nombre: true } },
+        ruta: {
+          select: {
+            id: true,
+            origen: {
+              select: {
+                calle: true,
+                altura: true,
+                nombre: true,
+                posicion: {
+                  select: {
+                    coordenadaX: true,
+                    coordenadaY: true,
+                  },
+                },
+              },
+            },
+            
+            destino: {
+              select: {
+                calle: true,
+                altura: true,
+                nombre: true,
+                posicion: {
+                  select: {
+                    coordenadaX: true,
+                    coordenadaY: true
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
     if (!pedido) {
