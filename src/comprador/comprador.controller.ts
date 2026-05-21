@@ -43,4 +43,9 @@ export class CompradorController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.compradorService.remove(id);
   }
+
+  @Get('user/:userId')
+  getCompradorByUserId(@Param('userId', ParseIntPipe) userId: number) {
+    return this.compradorService.getCompradorByUserId(userId);
+  }
 }
