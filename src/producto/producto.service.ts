@@ -72,6 +72,7 @@ export class ProductoService {
       include: {
         categoria: true,
         estado: true,
+        sucursal: true,
       },
     });
   }
@@ -87,6 +88,7 @@ export class ProductoService {
       include: {
         categoria: true,
         estado: true,
+        sucursal: true,
       },
     });
   }
@@ -105,6 +107,7 @@ export class ProductoService {
         sucursalId: true,
         categoria: true,
         estado: true,
+        sucursal: true,
       },
     });
   }
@@ -134,6 +137,15 @@ export class ProductoService {
           select: {
             id: true,
             nombre: true,
+            empresaId: true,
+            ubicacion: {
+              select: {
+                calle: true,
+                altura: true,
+                nombre: true,
+                posicion: { select: { coordenadaX: true, coordenadaY: true } },
+              },
+            },
           },
         },
       },

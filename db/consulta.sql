@@ -5,7 +5,7 @@
 INSERT INTO Estado (fechaHora, ambito, nombre) VALUES
   (NOW(), 'PEDIDO', 'CREADO'),
   (NOW(), 'PEDIDO', 'ENPREPARACION'),
-  (NOW(), 'PEDIDO', 'TOMADO'),
+  (NOW(), 'PEDIDO', 'ASIGNADO'),
   (NOW(), 'PEDIDO', 'ENRUTA'),
   (NOW(), 'PEDIDO', 'ENTREGADO'),
   (NOW(), 'PEDIDO', 'CANCELADO'),
@@ -139,3 +139,77 @@ VALUES
     ('Ensalada César', 1200.00, 'Ensalada fresca con lechuga, pollo a la parrilla, croutons y aderezo César.', 1, (SELECT id FROM `Estado` WHERE ambito = 'PRODUCTO' AND nombre = 'PUBLICADO' LIMIT 1), 6, 10),
     ('Helado de Chocolate', 500.00, 'Helado cremoso de chocolate con trozos de chocolate.', 2, (SELECT id FROM `Estado` WHERE ambito = 'PRODUCTO' AND nombre = 'PUBLICADO' LIMIT 1), 11, 5),
     ('Pan de Ajo', 400.00, 'Delicioso pan de ajo con mantequilla y perejil.', 3, (SELECT id FROM `Estado` WHERE ambito = 'PRODUCTO' AND nombre = 'PUBLICADO' LIMIT 1), 12, 10);
+
+
+/*
+-- -- Crear comprador
+{
+  "nombre": "gaspar",
+  "apellido": "string",
+  "mail": "comprador@gmail.com",
+  "dni": "40973893",
+  "contrasena": "123456",
+  "telefono": "3534199746",
+  "cuitCuil": "",
+  "rol": "COMPRADOR",
+  "imagenPerfil": "string",
+  "altura": "string",
+  "calle": "string",
+  "nombreUbicacion": "string",
+  "coordenadaX": 0,
+  "coordenadaY": 0
+}
+-- -- Repartidor
+{
+  "nombre": "repartidor",
+  "apellido": "string",
+  "mail": "repartidor@gmail.com",
+  "dni": "40173893",
+  "contrasena": "123456",
+  "telefono": "3531199746",
+  "cuitCuil": "",
+  "rol": "REPARTIDOR",
+  "imagenPerfil": "string",
+  "altura": "string",
+  "calle": "string",
+  "nombreUbicacion": "string",
+  "coordenadaX": 0,
+  "coordenadaY": 0
+}
+-- -- Empresa
+{
+  "nombre": "empresa",
+  "apellido": "string",
+  "mail": "empresa@gmail.com",
+  "dni": "40113893",
+  "contrasena": "123456",
+  "telefono": "3531399746",
+  "cuitCuil": "",
+  "rol": "EMPRESA",
+  "imagenPerfil": "string",
+  "altura": "string",
+  "calle": "string",
+  "nombreUbicacion": "string",
+  "coordenadaX": 0,
+  "coordenadaY": 0
+}
+-- -- Pedido
+{
+  "numero": "PED-1001",
+  "fechaHoraPedido": "2026-04-13T15:56:45.492Z",
+  "horaLlegadaEstimada": "2026-04-13T16:56:45.492Z",
+  "montoTotal": 0,
+  "tiempoPreparacionEstimado": 0,
+  "tiempoRepartoEstimado": 0,
+  "fechaHora": "2026-04-13T15:56:45.492Z",
+  "compradorId": 1,
+  "repartidorId": 1,
+  "empresaId": 1,
+  "rutaId": 1,
+  "pagoId": 1,
+  "estadoId": 1,
+  "detalle": [
+    {}
+  ]
+}
+*/
