@@ -13,9 +13,10 @@ model Usuario {
   contrasena String
   rol        Rol    @default(COMPRADOR)
 
-  empresa    Empresa?
-  comprador  Comprador?
-  repartidor Repartidor?
+  empresa      Empresa?
+  comprador    Comprador?
+  repartidor   Repartidor?
+  mensajesChat MensajeChat[]
 }
 
 enum Rol {
@@ -225,7 +226,8 @@ model Pedido {
   estado   Estado @relation(fields: [estadoId], references: [id])
   estadoId Int
 
-  detalle DetalleDePedido[]
+  detalle      DetalleDePedido[]
+  mensajesChat MensajeChat[]
 }
 
 // Chekeada
@@ -252,15 +254,14 @@ model Ruta {
   origenId Int
   destino Ubicacion @relation("DestinoUbicacion", fields: [destinoId], references: [id])
   destinoId Int
-  ubicacionId Int
 }
 
 //Chekeada
 model Ubicacion {
   id     Int     @id @default(autoincrement())
-  altura String?
-  calle  String?
-  nombre String?
+  altura String? @db.Text
+  calle  String? @db.Text
+  nombre String? @db.Text
 
   posicion   Posicion @relation(fields: [posicionId], references: [id], onDelete: Cascade)
   posicionId Int      @unique
@@ -271,6 +272,18 @@ model Ubicacion {
   origen    Ruta[]      @relation("OrigenUbicacion")
   destino   Ruta[]      @relation("DestinoUbicacion")
   comprador Comprador[]
+}
+
+model MensajeChat {
+  id         Int      @id @default(autoincrement())
+  contenido  String
+  timestamp  DateTime @default(now())
+
+  pedido      Pedido  @relation(fields: [pedidoId], references: [id])
+  pedidoId    Int
+
+  remitente   Usuario @relation(fields: [remitenteId], references: [id])
+  remitenteId Int
 }
 
 //Chekeada

@@ -240,7 +240,6 @@ async function main() {
       origenId: ubicaciones[0].id,
       destinoId: ubicaciones[4].id,
       tarifaDistancia: 65.50,
-      ubicacionId: ubicaciones[0].id,
     },
   });
 

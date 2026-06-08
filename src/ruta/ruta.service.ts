@@ -130,7 +130,6 @@ export class RutaService {
         origenId,
         destinoId,
         tarifaDistancia,
-        ubicacionId: origenId, // según tu schema actual
       },
       include: {
         origen: { include: { posicion: true } },
