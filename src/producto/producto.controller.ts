@@ -8,17 +8,23 @@ import {
   Delete,
   ParseIntPipe,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { Public } from './../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Rol } from '@prisma/client';
 
 @Controller('producto')
 export class ProductoController {
   constructor(private readonly productoService: ProductoService) {}
 
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles(Rol.EMPRESA)
   create(@Body() createProductoDto: CreateProductoDto) {
     return this.productoService.create(createProductoDto);
   }
@@ -53,6 +59,8 @@ export class ProductoController {
   }
 
   @Patch(':id/estado')
+  @UseGuards(RolesGuard)
+  @Roles(Rol.EMPRESA)
   actualizarEstado(
     @Param('id', ParseIntPipe) id: number,
     @Body('estado') nombreEstado: string,
@@ -67,6 +75,8 @@ export class ProductoController {
   }
 
   @Patch(':id')
+  @UseGuards(RolesGuard)
+  @Roles(Rol.EMPRESA)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProductoDto: UpdateProductoDto,
@@ -75,6 +85,8 @@ export class ProductoController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles(Rol.EMPRESA)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.productoService.remove(id);
   }
