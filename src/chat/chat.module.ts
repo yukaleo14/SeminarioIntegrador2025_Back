@@ -4,9 +4,10 @@ import { ChatGateway } from './chat.gateway';
 import { AuthModule } from '../auth/auth.module';
 import { PedidoModule } from '../pedido/pedido.module';
 import { StrategyModule } from '../strategy/strategy.module';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
   providers: [ChatGateway, ChatService],
-  imports: [AuthModule, PedidoModule, StrategyModule],
+  imports: [AuthModule, PedidoModule, StrategyModule, PrismaModule],
 })
 export class ChatModule {}
