@@ -119,6 +119,42 @@ export class PedidoService {
     });
   }
 
+  async cancelar(pedidoId: number): Promise<Pedido> {
+    const pedido = await this.prisma.pedido.findUnique({
+      where: { id: pedidoId },
+      include: { estado: true },
+    });
+
+    if (!pedido) {
+      throw new HttpException('Pedido no encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    // Solo se puede cancelar si el estado sigue siendo CREADO
+    if (pedido.estado.nombre !== 'CREADO') {
+      throw new HttpException(
+        `No se puede cancelar un pedido en estado ${pedido.estado.nombre}. Solo se puede cancelar antes de que la empresa lo acepte.`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const estadoCancelado = await this.prisma.estado.findFirst({
+      where: { ambito: 'PEDIDO', nombre: 'CANCELADO' },
+    });
+
+    if (!estadoCancelado) {
+      throw new HttpException(
+        'Estado PEDIDO/CANCELADO no encontrado en la base de datos',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return this.prisma.pedido.update({
+      where: { id: pedidoId },
+      data: { estadoId: estadoCancelado.id },
+      include: { estado: true, repartidor: true, empresa: true },
+    });
+  }
+
   async actualizarEstado(
     pedidoId: number,
     nuevoEstadoNombre: string,
@@ -194,47 +230,114 @@ export class PedidoService {
     return !!(compradorPedidos || repartidorPedidos);
   }
 
+  async findDisponibles() {
+    const estadoPublicado = await this.prisma.estado.findFirst({
+      where: { ambito: 'PEDIDO', nombre: 'PUBLICADO' },
+    });
+    if (!estadoPublicado) return [];
+
+    return this.prisma.pedido.findMany({
+      where: { estadoId: estadoPublicado.id, repartidorId: null },
+      include: {
+        comprador: { select: { id: true, nombre: true } },
+        empresa: { select: { id: true, nombre: true } },
+        estado: { select: { id: true, nombre: true } },
+        ruta: {
+          include: {
+            origen: { include: { posicion: true } },
+            destino: { include: { posicion: true } },
+          },
+        },
+      },
+      orderBy: { fechaHora: 'asc' },
+    });
+  }
+
+  async findByRepartidor(userId: number) {
+    const repartidor = await this.prisma.repartidor.findUnique({
+      where: { usuarioId: userId },
+    });
+    if (!repartidor) return [];
+
+    return this.prisma.pedido.findMany({
+      where: { repartidorId: repartidor.id },
+      include: {
+        comprador: { select: { id: true, nombre: true } },
+        empresa: { select: { id: true, nombre: true } },
+        estado: { select: { id: true, nombre: true } },
+        ruta: {
+          include: {
+            origen: { include: { posicion: true } },
+            destino: { include: { posicion: true } },
+          },
+        },
+      },
+      orderBy: { fechaHora: 'desc' },
+    });
+  }
+
+  async tomarPedido(pedidoId: number, userId: number): Promise<Pedido> {
+    const repartidor = await this.prisma.repartidor.findUnique({
+      where: { usuarioId: userId },
+    });
+    if (!repartidor) {
+      throw new HttpException('Perfil de repartidor no encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    const pedido = await this.prisma.pedido.findUnique({
+      where: { id: pedidoId },
+      include: { estado: true },
+    });
+    if (!pedido) {
+      throw new HttpException('Pedido no encontrado', HttpStatus.NOT_FOUND);
+    }
+    if (pedido.estado.nombre !== 'PUBLICADO') {
+      throw new HttpException(
+        `Solo se pueden tomar pedidos en estado PUBLICADO. Estado actual: ${pedido.estado.nombre}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const estadoAsignado = await this.prisma.estado.findFirst({
+      where: { ambito: 'PEDIDO', nombre: 'ASIGNADO' },
+    });
+    if (!estadoAsignado) {
+      throw new HttpException(
+        'Estado PEDIDO/ASIGNADO no encontrado en la base de datos',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return this.prisma.pedido.update({
+      where: { id: pedidoId },
+      data: { repartidorId: repartidor.id, estadoId: estadoAsignado.id },
+      include: {
+        estado: true,
+        repartidor: true,
+        empresa: true,
+        comprador: { select: { id: true, nombre: true } },
+        ruta: {
+          include: {
+            origen: { include: { posicion: true } },
+            destino: { include: { posicion: true } },
+          },
+        },
+      },
+    });
+  }
+
   async findOne(id: number) {
     const pedido = await this.prisma.pedido.findUnique({
       where: { id },
-      select: {
-        id: true,
-        numero: true,
-        montoTotal: true,
-        fechaHora: true,
+      include: {
         comprador: { select: { id: true, nombre: true } },
         repartidor: { select: { id: true, nombre: true } },
         empresa: { select: { id: true, nombre: true } },
+        estado: { select: { id: true, nombre: true } },
         ruta: {
-          select: {
-            id: true,
-            origen: {
-              select: {
-                calle: true,
-                altura: true,
-                nombre: true,
-                posicion: {
-                  select: {
-                    coordenadaX: true,
-                    coordenadaY: true,
-                  },
-                },
-              },
-            },
-            
-            destino: {
-              select: {
-                calle: true,
-                altura: true,
-                nombre: true,
-                posicion: {
-                  select: {
-                    coordenadaX: true,
-                    coordenadaY: true
-                  },
-                },
-              },
-            },
+          include: {
+            origen: { include: { posicion: true } },
+            destino: { include: { posicion: true } },
           },
         },
       },

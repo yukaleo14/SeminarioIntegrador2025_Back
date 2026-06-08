@@ -6,12 +6,17 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { PedidoService } from './pedido.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { PedidoGateway } from '../websocket/pedido.gateway';
 import { Public } from '../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Rol } from '@prisma/client';
 
 @Controller('pedidos')
 export class PedidoController {
@@ -21,6 +26,8 @@ export class PedidoController {
   ) {}
 
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles(Rol.COMPRADOR)
   async create(@Body() createPedidoDto: CreatePedidoDto) {
     const pedido = await this.pedidoService.create(createPedidoDto);
     if (pedido?.empresaId) {
@@ -35,6 +42,20 @@ export class PedidoController {
     return this.pedidoService.findAll();
   }
 
+  @Get('disponibles')
+  @UseGuards(RolesGuard)
+  @Roles(Rol.REPARTIDOR)
+  findDisponibles() {
+    return this.pedidoService.findDisponibles();
+  }
+
+  @Get('repartidor/me')
+  @UseGuards(RolesGuard)
+  @Roles(Rol.REPARTIDOR)
+  findMisPedidos(@Req() req: any) {
+    return this.pedidoService.findByRepartidor(req.user.userId);
+  }
+
   @Get(':id')
   @Public()
   findOne(@Param('id') id: string) {
@@ -46,7 +67,23 @@ export class PedidoController {
     return this.pedidoService.update(+id, updatePedidoDto);
   }
 
+  @Patch(':id/cancelar')
+  @UseGuards(RolesGuard)
+  @Roles(Rol.COMPRADOR)
+  async cancelar(@Param('id') id: number) {
+    const pedidoCancelado = await this.pedidoService.cancelar(id);
+    if (pedidoCancelado.empresaId) {
+      this.pedidoGateway.notifyPedidoActualizado(
+        pedidoCancelado.empresaId,
+        pedidoCancelado,
+      );
+    }
+    return pedidoCancelado;
+  }
+
   @Patch(':id/estado')
+  @UseGuards(RolesGuard)
+  @Roles(Rol.EMPRESA, Rol.REPARTIDOR)
   async actualizarEstado(
     @Param('id') id: number,
     @Body('estado') nuevoEstado: string,
@@ -65,6 +102,17 @@ export class PedidoController {
     }
 
     return pedidoActualizado;
+  }
+
+  @Patch(':id/tomar')
+  @UseGuards(RolesGuard)
+  @Roles(Rol.REPARTIDOR)
+  async tomar(@Param('id') id: number, @Req() req: any) {
+    const pedidoTomado = await this.pedidoService.tomarPedido(id, req.user.userId);
+    if (pedidoTomado?.empresaId) {
+      this.pedidoGateway.notifyPedidoActualizado(pedidoTomado.empresaId, pedidoTomado);
+    }
+    return pedidoTomado;
   }
 
   @Delete(':id')
