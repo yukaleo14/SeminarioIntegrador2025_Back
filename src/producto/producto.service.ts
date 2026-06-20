@@ -160,6 +160,7 @@ export class ProductoService {
       select: {
         nombre: true,
         precio: true,
+        imagen: true,
         categoria: {
           select: {
             nombre: true,
