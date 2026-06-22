@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { PedidoService } from './pedido.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
@@ -85,7 +86,7 @@ export class PedidoController {
   @UseGuards(RolesGuard)
   @Roles(Rol.EMPRESA, Rol.REPARTIDOR)
   async actualizarEstado(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body('estado') nuevoEstado: string,
   ) {
     const pedidoActualizado = await this.pedidoService.actualizarEstado(
