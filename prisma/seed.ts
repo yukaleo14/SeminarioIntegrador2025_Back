@@ -234,45 +234,93 @@ async function main() {
   // =============================================
   // 8. RUTA, PAGO Y PEDIDO DE EJEMPLO
   // =============================================
-  const ruta1 = await prisma.ruta.create({
-    data: {
-      origenId: ubicaciones[0].id,
-      destinoId: ubicaciones[4].id,
-      tarifaDistancia: 65.50,
-    },
-  });
+  // Buscamos a María, que no estaba en el Promise.all anterior
+  const comprador2 = await prisma.comprador.findFirst({ where: { nombre: 'Maria' } });
 
-  const pago1 = await prisma.pago.create({
-    data: { numero: 'PAGO-1001', monto: 5700, estadoId: estadoPagoPendiente!.id },
-  });
+  console.log('📦 Generando pedidos para las sucursales...');
 
-  const prod1 = await prisma.producto.findFirst({ where: { nombre: 'Pizza Mozzarella' } });
-  const prod2 = await prisma.producto.findFirst({ where: { nombre: 'Empanada de Carne' } });
-  const prod3 = await prisma.producto.findFirst({ where: { nombre: 'Gaseosa 500ml' } });
+  // Traemos todos los productos creados para usarlos en los pedidos
+  const prodsEstrella = await prisma.producto.findMany({ where: { sucursalId: suc1.id } });
+  const prodsSabor = await prisma.producto.findMany({ where: { sucursalId: suc2.id } });
 
-  const pedido1 = await prisma.pedido.create({
-    data: {
-      numero: 'PED-00001',
-      horaLlegadaEstimada: new Date(Date.now() + 1000 * 60 * 45),
-      montoTotal: 5700,
-      tiempoPreparacionEstimado: 35,
-      tiempoRepartoEstimado: 25,
-      compradorId: comprador1!.id,
-      repartidorId: repartidor1!.id,
-      empresaId: empresa1!.id,
-      rutaId: ruta1.id,
-      pagoId: pago1.id,
-      estadoId: estadoPedidoCreado!.id,
-    },
-  });
+  const compradoresDisponibles = [comprador1!, comprador2!];
+  // Usamos las ubicaciones 4 (Boedo) y 5 (San Telmo) para los destinos de los compradores
+  const destinosCompradores = [ubicaciones[4].id, ubicaciones[5].id]; 
+  
+  const ubicacionCentro = ubicaciones[0].id; // Origen La Estrella
+  const ubicacionBulevar = ubicaciones[2].id; // Origen El Sabor
 
-  await prisma.detalleDePedido.createMany({
-    data: [
-      { cantidad: 2, montoSubtotal: 3600, pedidoId: pedido1.id, productoId: prod1!.id },
-      { cantidad: 3, montoSubtotal: 1200, pedidoId: pedido1.id, productoId: prod2!.id },
-      { cantidad: 2, montoSubtotal:  800, pedidoId: pedido1.id, productoId: prod3!.id },
-    ],
-  });
+  // Función generadora para no repetir código
+  const generarPedidosPorSucursal = async (
+    empresaId: number,
+    origenId: number,
+    productos: any[],
+    prefijo: string
+  ) => {
+    for (let i = 1; i <= 8; i++) {
+      // Alternar entre Juan y María para los pedidos
+      const compradorActual = compradoresDisponibles[i % 2];
+      const destinoActual = destinosCompradores[i % 2];
+
+      // 1. Crear una ruta única para este pedido
+      const ruta = await prisma.ruta.create({
+        data: {
+          origenId: origenId,
+          destinoId: destinoActual,
+          tarifaDistancia: 1500 + (i * 100), // Simula un costo de envío variable
+        },
+      });
+
+      // 2. Elegir un par de productos diferentes del menú para armar el carrito
+      const prodA = productos[(i * 2) % productos.length];
+      const prodB = productos[(i * 2 + 1) % productos.length];
+
+      const cantA = (i % 3) + 1; // Cantidades entre 1 y 3
+      const cantB = (i % 2) + 1; // Cantidades entre 1 y 2
+
+      const subtotalA = prodA.precio * cantA;
+      const subtotalB = prodB.precio * cantB;
+      const montoTotal = subtotalA + subtotalB + ruta.tarifaDistancia;
+
+      // 3. Crear el pago asociado
+      const pago = await prisma.pago.create({
+        data: {
+          numero: `PAG-${prefijo}-${1000 + i}`,
+          monto: montoTotal,
+          estadoId: estadoPagoPendiente!.id,
+        },
+      });
+
+      // 4. Crear el pedido
+      const pedido = await prisma.pedido.create({
+        data: {
+          numero: `PED-${prefijo}-${String(i).padStart(4, '0')}`,
+          horaLlegadaEstimada: new Date(Date.now() + 1000 * 60 * (30 + i * 5)), // Tiempos escalonados
+          montoTotal: montoTotal,
+          tiempoPreparacionEstimado: 20 + i,
+          tiempoRepartoEstimado: 15 + i,
+          compradorId: compradorActual.id,
+          repartidorId: repartidor1!.id,
+          empresaId: empresaId,
+          rutaId: ruta.id,
+          pagoId: pago.id,
+          estadoId: estadoPedidoCreado!.id,
+        },
+      });
+
+      // 5. Insertar los detalles del pedido
+      await prisma.detalleDePedido.createMany({
+        data: [
+          { cantidad: cantA, montoSubtotal: subtotalA, pedidoId: pedido.id, productoId: prodA.id },
+          { cantidad: cantB, montoSubtotal: subtotalB, pedidoId: pedido.id, productoId: prodB.id },
+        ],
+      });
+    }
+  };
+
+  // Ejecutamos la función para generar 8 pedidos en La Estrella y 8 en El Sabor
+  await generarPedidosPorSucursal(empresa1!.id, ubicacionCentro, prodsEstrella, 'EST');
+  await generarPedidosPorSucursal(empresa2!.id, ubicacionBulevar, prodsSabor, 'SAB');
 
   console.log('✅ Seed ejecutado con éxito!');
   console.log('');
