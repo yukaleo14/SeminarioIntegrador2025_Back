@@ -116,6 +116,10 @@ export class PedidoService {
   findBySucursal(empresaId: number) {
     return this.prisma.pedido.findMany({
       where: { empresaId },
+      include: {
+        estado: { select: { id: true, nombre: true } },
+        comprador: { select: { id: true, nombre: true } },
+        repartidor: { select: { id: true, nombre: true } },}
     });
   }
 
