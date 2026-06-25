@@ -63,7 +63,14 @@ Para entornos fuera de Docker, crear un archivo `.env` en la raíz con esos valo
 
 ## Comandos útiles (dentro del contenedor)
 
+
 ```bash
+#para visualizar los datos cargados en la BD
+npx prisma studio
+
+# Agrega datos a la base de datos
+docker exec -it nest_app npx prisma db seed
+
 # Crear una nueva migración tras modificar prisma/schema.prisma
 docker compose exec app npx prisma migrate dev --name <nombre>
 
