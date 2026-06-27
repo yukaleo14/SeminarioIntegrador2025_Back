@@ -63,6 +63,13 @@ export class PedidoController {
     return this.pedidoService.findOne(+id);
   }
 
+  @Get('/:empresaId/me')
+  @Public()
+  @UseGuards(RolesGuard)
+  findBySucursal(@Param('empresaId') empresaId: number) {
+    return this.pedidoService.findBySucursal(+empresaId);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePedidoDto: UpdatePedidoDto) {
     return this.pedidoService.update(+id, updatePedidoDto);
