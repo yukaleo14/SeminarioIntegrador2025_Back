@@ -57,6 +57,12 @@ export class PedidoController {
     return this.pedidoService.findByRepartidor(req.user.userId);
   }
 
+  @Get('repartidor/:userId')
+  findByRepartidor(@Param('userId', ParseIntPipe) userId: number) {
+    return this.pedidoService.findByRepartidor(userId);
+  }
+
+
   @Get(':id')
   @Public()
   findOne(@Param('id') id: string) {

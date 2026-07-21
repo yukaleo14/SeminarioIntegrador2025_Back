@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { RepartidorService } from './repartidor.service';
 import { CreateRepartidorDto } from './dto/create-repartidor.dto';
@@ -41,5 +42,10 @@ export class RepartidorController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.repartidorService.remove(+id);
+  }
+
+  @Get('usuario/:usuarioId')
+  getRepartidorIdByUserId(@Param('userId', ParseIntPipe) userId: number) {
+    return this.repartidorService.getRepartidorIdByUserId(userId);
   }
 }
