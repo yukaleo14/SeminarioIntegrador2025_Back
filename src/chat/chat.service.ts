@@ -41,7 +41,10 @@ export class ChatService {
     const token: string =
       client.handshake.auth?.token || client.handshake.query?.token;
 
+    console.log('[ChatService] handleConnection - client:', client.id, 'token:', token ? 'presente (' + token.substring(0, 10) + '...)' : 'FALTA');
+
     if (!token) {
+      console.log('[ChatService] Sin token, desconectando cliente:', client.id);
       client.disconnect();
       return;
     }
@@ -49,10 +52,11 @@ export class ChatService {
     try {
       const payload: user = this.jwtService.verify(token);
       client.data.user = payload;
+      console.log('[ChatService] Token verificado OK - user:', payload.id, 'rol:', payload.rol);
     } catch (e) {
+      console.log('[ChatService] Token INVÁLIDO, desconectando:', client.id, e);
       client.disconnect();
       client.emit('error', { message: 'Invalid or expired token' });
-      console.log('Error: ', e);
     }
   }
 
@@ -69,7 +73,7 @@ export class ChatService {
       return;
     }
 
-    const pedido = await this.pedidoSvc.findOne(pedidoId);
+    const pedido = await this.pedidoSvc.findOne(Number(pedidoId));
     if (!pedido) {
       client.emit('error', { message: 'Pedido no encontrado' });
       return;
@@ -91,7 +95,7 @@ export class ChatService {
 
     // Enviar historial de mensajes al cliente que se acaba de unir
     const historial = await this.prisma.mensajeChat.findMany({
-      where: { pedidoId },
+      where: { pedidoId: Number(pedidoId) },
       orderBy: { timestamp: 'asc' },
       include: {
         remitente: { select: { id: true, mail: true, rol: true } },
@@ -117,12 +121,12 @@ export class ChatService {
     const mensajeGuardado = await this.prisma.mensajeChat.create({
       data: {
         contenido: data.message,
-        pedidoId: data.pedidoId,
+        pedidoId: Number(data.pedidoId),
         remitenteId: user.id,
       },
     });
 
-    const roomName = `pedido-${data.pedidoId}`;
+    const roomName = `pedido-${Number(data.pedidoId)}`;
     server.to(roomName).emit('newMessage', {
       id: mensajeGuardado.id,
       message: data.message,

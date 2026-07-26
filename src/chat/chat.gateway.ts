@@ -22,10 +22,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly chatService: ChatService) {}
 
   async handleDisconnect(client: Socket) {
+    console.log('[ChatGateway] Cliente desconectado:', client.id);
     await this.chatService.handleDisconnect(client, this.server);
   }
 
   handleConnection(client: Socket) {
+    console.log('[ChatGateway] Cliente conectado:', client.id, 'token:', client.handshake.auth?.token ? 'presente' : 'FALTA');
     this.chatService.handleConnection(client);
   }
 
