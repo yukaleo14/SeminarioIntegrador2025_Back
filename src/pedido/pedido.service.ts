@@ -88,6 +88,9 @@ export class PedidoService {
         include: {
           ruta: true,
           detalle: true,
+          estado: { select: { id: true, nombre: true } },
+          comprador: { select: { id: true, nombre: true } },
+          empresa: { select: { id: true, nombre: true } },
         },
       });
     } catch (error) {
@@ -265,6 +268,76 @@ export class PedidoService {
 
     return this.prisma.pedido.findMany({
       where: { repartidorId: repartidor.id },
+      include: {
+        comprador: { select: { id: true, nombre: true } },
+        empresa: { select: { id: true, nombre: true } },
+        estado: { select: { id: true, nombre: true } },
+        ruta: {
+          include: {
+            origen: { include: { posicion: true } },
+            destino: { include: { posicion: true } },
+          },
+        },
+      },
+      orderBy: { fechaHora: 'desc' },
+    });
+  }
+
+  async findPedidoActivoByRepartidor(userId: number) {
+    const repartidor = await this.prisma.repartidor.findUnique({
+      where: { usuarioId: userId },
+    });
+    if (!repartidor) return null;
+
+    const estadosActivos = await this.prisma.estado.findMany({
+      where: {
+        ambito: 'PEDIDO',
+        nombre: { in: ['ASIGNADO', 'ENRUTA'] },
+      },
+    });
+
+    if (estadosActivos.length === 0) return null;
+
+    return this.prisma.pedido.findFirst({
+      where: {
+        repartidorId: repartidor.id,
+        estadoId: { in: estadosActivos.map((e) => e.id) },
+      },
+      include: {
+        comprador: { select: { id: true, nombre: true } },
+        empresa: { select: { id: true, nombre: true } },
+        estado: { select: { id: true, nombre: true } },
+        ruta: {
+          include: {
+            origen: { include: { posicion: true } },
+            destino: { include: { posicion: true } },
+          },
+        },
+      },
+      orderBy: { fechaHora: 'desc' },
+    });
+  }
+
+  async findPedidoActivoByComprador(userId: number) {
+    const comprador = await this.prisma.comprador.findUnique({
+      where: { usuarioId: userId },
+    });
+    if (!comprador) return null;
+
+    const estadosActivos = await this.prisma.estado.findMany({
+      where: {
+        ambito: 'PEDIDO',
+        nombre: { in: ['CREADO', 'ENPREPARACION', 'ASIGNADO', 'ENRUTA'] },
+      },
+    });
+
+    if (estadosActivos.length === 0) return null;
+
+    return this.prisma.pedido.findFirst({
+      where: {
+        compradorId: comprador.id,
+        estadoId: { in: estadosActivos.map((e) => e.id) },
+      },
       include: {
         comprador: { select: { id: true, nombre: true } },
         empresa: { select: { id: true, nombre: true } },

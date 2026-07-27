@@ -57,6 +57,20 @@ export class PedidoController {
     return this.pedidoService.findByRepartidor(req.user.userId);
   }
 
+  @Get('repartidor/activo')
+  @UseGuards(RolesGuard)
+  @Roles(Rol.REPARTIDOR)
+  findPedidoActivo(@Req() req: any) {
+    return this.pedidoService.findPedidoActivoByRepartidor(req.user.userId);
+  }
+
+  @Get('comprador/activo')
+  @UseGuards(RolesGuard)
+  @Roles(Rol.COMPRADOR)
+  findPedidoActivoComprador(@Req() req: any) {
+    return this.pedidoService.findPedidoActivoByComprador(req.user.userId);
+  }
+
   @Get('repartidor/:userId')
   findByRepartidor(@Param('userId', ParseIntPipe) userId: number) {
     return this.pedidoService.findByRepartidor(userId);
