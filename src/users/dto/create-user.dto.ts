@@ -2,33 +2,33 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
+  IsNumber,
   IsString,
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { Role } from '@prisma/client';
+import { Rol } from '@prisma/client';
 
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ required: true })
-  name: string;
+  nombre: string;
 
   @IsString()
   @IsNotEmpty()
   @MinLength(5)
-  @ApiProperty({ required: true })
-  surname: string;
+  @ApiProperty({ required: false })
+  apellido: string;
 
   @IsString()
   @IsNotEmpty()
   @IsEmail()
   @ApiProperty({ required: true })
-  email: string;
+  mail: string;
 
   @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   dni: string;
 
   @IsString()
@@ -36,13 +36,37 @@ export class CreateUserDto {
   @MinLength(6)
   @MaxLength(20)
   @ApiProperty({ required: true })
-  password: string;
+  contrasena: string;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ required: true })
-  telephone: string;
+  telefono: string;
 
-  @ApiProperty({ required: false, default: Role.CLIENT })
-  role?: Role = Role.CLIENT;
+  @IsString()
+  @ApiProperty({ default: '', required: false })
+  cuitCuil: string;
+
+  @ApiProperty({ required: false, default: Rol.COMPRADOR })
+  rol?: Rol = Rol.COMPRADOR;
+
+  @ApiProperty({ required: false })
+  imagenPerfil?: string;
+
+  @IsString()
+  @ApiProperty({ required: false })
+  altura: string;
+  @IsString()
+  @ApiProperty({ required: false })
+  calle: string;
+  @IsString()
+  @ApiProperty({ required: false })
+  nombreUbicacion: string;
+
+  @IsNumber()
+  @ApiProperty({ required: false })
+  coordenadaX: number;
+  @IsNumber()
+  @ApiProperty({ required: false })
+  coordenadaY: number;
 }

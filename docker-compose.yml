@@ -12,6 +12,35 @@ services:
       - '3307:3306'
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  app:
+    build: .
+    container_name: nest_app
+    restart: always
+    ports:
+      - '3000:3000'
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - images_data:/app/images
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: mysql://root:rootpass@mysql:3306/nestdb
+      JWT_SECRET: devsecret
+      JWT_EXPIRES_IN: 3600s
+    command: sh -c "npx prisma db push --accept-data-loss && npm run start:dev"
 
 volumes:
   mysql_data:
+  images_data:

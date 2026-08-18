@@ -11,11 +11,11 @@ export class LoginDto {
   @IsEmail()
   @IsNotEmpty()
   @ApiProperty({ required: true })
-  email: string;
+  mail: string;
 
   @IsString()
   @MinLength(6)
   @MaxLength(20)
   @ApiProperty({ required: true })
-  password: string;
+  contrasena: string;
 }

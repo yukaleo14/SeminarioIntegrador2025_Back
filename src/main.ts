@@ -3,10 +3,24 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useWebSocketAdapter(new IoAdapter(app));
   app.useGlobalPipes(new ValidationPipe()); // Agregar globalmente el class Validator
+
+  app.enableCors({
+    origin: [
+      'http://localhost:4200',
+      'http://localhost:3000',
+      'https://localhost:4200',
+      'https://localhost:3000',
+    ], // dominios permitidos
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true, // permite cookies o cabeceras de autenticación
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Seminario Integrador 2025')

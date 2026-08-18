@@ -7,21 +7,290 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  name  String
-  surname String
-  dni   String @unique
-  telephone String @unique
-  createdAt DateTime @default(now())
-  password String
+model Usuario {
+  id         Int    @id @default(autoincrement())
+  mail       String @unique
+  contrasena String
+  rol        Rol    @default(COMPRADOR)
 
-  role Role @default(CLIENT)
+  empresa      Empresa?
+  comprador    Comprador?
+  repartidor   Repartidor?
+  mensajesChat MensajeChat[]
 }
 
-enum Role {
-  CLIENT
-  DELIVERY
-  BUSINESS
+enum Rol {
+  COMPRADOR
+  REPARTIDOR
+  EMPRESA
+}
+
+// Cheakeada
+model Empresa {
+  id           Int     @id @default(autoincrement())
+  nombre       String  @unique
+  cuitCuil     String  @unique
+  imagenPerfil String?
+
+  pedidos   Pedido[]
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id])
+  usuarioId Int       @unique
+  sucursales Sucursal[]
+}
+
+// Chekeada
+model Comprador {
+  id           Int     @id @default(autoincrement())
+  nombre       String
+  apellido     String
+  cuitCuil     String  @unique
+  dni          String  @unique
+  telefono     String  @unique
+  imagenPerfil String?
+
+  ubicacion   Ubicacion @relation(fields: [ubicacionId], references: [id])
+  ubicacionId Int
+
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int     @unique
+
+  pedidos Pedido[]
+}
+
+// Chekeada
+model Repartidor {
+  id           Int     @id @default(autoincrement())
+  nombre       String
+  apellido     String
+  cuitCuil     String  @unique
+  dni          String  @unique
+  telefono     String  @unique
+  imagenPerfil String?
+
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int     @unique
+
+  pedidos Pedido[]
+}
+
+// Chekeada
+model Categoria {
+  id    Int    @id @default(autoincrement())
+  nombre  String 
+  imagen String? @default("")
+  fechaHora DateTime @default(now())
+  productos Producto[]
+}
+
+// Chekeada
+model Producto {
+  id                        Int     @id @default(autoincrement())
+  nombre                    String
+  precio                    Float
+  imagen                    String?
+  tiempoPreparacionEstimado Int
+  descripcion               String
+
+  sucursal   Sucursal @relation(fields: [sucursalId], references: [id])
+  sucursalId Int
+
+  categoria   Categoria @relation(fields: [categoriaId], references: [id])
+  categoriaId Int
+
+  estado   Estado @relation(fields: [estadoId], references: [id])
+  estadoId Int
+
+  detalleDePedido DetalleDePedido[]
+}
+
+// Chekeada
+model Sucursal {
+  id          Int       @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  horario     Horario[]
+  imagen      String?
+
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+  empresaId Int
+
+  ubicacion   Ubicacion @relation(fields: [ubicacionId], references: [id])
+  ubicacionId Int
+
+  estado   Estado @relation(fields: [estadoId], references: [id])
+  estadoId Int
+
+  productos Producto[]
+}
+
+// Chekeada
+model Horario {
+  id    Int    @id @default(autoincrement())
+  desde String // 21
+  hasta String // 24
+
+  sucursal   Sucursal @relation(fields: [sucursalId], references: [id])
+  sucursalId Int
+  dia        Dia
+}
+
+// Chekeada
+enum Dia {
+  LUNES
+  MARTES
+  MIERCOLES
+  JUEVES
+  VIERNES
+  SABADO
+  DOMINGO
+}
+
+// Chekeada
+model Pago {
+  id        Int      @id @default(autoincrement())
+  numero    String   @unique
+  fechaHora DateTime @default(now())
+  monto     Float
+
+  estado   Estado @relation(fields: [estadoId], references: [id])
+  estadoId Int
+
+  pedido Pedido[]
+}
+
+// Chekeada
+model FormaPago {
+  id     Int    @id @default(autoincrement())
+  nombre String
+}
+
+// Chekeada
+model Estado {
+  id        Int      @id @default(autoincrement())
+  fechaHora DateTime @default(now())
+  ambito    Ambito
+  nombre    Nombre
+
+  sucursal Sucursal[]
+  pago     Pago[]
+  pedido   Pedido[]
+  producto Producto[]
+}
+
+enum Ambito {
+  PEDIDO
+  PRODUCTO
+  PAGO
+  SUCURSAL
+}
+
+enum Nombre {
+  CREADO
+  ENPREPARACION
+  PUBLICADO
+  ASIGNADO
+  ENRUTA
+  ENTREGADO
+  CANCELADO
+  DEMORADO
+  PENDIENTE
+  ABIERTO
+  CERRADO
+}
+
+// Chekeada
+model Pedido {
+  id    Int    @id @default(autoincrement())
+  numero String 
+  horaLlegadaEstimada DateTime 
+  montoTotal Int 
+  tiempoPreparacionEstimado Int 
+  tiempoRepartoEstimado Int 
+  fechaHora DateTime @default(now())
+
+  comprador Comprador @relation(fields: [compradorId], references: [id])
+  compradorId Int 
+
+  repartidor   Repartidor? @relation(fields: [repartidorId], references: [id])
+  repartidorId Int?
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+  empresaId Int 
+  
+  ruta Ruta @relation(fields: [rutaId], references: [id])
+  rutaId Int
+
+  pago   Pago @relation(fields: [pagoId], references: [id])
+  pagoId Int
+
+  estado   Estado @relation(fields: [estadoId], references: [id])
+  estadoId Int
+
+  detalle      DetalleDePedido[]
+  mensajesChat MensajeChat[]
+}
+
+// Chekeada
+model DetalleDePedido {
+  id            Int      @id @default(autoincrement())
+  cantidad      Int
+  montoSubtotal Float
+  fechaHora     DateTime @default(now())
+
+  pedido   Pedido @relation(fields: [pedidoId], references: [id])
+  pedidoId Int
+
+  producto   Producto @relation(fields: [productoId], references: [id])
+  productoId Int
+}
+
+//TODO: Falta ABM para rutas y ubicaciones
+// chekeada
+model Ruta {
+  id              Int       @id @default(autoincrement())
+  tarifaDistancia Float
+  pedido Pedido[]
+  origen Ubicacion @relation("OrigenUbicacion", fields: [origenId], references: [id])
+  origenId Int
+  destino Ubicacion @relation("DestinoUbicacion", fields: [destinoId], references: [id])
+  destinoId Int
+}
+
+//Chekeada
+model Ubicacion {
+  id     Int     @id @default(autoincrement())
+  altura String? @db.Text
+  calle  String? @db.Text
+  nombre String? @db.Text
+
+  posicion   Posicion @relation(fields: [posicionId], references: [id], onDelete: Cascade)
+  posicionId Int      @unique
+
+  fechaHora DateTime @default(now())
+
+  sucursal  Sucursal[]
+  origen    Ruta[]      @relation("OrigenUbicacion")
+  destino   Ruta[]      @relation("DestinoUbicacion")
+  comprador Comprador[]
+}
+
+model MensajeChat {
+  id         Int      @id @default(autoincrement())
+  contenido  String
+  timestamp  DateTime @default(now())
+
+  pedido      Pedido  @relation(fields: [pedidoId], references: [id])
+  pedidoId    Int
+
+  remitente   Usuario @relation(fields: [remitenteId], references: [id])
+  remitenteId Int
+}
+
+//Chekeada
+model Posicion {
+  id          Int   @id @default(autoincrement())
+  coordenadaX Float
+  coordenadaY Float
+
+  ubicacion Ubicacion?
 }
